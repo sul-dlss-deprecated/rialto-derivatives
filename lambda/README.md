@@ -6,12 +6,12 @@ GOOS=linux go build -o main
 zip lambda.zip main
 ```
 
-1. Start localstack. If you're on a Mac, ensure you are running the docker daemon.
+2. Start localstack. If you're on a Mac, ensure you are running the docker daemon.
 ```
 SERVICES=lambda,es,sns LAMBDA_EXECUTOR=docker localstack start
 ```
 
-1. Upload zip and create a function definition
+3. Upload zip and create a function definition
 ```
 AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws \
 --endpoint-url http://localhost:4574 lambda create-function \
@@ -23,7 +23,7 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws \
 --zip-file fileb://lambda.zip
 ```
 
-1. Create ES domain
+4. Create ES domain
 ```
 AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws es \
 --endpoint-url=http://localhost:4578 create-elasticsearch-domain \
@@ -33,14 +33,14 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws es \
 --ebs-options EBSEnabled=true,VolumeType=standard,VolumeSize=10
 ```
 
-1. Create SNS topic
+5. Create SNS topic
 ```
 AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws sns \
 --endpoint-url=http://localhost:4575 create-topic \
 --name data-update
 ```
 
-1. Subscribe to SNS events
+6. Subscribe to SNS events
 ```
 AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws sns \
 --endpoint-url=http://localhost:4575 subscribe \
@@ -49,7 +49,7 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws sns \
 --notification-endpoint arn:aws:lambda:us-east-1:000000000000:function:f1
 ```
 
-1. Publish a Message
+7. Publish a Message
 ```
 AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws sns \
 --endpoint-url=http://localhost:4575 publish \
@@ -58,7 +58,7 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws sns \
 "Message": "Hello world!" }}]}'
 ```
 
-1. View output
+8. View output
 When you go to http://localhost:4571/records/_search
 
 You should see an item record with:
@@ -66,7 +66,7 @@ You should see an item record with:
 "_source":{"foo": "barfoo"}
 ```
 
-1. Cleanup (necessary before you upload a newer version of the function)
+9. Cleanup (necessary before you upload a newer version of the function)
 
 ```
 AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws lambda \
