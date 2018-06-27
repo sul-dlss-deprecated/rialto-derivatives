@@ -1,0 +1,3 @@
+collection:
+  dir: solr_config/
+  name: collection1
