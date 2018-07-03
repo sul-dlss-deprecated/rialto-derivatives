@@ -1,9 +1,12 @@
 # Running a lambda on localstack
 
-## Dependencies
+## Localstack
 
-1. [Rialto-api / localstack](https://github.com/sul-dlss-labs/rialto-api/)
+Start localstack. If you're on a Mac, ensure you are running the docker daemon.
 
+```
+SERVICES=lambda,sns LAMBDA_EXECUTOR=docker localstack start
+```
 ## Create the lambda zip file, upload and subscribe
 
 ```
