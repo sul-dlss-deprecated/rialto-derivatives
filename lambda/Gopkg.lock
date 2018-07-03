@@ -12,9 +12,15 @@
   revision = "4d30d0ff60440c2d0480a15747c96ee71c3c53d4"
   version = "v1.2.0"
 
+[[projects]]
+  name = "github.com/vanng822/go-solr"
+  packages = ["solr"]
+  revision = "1bb020926a25e5470a9b7c61ba6f38cd92e83283"
+  version = "v0.5"
+
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9d6a95a4495da3438b107f151f0c5489d99ab4d0dc8d88ef94c0b0a6615994d4"
+  inputs-digest = "c66380c738c00ef34173eaa884f49716de9bdf9741ce7b401da0abc9a2bbb70a"
   solver-name = "gps-cdcl"
   solver-version = 1
