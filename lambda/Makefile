@@ -1,13 +1,13 @@
 LOCAL_ENDPOINT_HOST    ?=localhost
 LOCAL_ENDPOINT         =--endpoint-url=http://${LOCAL_ENDPOINT_HOST}
 SNS_ENDPOINT           =${LOCAL_ENDPOINT}:4575
-ES_ENDPOINT            =${LOCAL_ENDPOINT}:4578
 LAMBDA_ENDPOINT        =${LOCAL_ENDPOINT}:4574
-PROJ_ES_DOMAIN         =records
 PROJ_SNS_TOPIC         =data-update
 PROJ_AWS_REGION        =us-east-1
 PROJ_AWS_ACCESS_KEY_ID =999999
 PROJ_AWS_SECRET_KEY    =999999
+SOLR_HOST              =http://127.0.0.1:8983/solr
+SOLR_COLLECTION        =collection1
 PROJ_ENV_VARS          =AWS_REGION=${PROJ_AWS_REGION} AWS_ACCESS_KEY_ID=${PROJ_AWS_ACCESS_KEY_ID} AWS_SECRET_ACCESS_KEY=${PROJ_AWS_SECRET_KEY}
 
 default: package upload subscribe
@@ -25,7 +25,7 @@ upload:
 		--runtime go1.x \
 		--role r1 \
 		--handler main \
-		--environment "Variables={ES_HOST=$(ES_ENDPOINT)}" \
+		--environment "Variables={SOLR_HOST=$(SOLR_HOST),SOLR_COLLECTION=$(SOLR_COLLECTION)}" \
 		--zip-file fileb://lambda.zip && \
 		echo "f1 function created"; \
 fi;
