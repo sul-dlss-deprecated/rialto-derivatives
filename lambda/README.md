@@ -1,9 +1,16 @@
 # Running a lambda on localstack
 
-1. Create a zip
+## Localstack
+
+Start localstack. If you're on a Mac, ensure you are running the docker daemon.
+
 ```
-GOOS=linux go build -o main
-zip lambda.zip main
+SERVICES=lambda,sns LAMBDA_EXECUTOR=docker localstack start
+```
+## Create the lambda zip file, upload and subscribe
+
+```
+make
 ```
 
 2. Start localstack. If you're on a Mac, ensure you are running the docker daemon.
