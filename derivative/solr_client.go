@@ -22,10 +22,17 @@ func NewSolrClient(host string, collection string) *SolrClient {
 	}
 }
 
-func (d *SolrClient) removeResourcesOfType(resourceType string) error {
+// RemoveResourcesOfType clears the index of all the data with the matching type
+func (d *SolrClient) RemoveResourcesOfType(resourceType string) error {
 	query := fmt.Sprintf("%s:%s", typeField, resourceType)
 	data := map[string]interface{}{"query": query}
 	_, err := d.si.Delete(data, nil)
+	return err
+}
+
+// RemoveAll clears the index of all the data
+func (d *SolrClient) RemoveAll() error {
+	_, err := d.si.DeleteAll()
 	return err
 }
 
