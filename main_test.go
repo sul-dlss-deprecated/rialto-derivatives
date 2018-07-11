@@ -4,8 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/rialto-lambda/actions"
-	"github.com/sul-dlss-labs/rialto-lambda/message"
+	"github.com/sul-dlss-labs/rialto-derivatives/actions"
+	"github.com/sul-dlss-labs/rialto-derivatives/message"
 )
 
 func TestRecordToDoc(t *testing.T) {

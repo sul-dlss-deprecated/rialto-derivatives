@@ -7,10 +7,10 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/sul-dlss-labs/rialto-lambda/actions"
-	"github.com/sul-dlss-labs/rialto-lambda/derivative"
-	"github.com/sul-dlss-labs/rialto-lambda/message"
-	"github.com/sul-dlss-labs/rialto-lambda/transform"
+	"github.com/sul-dlss-labs/rialto-derivatives/actions"
+	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
+	"github.com/sul-dlss-labs/rialto-derivatives/message"
+	"github.com/sul-dlss-labs/rialto-derivatives/transform"
 )
 
 // Handler is the Lambda function handler

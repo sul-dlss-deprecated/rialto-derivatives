@@ -1,10 +1,10 @@
 package actions
 
 import (
-	"github.com/sul-dlss-labs/rialto-lambda/derivative"
-	"github.com/sul-dlss-labs/rialto-lambda/message"
-	"github.com/sul-dlss-labs/rialto-lambda/models"
-	"github.com/sul-dlss-labs/rialto-lambda/transform"
+	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
+	"github.com/sul-dlss-labs/rialto-derivatives/message"
+	"github.com/sul-dlss-labs/rialto-derivatives/models"
+	"github.com/sul-dlss-labs/rialto-derivatives/transform"
 )
 
 type TouchAction struct {

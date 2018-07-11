@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/rialto-lambda/models"
+	"github.com/sul-dlss-labs/rialto-derivatives/models"
 )
 
 func TestResourceToDoc(t *testing.T) {
