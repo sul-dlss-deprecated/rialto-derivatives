@@ -4,11 +4,12 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/sul-dlss-labs/rialto-lambda/message"
 )
 
 func TestRecordToDoc(t *testing.T) {
-	record := "{ \"dc:title\": \"Hello world!\" }"
-	doc := recordToResource(record)
+	msg := &message.Message{}
+	doc := recordToResource(msg)
 
-	assert.Equal(t, "Hello world!", doc.Title())
+	assert.Equal(t, "whatever", doc.Title())
 }
