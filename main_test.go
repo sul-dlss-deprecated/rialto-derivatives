@@ -7,8 +7,8 @@ import (
 )
 
 func TestRecordToDoc(t *testing.T) {
-	record := "{ \"foo_si\": \"Hello world!\" }"
-	doc := recordToDoc(record)
+	record := "{ \"dc:title\": \"Hello world!\" }"
+	doc := recordToResource(record)
 
-	assert.Equal(t, "Hello world!", doc.Get("foo_si"))
+	assert.Equal(t, "Hello world!", doc.Title())
 }

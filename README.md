@@ -77,3 +77,9 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws lambda \
 --endpoint-url=http://localhost:4574 delete-function \
 --function-name f1
 ```
+
+## Testing
+
+```
+go test ./...
+```
