@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"log"
-	"net/url"
 	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/vanng822/go-solr/solr"
+	"github.com/sul-dlss-labs/rialto-lambda/derivative"
+	"github.com/sul-dlss-labs/rialto-lambda/models"
+	"github.com/sul-dlss-labs/rialto-lambda/transform"
 )
 
 // Handler is the Lambda function handler
@@ -19,25 +20,30 @@ func Handler(ctx context.Context, snsEvent events.SNSEvent) {
 
 	host := os.Getenv("SOLR_HOST")
 	collection := os.Getenv("SOLR_COLLECTION")
-	si, _ := solr.NewSolrInterface(host, collection)
+	client := derivative.NewSolrClient(host, collection)
+	indexer := &transform.Indexer{}
+	resourceList := []models.Resource{}
 
 	for _, record := range snsEvent.Records {
-		doc := recordToDoc(record.SNS.Message)
-		docList := []solr.Document{doc}
-		params := url.Values{}
-		si.Add(docList, 1000, &params)
-		si.Commit()
+		doc := recordToResource(record.SNS.Message)
+		resourceList = append(resourceList, doc)
+	}
+
+	err := client.Add(indexer.Map(resourceList))
+	if err != nil {
+		panic(err)
 	}
 }
 
-func recordToDoc(message string) solr.Document {
+// This will take an SNS message and retrieve a resource from Neptune
+func recordToResource(message string) models.Resource {
 	data := map[string]interface{}{}
 	err := json.Unmarshal([]byte(message), &data)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return solr.Document(data)
+	return models.NewResource(data)
 }
 
 func main() {
