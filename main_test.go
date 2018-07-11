@@ -4,12 +4,15 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/sul-dlss-labs/rialto-lambda/actions"
 	"github.com/sul-dlss-labs/rialto-lambda/message"
 )
 
 func TestRecordToDoc(t *testing.T) {
-	msg := &message.Message{}
-	doc := recordToResource(msg)
+	msg := &message.Message{
+		Action: "touch",
+	}
+	action := actionForMessage(msg, nil, nil)
 
-	assert.Equal(t, "whatever", doc.Title())
+	assert.IsType(t, &actions.TouchAction{}, action)
 }
