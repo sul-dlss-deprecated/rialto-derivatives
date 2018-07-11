@@ -10,6 +10,8 @@ import (
 	"github.com/sul-dlss-labs/rialto-derivatives/actions"
 	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
+	"github.com/sul-dlss-labs/rialto-derivatives/repository"
+	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
 	"github.com/sul-dlss-labs/rialto-derivatives/transform"
 )
 
@@ -17,27 +19,34 @@ import (
 func Handler(ctx context.Context, snsEvent events.SNSEvent) {
 	// stdout and stderr are sent to AWS CloudWatch Logs
 	log.Printf("Running Lambda function\n")
-
-	host := os.Getenv("SOLR_HOST")
-	collection := os.Getenv("SOLR_COLLECTION")
-	client := derivative.NewSolrClient(host, collection)
-	indexer := &transform.Indexer{}
+	registry := buildServiceRegistry()
 
 	for _, record := range snsEvent.Records {
 		msg, _ := message.Parse(record)
-		err := actionForMessage(msg, client, indexer).Run(msg)
+		err := actionForMessage(msg, registry).Run(msg)
 		if err != nil {
 			panic(err)
 		}
 	}
 }
 
-func actionForMessage(msg *message.Message, client *derivative.SolrClient, indexer *transform.Indexer) actions.Action {
+func buildServiceRegistry() *runtime.Registry {
+	host := os.Getenv("SOLR_HOST")
+	collection := os.Getenv("SOLR_COLLECTION")
+	client := derivative.NewSolrClient(host, collection)
+	indexer := &transform.Indexer{}
+	endpoint := os.Getenv("SPARQL_ENDPOINT")
+	sparqlReader := repository.NewSparqlReader(endpoint)
+
+	return runtime.NewRegistry(client, indexer, sparqlReader)
+}
+
+func actionForMessage(msg *message.Message, registry *runtime.Registry) actions.Action {
 	switch msg.Action {
 	case "touch":
-		return actions.NewTouchAction(client, indexer)
+		return actions.NewTouchAction(registry)
 	case "delete":
-		return actions.NewRebuildAction(client, indexer)
+		return actions.NewRebuildAction(registry)
 	}
 	log.Panicf("Unknown action '%s'", msg.Action)
 	return nil

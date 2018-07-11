@@ -17,7 +17,9 @@ func (m *Indexer) Map(resources []models.Resource) []solr.Document {
 
 func (m *Indexer) mapOne(resource models.Resource) solr.Document {
 	doc := make(solr.Document)
-	doc.Set("type_ssi", resource.ResourceType())
-	doc.Set("title_ssi", resource.Title())
+	doc.Set("type_ssi", resource.ResourceTypes()[0].String())
+	if resource.Titles() != nil {
+		doc.Set("title_ssi", resource.Titles()[0].String())
+	}
 	return doc
 }

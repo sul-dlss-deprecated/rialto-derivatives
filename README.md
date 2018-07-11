@@ -26,7 +26,7 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws \
 --runtime go1.x \
 --role r1 \
 --handler main \
---environment "Variables={SOLR_HOST=http://127.0.0.1:8983/solr,SOLR_COLLECTION=collection1}" \
+--environment "Variables={SOLR_HOST=http://127.0.0.1:8983/solr,SOLR_COLLECTION=collection1,SPARQL_ENDPOINT=http://127.0.0.1:9999/blazegraph/namespace/kb/sparql}" \
 --zip-file fileb://lambda.zip
 ```
 
