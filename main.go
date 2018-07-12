@@ -17,8 +17,6 @@ import (
 
 // Handler is the Lambda function handler
 func Handler(ctx context.Context, snsEvent events.SNSEvent) {
-	// stdout and stderr are sent to AWS CloudWatch Logs
-	log.Printf("Running Lambda function\n")
 	registry := buildServiceRegistry()
 
 	for _, record := range snsEvent.Records {
@@ -44,8 +42,11 @@ func buildServiceRegistry() *runtime.Registry {
 func actionForMessage(msg *message.Message, registry *runtime.Registry) actions.Action {
 	switch msg.Action {
 	case "touch":
+		log.Printf("Running Touch action\n")
+
 		return actions.NewTouchAction(registry)
 	case "delete":
+		log.Printf("Running Rebuild action\n")
 		return actions.NewRebuildAction(registry)
 	}
 	log.Panicf("Unknown action '%s'", msg.Action)

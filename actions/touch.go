@@ -1,6 +1,8 @@
 package actions
 
 import (
+	"log"
+
 	"github.com/knakk/rdf"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
@@ -31,8 +33,10 @@ func (r *TouchAction) Run(message *message.Message) error {
 	}
 
 	resourceList = append(resourceList, *resource)
-
-	err = r.registry.Derivatives.Add(r.registry.Indexer.Map(resourceList))
+	log.Printf("Retrieved: %s", resourceList)
+	docs := r.registry.Indexer.Map(resourceList)
+	log.Printf("Writing: %s", docs)
+	err = r.registry.Derivatives.Add(docs)
 	return err
 }
 

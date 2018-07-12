@@ -22,4 +22,6 @@ func TestResourceToDoc(t *testing.T) {
 	docs := indexer.Map(resourceList)
 
 	assert.Equal(t, "Hello world!", docs[0].Get("title_ssi"))
+	assert.Equal(t, "http://example.com/record1", docs[0].Get("id"))
+
 }
