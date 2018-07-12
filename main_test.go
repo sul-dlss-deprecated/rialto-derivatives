@@ -12,7 +12,7 @@ func TestRecordToDoc(t *testing.T) {
 	msg := &message.Message{
 		Action: "touch",
 	}
-	action := actionForMessage(msg, nil, nil)
+	action := actionForMessage(msg, nil)
 
 	assert.IsType(t, &actions.TouchAction{}, action)
 }
