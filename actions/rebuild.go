@@ -12,7 +12,7 @@ type RebuildAction struct {
 	registry *runtime.Registry
 }
 
-// NewRebuildAction creates a Rebuild (delete) action
+// NewRebuildAction creates a Rebuild ("rebuild") action
 func NewRebuildAction(registry *runtime.Registry) Action {
 	return &RebuildAction{registry: registry}
 }

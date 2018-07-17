@@ -8,11 +8,20 @@ import (
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
 )
 
-func TestRecordToDoc(t *testing.T) {
+func TestTouchAction(t *testing.T) {
 	msg := &message.Message{
 		Action: "touch",
 	}
 	action := actionForMessage(msg, nil)
 
 	assert.IsType(t, &actions.TouchAction{}, action)
+}
+
+func TestRebuildAction(t *testing.T) {
+	msg := &message.Message{
+		Action: "rebuild",
+	}
+	action := actionForMessage(msg, nil)
+
+	assert.IsType(t, &actions.RebuildAction{}, action)
 }
