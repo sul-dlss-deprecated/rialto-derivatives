@@ -45,7 +45,7 @@ func actionForMessage(msg *message.Message, registry *runtime.Registry) actions.
 		log.Printf("Running Touch action\n")
 
 		return actions.NewTouchAction(registry)
-	case "delete":
+	case "rebuild":
 		log.Printf("Running Rebuild action\n")
 		return actions.NewRebuildAction(registry)
 	}

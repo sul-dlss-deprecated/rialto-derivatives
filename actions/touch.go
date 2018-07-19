@@ -14,7 +14,7 @@ type TouchAction struct {
 	registry *runtime.Registry
 }
 
-// Action is a request type that this service can handle. Currently "touch" and "delete"
+// Action is a request type that this service can handle. Currently "touch" and "rebuild"
 type Action interface {
 	Run(*message.Message) error
 }
