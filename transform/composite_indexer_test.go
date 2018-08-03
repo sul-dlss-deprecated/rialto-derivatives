@@ -14,8 +14,8 @@ func TestResourceToDoc(t *testing.T) {
 	document, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
 	title, _ := rdf.NewLiteral("Hello world!")
 
-	data[models.RdfTypePredicate] = []rdf.Term{document}
-	data[models.TitlePredicate] = []rdf.Term{title}
+	data[models.Predicates["rdf"]["type"]] = []rdf.Term{document}
+	data[models.Predicates["dct"]["title"]] = []rdf.Term{title}
 
 	resource := models.NewResource("http://example.com/record1", data)
 	resourceList := []models.Resource{resource}

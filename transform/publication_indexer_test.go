@@ -24,13 +24,13 @@ func createPublicationResource() models.Resource {
 	doi1, _ := rdf.NewIRI("https://doi.org/10.1109/5.771073")
 	doi2, _ := rdf.NewIRI("https://doi.org/10.1000/182")
 
-	data[models.RdfTypePredicate] = []rdf.Term{document}
-	data[models.TitlePredicate] = []rdf.Term{title}
-	data[models.AbstractPredicate] = []rdf.Term{abstract1, abstract2}
-	data[models.CitesPredicate] = []rdf.Term{cites1, cites2}
-	data[models.LinkPredicate] = []rdf.Term{link1, link2}
-	data[models.IdentifierPredicate] = []rdf.Term{id1, id2}
-	data[models.DoiPredicate] = []rdf.Term{doi1, doi2}
+	data[models.Predicates["rdf"]["type"]] = []rdf.Term{document}
+	data[models.Predicates["dct"]["title"]] = []rdf.Term{title}
+	data[models.Predicates["bibo"]["abstract"]] = []rdf.Term{abstract1, abstract2}
+	data[models.Predicates["bibo"]["cites"]] = []rdf.Term{cites1, cites2}
+	data[models.Predicates["bibo"]["uri"]] = []rdf.Term{link1, link2}
+	data[models.Predicates["bibo"]["identifier"]] = []rdf.Term{id1, id2}
+	data[models.Predicates["bibo"]["doi"]] = []rdf.Term{doi1, doi2}
 
 	return models.NewResource("http://example.com/record1", data)
 }
