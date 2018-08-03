@@ -1,32 +1,30 @@
 package transform
 
 import (
-	"log"
-
+	"github.com/knakk/rdf"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/vanng822/go-solr/solr"
 )
 
-type Indexer struct{}
-
-func (m *Indexer) Map(resources []models.Resource) []solr.Document {
-	docs := make([]solr.Document, len(resources))
-	for i, v := range resources {
-		docs[i] = m.mapOne(v)
-	}
-	return docs
+// Indexer is the interface for objects that transform resources into Solr Documents
+type Indexer interface {
+	Index(models.Resource, solr.Document) solr.Document
 }
 
-func (m *Indexer) mapOne(resource models.Resource) solr.Document {
-	doc := make(solr.Document)
-	doc.Set("id", resource.Subject)
-	if resource.ResourceTypes() != nil {
-		doc.Set("type_ssi", resource.ResourceTypes()[0].String())
-	} else {
-		log.Printf("No resource types exist for %s", resource)
+func mapToString(terms []rdf.Term) []string {
+	out := make([]string, len(terms))
+	for i, v := range terms {
+		out[i] = v.String()
 	}
-	if resource.Titles() != nil {
-		doc.Set("title_ssi", resource.Titles()[0].String())
+	return out
+}
+
+func indexMapping(resource models.Resource, doc solr.Document, mapping map[string]string) solr.Document {
+	for property, field := range mapping {
+		terms := resource.ValueOf(property)
+		if terms != nil {
+			doc.Set(field, mapToString(terms))
+		}
 	}
 	return doc
 }

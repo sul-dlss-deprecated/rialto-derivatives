@@ -32,7 +32,7 @@ func buildServiceRegistry() *runtime.Registry {
 	host := os.Getenv("SOLR_HOST")
 	collection := os.Getenv("SOLR_COLLECTION")
 	client := derivative.NewSolrClient(host, collection)
-	indexer := &transform.Indexer{}
+	indexer := &transform.CompositeIndexer{}
 	endpoint := os.Getenv("SPARQL_ENDPOINT")
 	sparqlReader := repository.NewSparqlReader(endpoint)
 
