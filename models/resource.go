@@ -8,37 +8,6 @@ type Resource struct {
 	data    map[string][]rdf.Term
 }
 
-// RdfTypePredicate is the predicate for rdf type
-const RdfTypePredicate = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
-
-// TitlePredicate is the rdf predicate we are using for title
-const TitlePredicate = "http://xmlns.com/foaf/0.1/name"
-
-var publicationTypes = []string{
-	"http://purl.org/ontology/bibo/Document",
-	"http://vivoweb.org/ontology/core#Abstract",
-	"http://purl.org/ontology/bibo/Article",
-	"http://purl.org/ontology/bibo/Book",
-	"http://vivoweb.org/ontology/core#CaseStudy",
-	"http://vivoweb.org/ontology/core#Catalog",
-	"http://purl.org/spar/fabio/ClinicalGuideline",
-	"http://vivoweb.org/ontology/core#ConferencePoster",
-	"http://purl.org/ontology/bibo/Manual",
-	"http://purl.org/ontology/bibo/Manuscript",
-	"http://purl.org/ontology/bibo/Patent",
-	"http://purl.org/ontology/bibo/Report",
-	"http://vivoweb.org/ontology/core#ResearchProposal",
-	"http://vivoweb.org/ontology/core#Score",
-	"http://vivoweb.org/ontology/core#Screenplay",
-	"http://purl.org/ontology/bibo/Slideshow",
-	"http://vivoweb.org/ontology/core#Speech",
-	"http://purl.org/ontology/bibo/Standard",
-	"http://purl.org/ontology/bibo/Thesis",
-	"http://vivoweb.org/ontology/core#Translation",
-	"http://purl.org/ontology/bibo/Webpage",
-	"http://vivoweb.org/ontology/core#WorkingPaper",
-}
-
 // NewResource creates a new instance of the resource
 func NewResource(subject string, data map[string][]rdf.Term) Resource {
 	return Resource{Subject: subject, data: data}
@@ -66,3 +35,30 @@ func (r *Resource) ResourceTypes() []rdf.Term {
 func (r *Resource) Titles() []rdf.Term {
 	return r.data[TitlePredicate]
 }
+
+// Abstract returns the bibo:abstract assertions
+func (r *Resource) Abstract() []rdf.Term {
+	return r.data[AbstractPredicate]
+}
+
+// DOI returns the bibo:doi assertions
+func (r *Resource) DOI() []rdf.Term {
+	return r.data[DoiPredicate]
+}
+
+// Cites returns the bibo:cites assertions
+func (r *Resource) Cites() []rdf.Term {
+	return r.data[CitesPredicate]
+}
+
+// Identifier returns the bibo:identifier assertions
+func (r *Resource) Identifier() []rdf.Term {
+	return r.data[IdentifierPredicate]
+}
+
+// Link returns the bibo:uri assertions
+func (r *Resource) Link() []rdf.Term {
+	return r.data[LinkPredicate]
+}
+
+// TODO: author, Profiles, editor -- these go through a vivo:Authorship node.
