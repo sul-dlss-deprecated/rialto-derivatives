@@ -7,6 +7,15 @@ Start localstack. If you're on a Mac, ensure you are running the docker daemon.
 ```
 SERVICES=lambda,sns LAMBDA_EXECUTOR=docker localstack start
 ```
+
+## Blazegraph
+Start Blazegraph.  On AWS we would use Neptune, but Neptune is not yet a part of localstack.
+* Note * use Java 8 -- it won't work with newer versions of Java.
+```
+export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
+java -server -Xmx4g -jar blazegraph.jar
+```
+
 ## Create the lambda zip file, upload and subscribe
 
 ```
