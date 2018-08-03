@@ -1,8 +1,6 @@
 package transform
 
 import (
-	"reflect"
-
 	"github.com/knakk/rdf"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/vanng822/go-solr/solr"
@@ -22,10 +20,9 @@ func mapToString(terms []rdf.Term) []string {
 }
 
 func indexMapping(resource models.Resource, doc solr.Document, mapping map[string]string) solr.Document {
-	for method, field := range mapping {
-		values := reflect.ValueOf(&resource).MethodByName(method).Call([]reflect.Value{})
-		if values != nil {
-			terms := values[0].Interface().([]rdf.Term)
+	for property, field := range mapping {
+		terms := resource.ValueOf(property)
+		if terms != nil {
 			doc.Set(field, mapToString(terms))
 		}
 	}

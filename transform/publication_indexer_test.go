@@ -43,7 +43,7 @@ func TestPublicationResourceToDoc(t *testing.T) {
 	in.Set("id", "http://example.com/record1")
 	doc := indexer.Index(resource, in)
 
-	assert.Equal(t, []string{"Hello world!"}, doc.Get("title_ssi"))
+	assert.Equal(t, []string{"Hello world!"}, doc.Get("title_tesi"))
 	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
 	assert.Equal(t, []string{"https://doi.org/10.1109/5.771073", "https://doi.org/10.1000/182"}, doc.Get("doi_ssim"))
 

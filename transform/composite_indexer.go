@@ -34,8 +34,9 @@ func (m *CompositeIndexer) Map(resources []models.Resource) []solr.Document {
 func (m *CompositeIndexer) mapOne(resource models.Resource) solr.Document {
 	doc := make(solr.Document)
 	doc.Set("id", resource.Subject)
-	if resource.ResourceTypes() != nil {
-		doc.Set("type_ssi", resource.ResourceTypes()[0].String())
+	types := resource.ValueOf("type")
+	if types != nil {
+		doc.Set("type_ssi", types[0].String())
 	} else {
 		log.Printf("No resource types exist for %s", resource)
 	}

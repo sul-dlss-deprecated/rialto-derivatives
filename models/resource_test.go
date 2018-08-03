@@ -17,8 +17,8 @@ func TestResource(t *testing.T) {
 
 	resource := NewResource("http://example.com/record1", data)
 
-	assert.Equal(t, "Hello world!", resource.Titles()[0].String())
-	assert.Equal(t, "http://purl.org/ontology/bibo/Document", resource.ResourceTypes()[0].String())
+	assert.Equal(t, "Hello world!", resource.ValueOf("title")[0].String())
+	assert.Equal(t, "http://purl.org/ontology/bibo/Document", resource.ValueOf("type")[0].String())
 	assert.True(t, resource.IsPublication())
 
 }

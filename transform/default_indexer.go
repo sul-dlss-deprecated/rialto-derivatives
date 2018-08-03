@@ -12,7 +12,7 @@ type DefaultIndexer struct {
 // Index adds fields from the resource to the Solr Document
 func (m *DefaultIndexer) Index(resource models.Resource, doc solr.Document) solr.Document {
 	mapping := map[string]string{
-		"Titles": "title_ssi",
+		"title": "title_ssi",
 	}
 
 	return indexMapping(resource, doc, mapping)
