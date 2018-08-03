@@ -16,6 +16,27 @@ const TitlePredicate = "http://xmlns.com/foaf/0.1/name"
 
 var publicationTypes = []string{
 	"http://purl.org/ontology/bibo/Document",
+	"http://vivoweb.org/ontology/core#Abstract",
+	"http://purl.org/ontology/bibo/Article",
+	"http://purl.org/ontology/bibo/Book",
+	"http://vivoweb.org/ontology/core#CaseStudy",
+	"http://vivoweb.org/ontology/core#Catalog",
+	"http://purl.org/spar/fabio/ClinicalGuideline",
+	"http://vivoweb.org/ontology/core#ConferencePoster",
+	"http://purl.org/ontology/bibo/Manual",
+	"http://purl.org/ontology/bibo/Manuscript",
+	"http://purl.org/ontology/bibo/Patent",
+	"http://purl.org/ontology/bibo/Report",
+	"http://vivoweb.org/ontology/core#ResearchProposal",
+	"http://vivoweb.org/ontology/core#Score",
+	"http://vivoweb.org/ontology/core#Screenplay",
+	"http://purl.org/ontology/bibo/Slideshow",
+	"http://vivoweb.org/ontology/core#Speech",
+	"http://purl.org/ontology/bibo/Standard",
+	"http://purl.org/ontology/bibo/Thesis",
+	"http://vivoweb.org/ontology/core#Translation",
+	"http://purl.org/ontology/bibo/Webpage",
+	"http://vivoweb.org/ontology/core#WorkingPaper",
 }
 
 // NewResource creates a new instance of the resource
