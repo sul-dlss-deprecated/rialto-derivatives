@@ -3,7 +3,6 @@ package actions
 import (
 	"log"
 
-	"github.com/knakk/rdf"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
@@ -43,23 +42,5 @@ func (r *TouchAction) Run(message *message.Message) error {
 // This will take an SNS message and retrieve a resource from Neptune
 func (r *TouchAction) recordToResource(msg *message.Message) (*models.Resource, error) {
 	subject := msg.Entities[0]
-	response, err := r.registry.Canonical.QueryByID(subject)
-	if err != nil {
-		return nil, err
-	}
-	data := map[string][]rdf.Term{}
-	for _, triple := range response.Solutions() {
-		predicate := triple["p"].String()
-		object := triple["o"]
-
-		if data[predicate] == nil {
-			// First time we encounter a predicate
-			data[predicate] = []rdf.Term{object}
-		} else {
-			// subsequent encounters
-			data[predicate] = append(data[predicate], object)
-		}
-	}
-	resource := models.NewResource(subject, data)
-	return &resource, nil
+	return r.registry.Canonical.SubjectToResource(subject)
 }

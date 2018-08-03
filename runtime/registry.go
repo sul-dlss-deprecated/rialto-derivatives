@@ -10,7 +10,7 @@ import (
 type Registry struct {
 	Derivatives derivative.Writer
 	Indexer     *transform.CompositeIndexer
-	Canonical   repository.Reader
+	Canonical   *repository.Service
 }
 
 // NewRegistry creates a new instance of the service registry
@@ -18,6 +18,6 @@ func NewRegistry(solr derivative.Writer, indexer *transform.CompositeIndexer, sp
 	return &Registry{
 		Derivatives: solr,
 		Indexer:     indexer,
-		Canonical:   sparql,
+		Canonical:   repository.NewService(sparql),
 	}
 }
