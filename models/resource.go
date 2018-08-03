@@ -26,6 +26,7 @@ var property = map[string]string{
 	"sponsor":        Predicates["vivo"]["informationResourceSupportedBy"],
 	"hasInstrument":  Predicates["gcis"]["hasInstrument"],
 	"sameAs":         Predicates["owl"]["sameAs"],
+	"name":           Predicates["vcard"]["hasName"],
 }
 
 // NewResource creates a new instance of the resource
@@ -35,10 +36,20 @@ func NewResource(subject string, data map[string][]rdf.Term) Resource {
 
 // IsPublication returns true if the type is a publiction
 func (r *Resource) IsPublication() bool {
+	return r.isTypeIn(publicationTypes)
+}
+
+// IsPerson returns true if the type is a person
+func (r *Resource) IsPerson() bool {
+	return r.isTypeIn(personTypes)
+}
+
+// isTypeIn returns true if the resource type is in the provided list
+func (r *Resource) isTypeIn(desiredTypes []string) bool {
 	resourceTypes := r.ValueOf("type")
-	for _, pubType := range publicationTypes {
+	for _, desired := range desiredTypes {
 		for _, resType := range resourceTypes {
-			if pubType == resType.String() {
+			if desired == resType.String() {
 				return true
 			}
 		}
