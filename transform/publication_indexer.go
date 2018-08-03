@@ -11,29 +11,16 @@ type PublicationIndexer struct {
 
 // Index adds fields from the resource to the Solr Document
 func (m *PublicationIndexer) Index(resource models.Resource, doc solr.Document) solr.Document {
-	if resource.Titles() != nil {
-		doc.Set("title_ssi", mapToString(resource.Titles()))
+	mapping := map[string]string{
+		"Titles":     "title_ssi",
+		"Abstract":   "abstract_tesim",
+		"Cites":      "cites_ssim",
+		"DOI":        "doi_ssim",
+		"Identifier": "identifier_ssim",
+		"Link":       "link_ssim",
 	}
 
-	if resource.Abstract() != nil {
-		doc.Set("abstract_tesim", mapToString(resource.Abstract()))
-	}
-
-	if resource.Cites() != nil {
-		doc.Set("cites_ssim", mapToString(resource.Cites()))
-	}
-
-	if resource.DOI() != nil {
-		doc.Set("doi_ssim", mapToString(resource.DOI()))
-	}
-
-	if resource.Identifier() != nil {
-		doc.Set("identifier_ssim", mapToString(resource.Identifier()))
-	}
-
-	if resource.Link() != nil {
-		doc.Set("link_ssim", mapToString(resource.Link()))
-	}
+	doc = indexMapping(resource, doc, mapping)
 
 	// author 	vivo:relatedBy vivo:Authorship vivo:relates 	URI for foaf:Agent 	[0,n] 	Author of the publication.
 	// Profiles confirmed 	vivo:relatedBy vivo:Authorship dcterms:source 	"Profiles" string-literal 	[0,1] 	If the authorship relationship has been confirmed by the Author in Profiles. Can be reused for any relationship needed (i.e. Editorship, Advising Relationship, etc.)

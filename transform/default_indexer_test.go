@@ -23,6 +23,6 @@ func TestDefaultIndexerToDoc(t *testing.T) {
 	in.Set("id", "http://example.com/record1")
 	doc := indexer.Index(resource, in)
 
-	assert.Equal(t, "Hello world!", doc.Get("title_ssi"))
+	assert.Equal(t, []string{"Hello world!"}, doc.Get("title_ssi"))
 	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
 }
