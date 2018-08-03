@@ -1,0 +1,28 @@
+package transform
+
+import (
+	"testing"
+
+	"github.com/knakk/rdf"
+	"github.com/stretchr/testify/assert"
+	"github.com/sul-dlss-labs/rialto-derivatives/models"
+	"github.com/vanng822/go-solr/solr"
+)
+
+func TestDefaultIndexerToDoc(t *testing.T) {
+	indexer := &DefaultIndexer{}
+	data := make(map[string][]rdf.Term)
+	document, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
+	title, _ := rdf.NewLiteral("Hello world!")
+
+	data[models.RdfTypePredicate] = []rdf.Term{document}
+	data[models.TitlePredicate] = []rdf.Term{title}
+
+	resource := models.NewResource("http://example.com/record1", data)
+	in := make(solr.Document)
+	in.Set("id", "http://example.com/record1")
+	doc := indexer.Index(resource, in)
+
+	assert.Equal(t, "Hello world!", doc.Get("title_ssi"))
+	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
+}
