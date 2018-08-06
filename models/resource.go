@@ -27,6 +27,9 @@ var property = map[string]string{
 	"hasInstrument":  Predicates["gcis"]["hasInstrument"],
 	"sameAs":         Predicates["owl"]["sameAs"],
 	"name":           Predicates["vcard"]["hasName"],
+
+	// Organization properties
+	"orgName": Predicates["skos"]["prefLabel"],
 }
 
 // NewResource creates a new instance of the resource
@@ -42,6 +45,11 @@ func (r *Resource) IsPublication() bool {
 // IsPerson returns true if the type is a person
 func (r *Resource) IsPerson() bool {
 	return r.isTypeIn(personTypes)
+}
+
+// IsOrganization returns true if the type is a organization
+func (r *Resource) IsOrganization() bool {
+	return r.isTypeIn(organizationTypes)
 }
 
 // isTypeIn returns true if the resource type is in the provided list

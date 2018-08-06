@@ -38,3 +38,18 @@ func TestPersonResource(t *testing.T) {
 	assert.True(t, resource.IsPerson())
 
 }
+
+func TestOrganizationResource(t *testing.T) {
+	data := make(map[string][]rdf.Term)
+	document, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Organization")
+	name, _ := rdf.NewLiteral("Cornell")
+
+	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
+	data[Predicates["skos"]["prefLabel"]] = []rdf.Term{name}
+	resource := NewResource("http://example.com/record1", data)
+
+	assert.Equal(t, "Cornell", resource.ValueOf("orgName")[0].String())
+	assert.Equal(t, "http://xmlns.com/foaf/0.1/Organization", resource.ValueOf("type")[0].String())
+	assert.True(t, resource.IsOrganization())
+
+}

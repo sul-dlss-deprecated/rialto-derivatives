@@ -32,6 +32,9 @@ var Predicates = map[string]map[string]string{
 	"vcard": map[string]string{
 		"hasName": "http://www.w3.org/2006/vcard/ns#hasName",
 	},
+	"skos": map[string]string{
+		"prefLabel": "http://www.w3.org/2008/05/skos#prefLabel",
+	},
 }
 
 var publicationTypes = []string{
@@ -66,4 +69,28 @@ var personTypes = []string{
 	"http://vivoweb.org/ontology/core#EmeritusFaculty",
 	"http://vivoweb.org/ontology/core#NonAcademic",
 	"http://vivoweb.org/ontology/core#NonFacultyAcademic",
+}
+
+var organizationTypes = []string{
+	"http://xmlns.com/foaf/0.1/Organization",
+	"http://vivoweb.org/ontology/core#Association",
+	"http://vivoweb.org/ontology/core#Center",
+	"http://vivoweb.org/ontology/core#College",
+	"http://vivoweb.org/ontology/core#Consortium",
+	"http://vivoweb.org/ontology/core#Department",
+	"http://vivoweb.org/ontology/core#Division",
+	"http://vivoweb.org/ontology/core#Foundation",
+	"http://vivoweb.org/ontology/core#FundingOrganization",
+	"http://vivoweb.org/ontology/core#GovernmentAgency",
+	"http://vivoweb.org/ontology/core#Hospital",
+	"http://vivoweb.org/ontology/core#Institute",
+	"http://vivoweb.org/ontology/core#Laboratory",
+	"http://vivoweb.org/ontology/core#Library",
+	"http://vivoweb.org/ontology/core#Museum",
+	"http://vivoweb.org/ontology/core#Program",
+	"http://vivoweb.org/ontology/core#Publisher",
+	"http://vivoweb.org/ontology/core#ResearchOrganization",
+	"http://vivoweb.org/ontology/core#School",
+	"http://vivoweb.org/ontology/core#StudentOrganization",
+	"http://vivoweb.org/ontology/core#University",
 }
