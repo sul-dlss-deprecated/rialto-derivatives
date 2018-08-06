@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
+	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
 	"github.com/vanng822/go-solr/solr"
 )
@@ -43,7 +44,7 @@ func TestRebuildRepository(t *testing.T) {
 	fakeSparql := new(MockedReader)
 	reg := &runtime.Registry{
 		Derivatives: fakeSolr,
-		Canonical:   fakeSparql,
+		Canonical:   repository.NewService(fakeSparql),
 	}
 	action := NewRebuildAction(reg)
 	err := action.Run(msg)

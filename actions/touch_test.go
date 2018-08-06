@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
+	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
 )
 
@@ -12,7 +13,7 @@ func TestRecordToResource(t *testing.T) {
 	fakeSparql := new(MockedReader)
 
 	reg := &runtime.Registry{
-		Canonical: fakeSparql,
+		Canonical: repository.NewService(fakeSparql),
 	}
 	msg := &message.Message{Entities: []string{"http://example.com/record2"}}
 	action := NewTouchAction(reg)

@@ -1,6 +1,8 @@
 package repository
 
-import "github.com/knakk/sparql"
+import (
+	"github.com/knakk/sparql"
+)
 
 // Reader reads from the data store
 type Reader interface {
