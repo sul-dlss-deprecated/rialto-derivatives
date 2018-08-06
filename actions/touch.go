@@ -31,7 +31,7 @@ func (r *TouchAction) Run(message *message.Message) error {
 		return err
 	}
 
-	resourceList = append(resourceList, *resource)
+	resourceList = append(resourceList, resource)
 	log.Printf("Retrieved: %s", resourceList)
 	docs := r.registry.Indexer.Map(resourceList)
 	log.Printf("Writing: %s", docs)
@@ -40,7 +40,7 @@ func (r *TouchAction) Run(message *message.Message) error {
 }
 
 // This will take an SNS message and retrieve a resource from Neptune
-func (r *TouchAction) recordToResource(msg *message.Message) (*models.Resource, error) {
+func (r *TouchAction) recordToResource(msg *message.Message) (models.Resource, error) {
 	subject := msg.Entities[0]
 	return r.registry.Canonical.SubjectToResource(subject)
 }

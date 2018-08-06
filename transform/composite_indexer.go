@@ -37,7 +37,7 @@ func (m *CompositeIndexer) Map(resources []models.Resource) []solr.Document {
 // mapOne sets the id and type and then delegates to the type specific indexer
 func (m *CompositeIndexer) mapOne(resource models.Resource) solr.Document {
 	doc := make(solr.Document)
-	doc.Set("id", resource.Subject)
+	doc.Set("id", resource.Subject())
 	types := resource.ValueOf("type")
 	if types != nil {
 		doc.Set("type_ssi", types[0].String())
