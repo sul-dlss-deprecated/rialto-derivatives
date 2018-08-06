@@ -10,6 +10,7 @@ import (
 // CompositeIndexer delegates to subindexers to transform resources to solr Documents
 type CompositeIndexer struct {
 	publicationIndexer Indexer
+	personIndexer      Indexer
 	defaultIndexer     Indexer
 }
 
@@ -17,6 +18,7 @@ type CompositeIndexer struct {
 func NewCompositeIndexer() *CompositeIndexer {
 	return &CompositeIndexer{
 		publicationIndexer: &PublicationIndexer{},
+		personIndexer:      &PersonIndexer{},
 		defaultIndexer:     &DefaultIndexer{},
 	}
 }
@@ -40,9 +42,13 @@ func (m *CompositeIndexer) mapOne(resource models.Resource) solr.Document {
 	} else {
 		log.Printf("No resource types exist for %s", resource)
 	}
-
+	var indexer Indexer
 	if resource.IsPublication() {
-		return m.publicationIndexer.Index(resource, doc)
+		indexer = m.publicationIndexer
+	} else if resource.IsPerson() {
+		indexer = m.personIndexer
+	} else {
+		indexer = m.defaultIndexer
 	}
-	return m.defaultIndexer.Index(resource, doc)
+	return indexer.Index(resource, doc)
 }

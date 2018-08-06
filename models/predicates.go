@@ -29,6 +29,9 @@ var Predicates = map[string]map[string]string{
 	"owl": map[string]string{
 		"sameAs": "http://www.w3.org/2002/07/owl#sameAs",
 	},
+	"vcard": map[string]string{
+		"hasName": "http://www.w3.org/2006/vcard/ns#hasName",
+	},
 }
 
 var publicationTypes = []string{
@@ -54,4 +57,13 @@ var publicationTypes = []string{
 	"http://vivoweb.org/ontology/core#Translation",
 	"http://purl.org/ontology/bibo/Webpage",
 	"http://vivoweb.org/ontology/core#WorkingPaper",
+}
+
+var personTypes = []string{
+	"http://xmlns.com/foaf/0.1/Person",
+	"http://vivoweb.org/ontology/core#Student",
+	"http://vivoweb.org/ontology/core#FacultyMember",
+	"http://vivoweb.org/ontology/core#EmeritusFaculty",
+	"http://vivoweb.org/ontology/core#NonAcademic",
+	"http://vivoweb.org/ontology/core#NonFacultyAcademic",
 }
