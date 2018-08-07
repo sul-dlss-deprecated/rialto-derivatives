@@ -13,6 +13,7 @@ type CompositeIndexer struct {
 	publicationIndexer  Indexer
 	personIndexer       Indexer
 	organizationIndexer Indexer
+	projectIndexer      Indexer
 	defaultIndexer      Indexer
 }
 
@@ -23,6 +24,7 @@ func NewCompositeIndexer() *CompositeIndexer {
 		publicationIndexer:  &PublicationIndexer{},
 		personIndexer:       &PersonIndexer{},
 		organizationIndexer: &OrganizationIndexer{},
+		projectIndexer:      &ProjectIndexer{},
 		defaultIndexer:      &DefaultIndexer{},
 	}
 }
@@ -55,6 +57,8 @@ func (m *CompositeIndexer) mapOne(resource models.Resource) solr.Document {
 		indexer = m.organizationIndexer
 	} else if resource.IsGrant() {
 		indexer = m.grantIndexer
+	} else if resource.IsProject() {
+		indexer = m.projectIndexer
 	} else {
 		indexer = m.defaultIndexer
 	}

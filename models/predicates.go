@@ -37,6 +37,10 @@ var Predicates = map[string]map[string]string{
 	"skos": map[string]string{
 		"prefLabel": "http://www.w3.org/2008/05/skos#prefLabel",
 	},
+	"frapo": map[string]string{
+		"hasStartDate": "http://purl.org/cerif/frapo/hasStartDate",
+		"hasEndDate":   "http://purl.org/cerif/frapo/hasEndDate",
+	},
 }
 
 var publicationTypes = []string{
@@ -98,3 +102,5 @@ var organizationTypes = []string{
 }
 
 var grantTypes = []string{"http://vivoweb.org/ontology/core#Grant"}
+
+var projectTypes = []string{"http://xmlns.com/foaf/0.1/Project"}

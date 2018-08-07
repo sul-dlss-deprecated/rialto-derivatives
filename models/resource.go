@@ -8,6 +8,8 @@ type Resource interface {
 	IsPublication() bool
 	IsPerson() bool
 	IsOrganization() bool
+	IsGrant() bool
+	IsProject() bool
 	Subject() string
 }
 
@@ -39,6 +41,9 @@ var property = map[string]string{
 	"hasInstrument":  Predicates["gcis"]["hasInstrument"],
 	"sameAs":         Predicates["owl"]["sameAs"],
 
+	// Grant resources
+	"grantName": Predicates["skos"]["prefLabel"],
+
 	// For person resources
 	"name": Predicates["vcard"]["hasName"],
 
@@ -49,8 +54,9 @@ var property = map[string]string{
 	// Organization resources
 	"orgName": Predicates["skos"]["prefLabel"],
 
-	// Grant properties
-	"grantName": Predicates["skos"]["prefLabel"],
+	// Project resources
+	"hasStartDate": Predicates["frapo"]["hasStartDate"],
+	"hasEndDate":   Predicates["frapo"]["hasEndDate"],
 }
 
 // NewResource creates a new instance of the resource
@@ -79,8 +85,13 @@ func (r *RdfBackedResource) IsOrganization() bool {
 }
 
 // IsGrant returns true if the type is a grant
-func (r *Resource) IsGrant() bool {
+func (r *RdfBackedResource) IsGrant() bool {
 	return r.isTypeIn(grantTypes)
+}
+
+// IsProject returns true if the type is a project
+func (r *RdfBackedResource) IsProject() bool {
+	return r.isTypeIn(projectTypes)
 }
 
 // isTypeIn returns true if the resource type is in the provided list

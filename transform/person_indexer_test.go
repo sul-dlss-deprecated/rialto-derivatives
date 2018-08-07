@@ -33,6 +33,14 @@ func (f *MockResource) IsPublication() bool {
 	return false
 }
 
+func (f *MockResource) IsGrant() bool {
+	return false
+}
+
+func (f *MockResource) IsProject() bool {
+	return false
+}
+
 func (f *MockResource) IsOrganization() bool {
 	return false
 }
