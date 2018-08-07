@@ -104,3 +104,5 @@ var organizationTypes = []string{
 var grantTypes = []string{"http://vivoweb.org/ontology/core#Grant"}
 
 var projectTypes = []string{"http://xmlns.com/foaf/0.1/Project"}
+
+var conceptTypes = []string{"http://www.w3.org/2004/02/skos/core#Concept"}

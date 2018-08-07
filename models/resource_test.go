@@ -66,3 +66,31 @@ func TestGrantResource(t *testing.T) {
 	assert.Equal(t, "http://vivoweb.org/ontology/core#Grant", resource.ValueOf("type")[0].String())
 	assert.True(t, resource.IsGrant())
 }
+
+func TestProjectResource(t *testing.T) {
+	data := make(map[string][]rdf.Term)
+	document, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Project")
+	title, _ := rdf.NewLiteral("Hydra in a Box")
+
+	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
+	data[Predicates["skos"]["prefLabel"]] = []rdf.Term{title}
+	resource := NewResource("http://example.com/record1", data)
+
+	assert.Equal(t, "Hydra in a Box", resource.ValueOf("grantName")[0].String())
+	assert.Equal(t, "http://xmlns.com/foaf/0.1/Project", resource.ValueOf("type")[0].String())
+	assert.True(t, resource.IsProject())
+}
+
+func TestConceptResource(t *testing.T) {
+	data := make(map[string][]rdf.Term)
+	document, _ := rdf.NewIRI("http://www.w3.org/2004/02/skos/core#Concept")
+	title, _ := rdf.NewLiteral("Hydra in a Box")
+
+	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
+	data[Predicates["skos"]["prefLabel"]] = []rdf.Term{title}
+	resource := NewResource("http://example.com/record1", data)
+
+	assert.Equal(t, "Hydra in a Box", resource.ValueOf("grantName")[0].String())
+	assert.Equal(t, "http://www.w3.org/2004/02/skos/core#Concept", resource.ValueOf("type")[0].String())
+	assert.True(t, resource.IsConcept())
+}

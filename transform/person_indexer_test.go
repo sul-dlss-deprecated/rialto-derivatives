@@ -45,6 +45,10 @@ func (f *MockResource) IsOrganization() bool {
 	return false
 }
 
+func (f *MockResource) IsConcept() bool {
+	return false
+}
+
 func (f *MockResource) Subject() string {
 	return ""
 }

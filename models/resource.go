@@ -5,11 +5,12 @@ import "github.com/knakk/rdf"
 // Resource is the interface type for resources
 type Resource interface {
 	ValueOf(name string) []rdf.Term
-	IsPublication() bool
-	IsPerson() bool
-	IsOrganization() bool
+	IsConcept() bool
 	IsGrant() bool
+	IsOrganization() bool
+	IsPerson() bool
 	IsProject() bool
+	IsPublication() bool
 	Subject() string
 }
 
@@ -57,6 +58,9 @@ var property = map[string]string{
 	// Project resources
 	"hasStartDate": Predicates["frapo"]["hasStartDate"],
 	"hasEndDate":   Predicates["frapo"]["hasEndDate"],
+
+	// Concept resources
+	"label": Predicates["skos"]["prefLabel"],
 }
 
 // NewResource creates a new instance of the resource
@@ -92,6 +96,11 @@ func (r *RdfBackedResource) IsGrant() bool {
 // IsProject returns true if the type is a project
 func (r *RdfBackedResource) IsProject() bool {
 	return r.isTypeIn(projectTypes)
+}
+
+// IsConcept returns true if the type is a concept
+func (r *RdfBackedResource) IsConcept() bool {
+	return r.isTypeIn(conceptTypes)
 }
 
 // isTypeIn returns true if the resource type is in the provided list
