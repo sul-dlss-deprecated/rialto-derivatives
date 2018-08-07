@@ -19,5 +19,5 @@ func TestRecordToResource(t *testing.T) {
 	action := NewTouchAction(reg)
 	doc, _ := action.(*TouchAction).recordToResource(msg)
 
-	assert.Equal(t, "http://example.com/record2", doc.Subject)
+	assert.Equal(t, "http://example.com/record2", doc.Subject())
 }

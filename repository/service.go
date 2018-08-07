@@ -16,11 +16,12 @@ func NewService(reader Reader) *Service {
 }
 
 // SubjectToResource takes a subject string and returns a resource
-func (m *Service) SubjectToResource(subject string) (*models.Resource, error) {
+func (m *Service) SubjectToResource(subject string) (models.Resource, error) {
 	response, err := m.reader.QueryByID(subject)
 	if err != nil {
 		return nil, err
 	}
+
 	data := map[string][]rdf.Term{}
 	for _, triple := range response.Solutions() {
 		predicate := triple["p"].String()
@@ -35,7 +36,7 @@ func (m *Service) SubjectToResource(subject string) (*models.Resource, error) {
 		}
 	}
 	resource := models.NewResource(subject, data)
-	return &resource, nil
+	return resource, nil
 }
 
 // AllResources returns a full list of resources

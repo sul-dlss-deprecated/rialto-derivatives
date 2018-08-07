@@ -30,7 +30,9 @@ var Predicates = map[string]map[string]string{
 		"sameAs": "http://www.w3.org/2002/07/owl#sameAs",
 	},
 	"vcard": map[string]string{
-		"hasName": "http://www.w3.org/2006/vcard/ns#hasName",
+		"hasName":     "http://www.w3.org/2006/vcard/ns#hasName",
+		"given-name":  "http://www.w3.org/2006/vcard/ns#given-name",
+		"family-name": "http://www.w3.org/2006/vcard/ns#family-name",
 	},
 	"skos": map[string]string{
 		"prefLabel": "http://www.w3.org/2008/05/skos#prefLabel",

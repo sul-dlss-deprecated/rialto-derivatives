@@ -2,14 +2,26 @@ package models
 
 import "github.com/knakk/rdf"
 
-// Resource represents the data we get from Neptune
-type Resource struct {
-	Subject string
+// Resource is the interface type for resources
+type Resource interface {
+	ValueOf(name string) []rdf.Term
+	IsPublication() bool
+	IsPerson() bool
+	IsOrganization() bool
+	Subject() string
+}
+
+// RdfBackedResource represents the data we get from Neptune
+type RdfBackedResource struct {
+	subject string
 	data    map[string][]rdf.Term
 }
 
 var property = map[string]string{
-	"type":           Predicates["rdf"]["type"],
+	// All resource types:
+	"type": Predicates["rdf"]["type"],
+
+	// Publication resource types
 	"abstract":       Predicates["bibo"]["abstract"],
 	"doi":            Predicates["bibo"]["doi"],
 	"cites":          Predicates["bibo"]["cites"],
@@ -26,34 +38,45 @@ var property = map[string]string{
 	"sponsor":        Predicates["vivo"]["informationResourceSupportedBy"],
 	"hasInstrument":  Predicates["gcis"]["hasInstrument"],
 	"sameAs":         Predicates["owl"]["sameAs"],
-	"name":           Predicates["vcard"]["hasName"],
 
-	// Organization properties
+	// For person resources
+	"name": Predicates["vcard"]["hasName"],
+
+	// For name resources
+	"given-name":  Predicates["vcard"]["given-name"],
+	"family-name": Predicates["vcard"]["family-name"],
+
+	// Organization resources
 	"orgName": Predicates["skos"]["prefLabel"],
 }
 
 // NewResource creates a new instance of the resource
 func NewResource(subject string, data map[string][]rdf.Term) Resource {
-	return Resource{Subject: subject, data: data}
+	return &RdfBackedResource{subject: subject, data: data}
+}
+
+// Subject returns the identifier of the resource
+func (r *RdfBackedResource) Subject() string {
+	return r.subject
 }
 
 // IsPublication returns true if the type is a publiction
-func (r *Resource) IsPublication() bool {
+func (r *RdfBackedResource) IsPublication() bool {
 	return r.isTypeIn(publicationTypes)
 }
 
 // IsPerson returns true if the type is a person
-func (r *Resource) IsPerson() bool {
+func (r *RdfBackedResource) IsPerson() bool {
 	return r.isTypeIn(personTypes)
 }
 
 // IsOrganization returns true if the type is a organization
-func (r *Resource) IsOrganization() bool {
+func (r *RdfBackedResource) IsOrganization() bool {
 	return r.isTypeIn(organizationTypes)
 }
 
 // isTypeIn returns true if the resource type is in the provided list
-func (r *Resource) isTypeIn(desiredTypes []string) bool {
+func (r *RdfBackedResource) isTypeIn(desiredTypes []string) bool {
 	resourceTypes := r.ValueOf("type")
 	for _, desired := range desiredTypes {
 		for _, resType := range resourceTypes {
@@ -66,7 +89,7 @@ func (r *Resource) isTypeIn(desiredTypes []string) bool {
 }
 
 // ValueOf returns the rdf assertions for the predicate registerd under the supplied property name
-func (r *Resource) ValueOf(name string) []rdf.Term {
+func (r RdfBackedResource) ValueOf(name string) []rdf.Term {
 	return r.data[property[name]]
 }
 
