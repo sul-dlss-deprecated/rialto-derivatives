@@ -1,6 +1,12 @@
-# Running a lambda on localstack
+# Rialto derivatives
+[![CircleCI](https://circleci.com/gh/sul-dlss-labs/rialto-derivatives.svg?style=svg)](https://circleci.com/gh/sul-dlss-labs/rialto-derivatives)
 
-## Localstack
+This project contains Lambda functions that migrate data from Neptune to Solr and Postgres
+when an appropriately formatted SNS message is received
+
+## Running a lambda on localstack
+
+### Localstack
 
 Start localstack. If you're on a Mac, ensure you are running the docker daemon.
 
@@ -8,7 +14,7 @@ Start localstack. If you're on a Mac, ensure you are running the docker daemon.
 SERVICES=lambda,sns LAMBDA_EXECUTOR=docker localstack start
 ```
 
-## Blazegraph
+### Blazegraph
 Start Blazegraph.  On AWS we would use Neptune, but Neptune is not yet a part of localstack.
 * Note * use Java 8 -- it won't work with newer versions of Java.
 ```
@@ -16,7 +22,7 @@ export JAVA_HOME="$(/usr/libexec/java_home -v 1.8)"
 java -server -Xmx4g -jar blazegraph.jar
 ```
 
-## Create the lambda zip file, upload and subscribe
+### Create the lambda zip file, upload and subscribe
 
 ```
 make
@@ -87,7 +93,7 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws lambda \
 --function-name f1
 ```
 
-## Testing
+### Testing
 
 ```
 go test ./...
