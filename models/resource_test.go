@@ -51,5 +51,18 @@ func TestOrganizationResource(t *testing.T) {
 	assert.Equal(t, "Cornell", resource.ValueOf("orgName")[0].String())
 	assert.Equal(t, "http://xmlns.com/foaf/0.1/Organization", resource.ValueOf("type")[0].String())
 	assert.True(t, resource.IsOrganization())
+}
 
+func TestGrantResource(t *testing.T) {
+	data := make(map[string][]rdf.Term)
+	document, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#Grant")
+	title, _ := rdf.NewLiteral("Hydra in a Box")
+
+	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
+	data[Predicates["skos"]["prefLabel"]] = []rdf.Term{title}
+	resource := NewResource("http://example.com/record1", data)
+
+	assert.Equal(t, "Hydra in a Box", resource.ValueOf("grantName")[0].String())
+	assert.Equal(t, "http://vivoweb.org/ontology/core#Grant", resource.ValueOf("type")[0].String())
+	assert.True(t, resource.IsGrant())
 }

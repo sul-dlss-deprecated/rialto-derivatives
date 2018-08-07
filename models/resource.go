@@ -48,6 +48,9 @@ var property = map[string]string{
 
 	// Organization resources
 	"orgName": Predicates["skos"]["prefLabel"],
+
+	// Grant properties
+	"grantName": Predicates["skos"]["prefLabel"],
 }
 
 // NewResource creates a new instance of the resource
@@ -73,6 +76,11 @@ func (r *RdfBackedResource) IsPerson() bool {
 // IsOrganization returns true if the type is a organization
 func (r *RdfBackedResource) IsOrganization() bool {
 	return r.isTypeIn(organizationTypes)
+}
+
+// IsGrant returns true if the type is a grant
+func (r *Resource) IsGrant() bool {
+	return r.isTypeIn(grantTypes)
 }
 
 // isTypeIn returns true if the resource type is in the provided list

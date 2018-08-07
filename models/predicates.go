@@ -96,3 +96,5 @@ var organizationTypes = []string{
 	"http://vivoweb.org/ontology/core#StudentOrganization",
 	"http://vivoweb.org/ontology/core#University",
 }
+
+var grantTypes = []string{"http://vivoweb.org/ontology/core#Grant"}
