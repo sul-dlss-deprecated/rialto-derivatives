@@ -9,6 +9,7 @@ import (
 
 // CompositeIndexer delegates to subindexers to transform resources to solr Documents
 type CompositeIndexer struct {
+	grantIndexer        Indexer
 	publicationIndexer  Indexer
 	personIndexer       Indexer
 	organizationIndexer Indexer
@@ -18,6 +19,7 @@ type CompositeIndexer struct {
 // NewCompositeIndexer creates a new CompositeIndexer instance
 func NewCompositeIndexer() *CompositeIndexer {
 	return &CompositeIndexer{
+		grantIndexer:        &GrantIndexer{},
 		publicationIndexer:  &PublicationIndexer{},
 		personIndexer:       &PersonIndexer{},
 		organizationIndexer: &OrganizationIndexer{},
@@ -51,6 +53,8 @@ func (m *CompositeIndexer) mapOne(resource models.Resource) solr.Document {
 		indexer = m.personIndexer
 	} else if resource.IsOrganization() {
 		indexer = m.organizationIndexer
+	} else if resource.IsGrant() {
+		indexer = m.grantIndexer
 	} else {
 		indexer = m.defaultIndexer
 	}
