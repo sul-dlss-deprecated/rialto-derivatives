@@ -73,7 +73,7 @@ func (r *RdfBackedResource) Subject() string {
 	return r.subject
 }
 
-// IsPublication returns true if the type is a publiction
+// IsPublication returns true if the type is a publication
 func (r *RdfBackedResource) IsPublication() bool {
 	return r.isTypeIn(publicationTypes)
 }

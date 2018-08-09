@@ -8,16 +8,20 @@ import (
 
 // Registry is the object that holds all the external services
 type Registry struct {
-	Derivatives derivative.Writer
-	Indexer     *transform.CompositeIndexer
-	Canonical   *repository.Service
+	DbWriter      derivative.DbWriter
+	DbTransformer *transform.DbTransformer
+	IndexWriter   derivative.IndexWriter
+	Indexer       *transform.CompositeIndexer
+	Canonical     *repository.Service
 }
 
 // NewRegistry creates a new instance of the service registry
-func NewRegistry(solr derivative.Writer, indexer *transform.CompositeIndexer, sparql repository.Reader) *Registry {
+func NewRegistry(dbClient derivative.DbWriter, dbTransformer *transform.DbTransformer, indexClient derivative.IndexWriter, indexer *transform.CompositeIndexer, sparql repository.Reader) *Registry {
 	return &Registry{
-		Derivatives: solr,
-		Indexer:     indexer,
-		Canonical:   repository.NewService(sparql),
+		DbWriter:      dbClient,
+		DbTransformer: dbTransformer,
+		IndexWriter:   indexClient,
+		Indexer:       indexer,
+		Canonical:     repository.NewService(sparql),
 	}
 }

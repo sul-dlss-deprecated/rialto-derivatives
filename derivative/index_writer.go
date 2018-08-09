@@ -2,8 +2,8 @@ package derivative
 
 import "github.com/vanng822/go-solr/solr"
 
-// Writer writes a derivative document
-type Writer interface {
+// IndexWriter writes one or more Solr documents to a search index
+type IndexWriter interface {
 	RemoveAll() error
 	Add(docs []solr.Document) error
 }

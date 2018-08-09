@@ -12,16 +12,16 @@ import (
 	"github.com/vanng822/go-solr/solr"
 )
 
-// MockedWriter is a mocked object that implements the Writer interface
-type MockedWriter struct {
+// MockedIndexWriter is a mocked object that implements the IndexWriter interface
+type MockedIndexWriter struct {
 	mock.Mock
 }
 
-func (f *MockedWriter) Add(docs []solr.Document) error {
+func (f *MockedIndexWriter) Add(docs []solr.Document) error {
 	return nil
 }
 
-func (f *MockedWriter) RemoveAll() error {
+func (f *MockedIndexWriter) RemoveAll() error {
 	return nil
 }
 
@@ -40,10 +40,10 @@ func (f *MockedReader) QueryByID(id string) (*sparql.Results, error) {
 
 func TestRebuildRepository(t *testing.T) {
 	msg := &message.Message{}
-	fakeSolr := new(MockedWriter)
+	fakeSolr := new(MockedIndexWriter)
 	fakeSparql := new(MockedReader)
 	reg := &runtime.Registry{
-		Derivatives: fakeSolr,
+		IndexWriter: fakeSolr,
 		Canonical:   repository.NewService(fakeSparql),
 	}
 	action := NewRebuildAction(reg)

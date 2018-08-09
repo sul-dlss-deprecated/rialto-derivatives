@@ -35,7 +35,7 @@ func (r *TouchAction) Run(message *message.Message) error {
 	log.Printf("Retrieved: %s", resourceList)
 	docs := r.registry.Indexer.Map(resourceList)
 	log.Printf("Writing: %s", docs)
-	err = r.registry.Derivatives.Add(docs)
+	err = r.registry.IndexWriter.Add(docs)
 	return err
 }
 
