@@ -12,8 +12,9 @@ type OrganizationIndexer struct {
 // Index adds fields from the resource to the Solr Document
 func (m *OrganizationIndexer) Index(resource models.Resource, doc solr.Document) solr.Document {
 	mapping := map[string]string{
-		"orgName": "title_tesi",
-		"parent":  "parent_ssim",
+		"abbreviation": "abbreviation_ssim",
+		"orgName":      "title_tesi",
+		"parent":       "parent_ssim",
 	}
 
 	doc = indexMapping(resource, doc, mapping)

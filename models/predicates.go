@@ -18,6 +18,7 @@ var Predicates = map[string]map[string]string{
 		"alternative": "http://purl.org/dc/terms/alternative",
 	},
 	"vivo": map[string]string{
+		"abbreviation":                   "http://vivoweb.org/ontology/core#abbreviation",
 		"description":                    "http://vivoweb.org/ontology/core#description",
 		"hasFundingVehicle":              "http://vivoweb.org/ontology/core#hasFundingVehicle",
 		"publisher":                      "http://vivoweb.org/ontology/core#publisher",
