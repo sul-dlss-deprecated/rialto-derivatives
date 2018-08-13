@@ -54,6 +54,7 @@ var property = map[string]string{
 
 	// Organization resources
 	"orgName": Predicates["skos"]["prefLabel"],
+	"parent":  Predicates["obo"]["BFO_0000050"],
 
 	// Project resources
 	"hasStartDate": Predicates["frapo"]["hasStartDate"],

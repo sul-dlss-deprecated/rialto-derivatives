@@ -26,6 +26,9 @@ var Predicates = map[string]map[string]string{
 	"gcis": map[string]string{
 		"hasInstrument": "http://data.globalchange.gov/gcis.owl#hasInstrument",
 	},
+	"obo": map[string]string{
+		"BFO_0000050": "http://purl.obolibrary.org/obo/BFO_0000050",
+	},
 	"owl": map[string]string{
 		"sameAs": "http://www.w3.org/2002/07/owl#sameAs",
 	},
