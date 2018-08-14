@@ -20,9 +20,12 @@ func Handler(ctx context.Context, snsEvent events.SNSEvent) {
 	registry := buildServiceRegistry()
 
 	for _, record := range snsEvent.Records {
-		msg, _ := message.Parse(record)
-		err := actionForMessage(msg, registry).Run(msg)
+		msg, err := message.Parse(record)
 		if err != nil {
+			panic(err)
+		}
+
+		if err = actionForMessage(msg, registry).Run(msg); err != nil {
 			panic(err)
 		}
 	}
