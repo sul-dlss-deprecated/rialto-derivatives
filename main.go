@@ -49,7 +49,7 @@ func actionForMessage(msg *message.Message, registry *runtime.Registry) actions.
 		log.Printf("Running Rebuild action\n")
 		return actions.NewRebuildAction(registry)
 	}
-	log.Panicf("Unknown action '%s'", msg.Action)
+	log.Panicf("Unknown action '%s'. Allowed actions: touch, rebuild.", msg.Action)
 	return nil
 }
 
