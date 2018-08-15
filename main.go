@@ -35,11 +35,12 @@ func buildServiceRegistry() *runtime.Registry {
 	host := os.Getenv("SOLR_HOST")
 	collection := os.Getenv("SOLR_COLLECTION")
 	client := derivative.NewSolrClient(host, collection)
-	indexer := transform.NewCompositeIndexer()
 	endpoint := os.Getenv("SPARQL_ENDPOINT")
 	sparqlReader := repository.NewSparqlReader(endpoint)
+	service := repository.NewService(sparqlReader)
+	indexer := transform.NewCompositeIndexer(service)
 
-	return runtime.NewRegistry(client, indexer, sparqlReader)
+	return runtime.NewRegistry(client, indexer, service)
 }
 
 func actionForMessage(msg *message.Message, registry *runtime.Registry) actions.Action {

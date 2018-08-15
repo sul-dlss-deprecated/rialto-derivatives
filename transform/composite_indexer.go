@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
+	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/vanng822/go-solr/solr"
 )
 
@@ -19,12 +20,12 @@ type CompositeIndexer struct {
 }
 
 // NewCompositeIndexer creates a new CompositeIndexer instance
-func NewCompositeIndexer() *CompositeIndexer {
+func NewCompositeIndexer(service *repository.Service) *CompositeIndexer {
 	return &CompositeIndexer{
 		conceptIndexer:      &ConceptIndexer{},
 		grantIndexer:        &GrantIndexer{},
 		publicationIndexer:  &PublicationIndexer{},
-		personIndexer:       &PersonIndexer{},
+		personIndexer:       NewPersonIndexer(service),
 		organizationIndexer: &OrganizationIndexer{},
 		projectIndexer:      &ProjectIndexer{},
 		defaultIndexer:      &DefaultIndexer{},

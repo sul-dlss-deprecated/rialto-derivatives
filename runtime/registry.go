@@ -14,10 +14,10 @@ type Registry struct {
 }
 
 // NewRegistry creates a new instance of the service registry
-func NewRegistry(solr derivative.Writer, indexer *transform.CompositeIndexer, sparql repository.Reader) *Registry {
+func NewRegistry(solr derivative.Writer, indexer *transform.CompositeIndexer, service *repository.Service) *Registry {
 	return &Registry{
 		Derivatives: solr,
 		Indexer:     indexer,
-		Canonical:   repository.NewService(sparql),
+		Canonical:   service,
 	}
 }
