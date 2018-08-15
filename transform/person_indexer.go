@@ -14,6 +14,11 @@ type PersonIndexer struct {
 	Canonical *repository.Service
 }
 
+// NewPersonIndexer creates a new instance of the Person indexer
+func NewPersonIndexer(service *repository.Service) Indexer {
+	return &PersonIndexer{Canonical: service}
+}
+
 // Index adds fields from the resource to the Solr Document
 // The only sting literals for person are 'email' and 'about' (It's unclear if we need to index these).
 // Everything else is a URI
