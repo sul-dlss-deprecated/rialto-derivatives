@@ -10,6 +10,7 @@ import (
 	"github.com/sul-dlss-labs/rialto-derivatives/actions"
 	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
+	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
 	"github.com/sul-dlss-labs/rialto-derivatives/transform"
@@ -30,11 +31,12 @@ func Handler(ctx context.Context, snsEvent events.SNSEvent) {
 
 func buildServiceRegistry() *runtime.Registry {
 	dbHost := getenvOrDefault("DB_HOST", "localhost")
-	dbName := getenvOrDefault("DB_NAME", "rialto")
-	dbPort := getenvOrDefault("DB_PORT", "5432")
-	dbUsername := getenvOrDefault("DB_USERNAME", "foo")
-	dbPassword := getenvOrDefault("DB_PASSWORD", "bar")
+	dbName := getenvOrDefault("DB_NAME", "rialto_development")
+	dbPort := getenvOrDefault("DB_PORT", "5433")
+	dbUsername := getenvOrDefault("DB_USERNAME", "postgres")
+	dbPassword := getenvOrDefault("DB_PASSWORD", "postgres")
 	dbClient := derivative.NewPostgresClient(dbHost, dbName, dbPort, dbUsername, dbPassword)
+	dbWriter := *models.NewModelWriter(dbClient)
 	dbTransformer := transform.NewDbTransformer()
 
 	solrHost := os.Getenv("SOLR_HOST")
@@ -45,7 +47,7 @@ func buildServiceRegistry() *runtime.Registry {
 	endpoint := os.Getenv("SPARQL_ENDPOINT")
 	sparqlReader := repository.NewSparqlReader(endpoint)
 
-	return runtime.NewRegistry(dbClient, dbTransformer, solrClient, solrIndexer, sparqlReader)
+	return runtime.NewRegistry(dbWriter, dbTransformer, solrClient, solrIndexer, sparqlReader)
 }
 
 func getenvOrDefault(key, fallback string) string {
