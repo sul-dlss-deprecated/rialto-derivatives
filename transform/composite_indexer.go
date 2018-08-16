@@ -1,8 +1,6 @@
 package transform
 
 import (
-	"log"
-
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/vanng822/go-solr/solr"
@@ -11,24 +9,26 @@ import (
 // CompositeIndexer delegates to subindexers to transform resources to solr Documents
 type CompositeIndexer struct {
 	conceptIndexer      Indexer
-	grantIndexer        Indexer
-	publicationIndexer  Indexer
-	personIndexer       Indexer
-	organizationIndexer Indexer
-	projectIndexer      Indexer
 	defaultIndexer      Indexer
+	grantIndexer        Indexer
+	organizationIndexer Indexer
+	personIndexer       Indexer
+	projectIndexer      Indexer
+	publicationIndexer  Indexer
+	typeIndexer         Indexer
 }
 
 // NewCompositeIndexer creates a new CompositeIndexer instance
 func NewCompositeIndexer(service *repository.Service) *CompositeIndexer {
 	return &CompositeIndexer{
 		conceptIndexer:      &ConceptIndexer{},
-		grantIndexer:        &GrantIndexer{},
-		publicationIndexer:  &PublicationIndexer{},
-		personIndexer:       NewPersonIndexer(service),
-		organizationIndexer: &OrganizationIndexer{},
-		projectIndexer:      &ProjectIndexer{},
 		defaultIndexer:      &DefaultIndexer{},
+		grantIndexer:        &GrantIndexer{},
+		organizationIndexer: &OrganizationIndexer{},
+		personIndexer:       NewPersonIndexer(service),
+		projectIndexer:      &ProjectIndexer{},
+		publicationIndexer:  &PublicationIndexer{},
+		typeIndexer:         &TypeIndexer{},
 	}
 }
 
@@ -45,12 +45,9 @@ func (m *CompositeIndexer) Map(resources []models.Resource) []solr.Document {
 func (m *CompositeIndexer) mapOne(resource models.Resource) solr.Document {
 	doc := make(solr.Document)
 	doc.Set("id", resource.Subject())
-	types := resource.ValueOf("type")
-	if types != nil {
-		doc.Set("type_ssi", types[0].String())
-	} else {
-		log.Printf("No resource types exist for %s", resource)
-	}
+
+	doc = m.typeIndexer.Index(resource, doc)
+
 	var indexer Indexer
 	if resource.IsPublication() {
 		indexer = m.publicationIndexer
