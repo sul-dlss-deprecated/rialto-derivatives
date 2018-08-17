@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/knakk/rdf"
+	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/vanng822/go-solr/solr"
 )
@@ -18,7 +19,7 @@ type TypeIndexer struct {
 func (m *TypeIndexer) Index(resource models.Resource, doc solr.Document) solr.Document {
 	types := resource.ValueOf("type")
 	if types != nil {
-		doc.Set("type_ssi", m.bestType(types))
+		doc.Set(derivative.SolrTypeField, m.bestType(types))
 	} else {
 		log.Printf("No resource types exist for %s", resource)
 	}
