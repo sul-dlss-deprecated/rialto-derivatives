@@ -12,6 +12,5 @@ func TestBuildRegistry(t *testing.T) {
 	registry := BuildServiceRegistry()
 
 	assert.IsType(t, &repository.Service{}, registry.Canonical)
-	assert.IsType(t, &derivative.SolrClient{}, registry.Derivatives)
-	assert.IsType(t, &derivative.PostgresClient{}, registry.Database)
+	assert.IsType(t, &derivative.CompositeWriter{}, registry.Writer)
 }

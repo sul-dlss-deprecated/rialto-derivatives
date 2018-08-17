@@ -33,7 +33,7 @@ func (r *TouchAction) Run(message *message.Message) error {
 
 	resourceList = append(resourceList, resource)
 	log.Printf("Retrieved: %s", resourceList)
-	err = r.registry.Derivatives.Add(resourceList)
+	err = r.registry.Writer.Add(resourceList)
 	return err
 }
 

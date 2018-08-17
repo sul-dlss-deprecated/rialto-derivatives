@@ -17,7 +17,8 @@ func BuildServiceRegistry() *Registry {
 	service := buildSparqlService()
 	solr := buildSolrClient(service)
 	db := buildDatabase()
-	return NewRegistry(service, solr, db)
+	writer := derivative.NewCompositeWriter(db, solr)
+	return NewRegistry(service, writer)
 }
 
 func buildSolrClient(service *repository.Service) *derivative.SolrClient {

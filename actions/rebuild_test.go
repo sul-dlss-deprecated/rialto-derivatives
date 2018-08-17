@@ -40,11 +40,11 @@ func (f *MockedReader) QueryByID(id string) (*sparql.Results, error) {
 
 func TestRebuildRepository(t *testing.T) {
 	msg := &message.Message{}
-	fakeSolr := new(MockedWriter)
+	fakeWriter := new(MockedWriter)
 	fakeSparql := new(MockedReader)
 	reg := &runtime.Registry{
-		Derivatives: fakeSolr,
-		Canonical:   repository.NewService(fakeSparql),
+		Writer:    fakeWriter,
+		Canonical: repository.NewService(fakeSparql),
 	}
 	action := NewRebuildAction(reg)
 	err := action.Run(msg)
