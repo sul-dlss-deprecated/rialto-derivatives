@@ -3,21 +3,17 @@ package main
 import (
 	"context"
 	"log"
-	"os"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
 	"github.com/sul-dlss-labs/rialto-derivatives/actions"
-	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
-	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
-	"github.com/sul-dlss-labs/rialto-derivatives/transform"
 )
 
 // Handler is the Lambda function handler
 func Handler(ctx context.Context, snsEvent events.SNSEvent) {
-	registry := buildServiceRegistry()
+	registry := runtime.BuildServiceRegistry()
 
 	for _, record := range snsEvent.Records {
 		msg, err := message.Parse(record)
@@ -29,18 +25,6 @@ func Handler(ctx context.Context, snsEvent events.SNSEvent) {
 			panic(err)
 		}
 	}
-}
-
-func buildServiceRegistry() *runtime.Registry {
-	host := os.Getenv("SOLR_HOST")
-	collection := os.Getenv("SOLR_COLLECTION")
-	client := derivative.NewSolrClient(host, collection)
-	endpoint := os.Getenv("SPARQL_ENDPOINT")
-	sparqlReader := repository.NewSparqlReader(endpoint)
-	service := repository.NewService(sparqlReader)
-	indexer := transform.NewCompositeIndexer(service)
-
-	return runtime.NewRegistry(client, indexer, service)
 }
 
 func actionForMessage(msg *message.Message, registry *runtime.Registry) actions.Action {
