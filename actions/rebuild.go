@@ -27,7 +27,7 @@ func (r *RebuildAction) Run(message *message.Message) error {
 		return err
 	}
 
-	err = r.registry.Derivatives.Add(r.registry.Indexer.Map(resourceList))
+	err = r.registry.Derivatives.Add(resourceList)
 	return err
 }
 

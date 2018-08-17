@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
+	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
-	"github.com/vanng822/go-solr/solr"
 )
 
 // MockedWriter is a mocked object that implements the Writer interface
@@ -17,7 +17,7 @@ type MockedWriter struct {
 	mock.Mock
 }
 
-func (f *MockedWriter) Add(docs []solr.Document) error {
+func (f *MockedWriter) Add(docs []models.Resource) error {
 	return nil
 }
 

@@ -4,7 +4,6 @@ import (
 	"log"
 
 	"github.com/knakk/rdf"
-	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/vanng822/go-solr/solr"
 )
@@ -13,13 +12,17 @@ import (
 type TypeIndexer struct {
 }
 
-// Index adds fields from the resource to the Solr Document
-// The only sting literals for person are 'email' and 'about' (It's unclear if we need to index these).
-// Everything else is a URI
+// SolrTypeField is the field that holds the type assertion in Solr
+const SolrTypeField = "type_ssi"
+
+// Index adds the type assertion field from the resource to the Solr Document
+// This type assertion is going to drive which view is displayed, so it's important for this
+// value to be more specific than "Agent", but not so specific as "Student".
+// This typically would return Organization or Person
 func (m *TypeIndexer) Index(resource models.Resource, doc solr.Document) solr.Document {
 	types := resource.ValueOf("type")
 	if types != nil {
-		doc.Set(derivative.SolrTypeField, m.bestType(types))
+		doc.Set(SolrTypeField, m.bestType(types))
 	} else {
 		log.Printf("No resource types exist for %s", resource)
 	}

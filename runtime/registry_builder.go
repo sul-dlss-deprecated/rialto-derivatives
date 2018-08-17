@@ -1,10 +1,12 @@
 package runtime
 
 import (
-	"fmt"
+	"bytes"
 	"os"
 
-	"github.com/go-pg/pg"
+	// Added for the postgres driver
+	_ "github.com/lib/pq"
+
 	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/sul-dlss-labs/rialto-derivatives/transform"
@@ -12,17 +14,18 @@ import (
 
 // BuildServiceRegistry builds a Registry with the services initialized from the environment variables
 func BuildServiceRegistry() *Registry {
-	client := buildSolrClient()
 	service := buildSparqlService()
-	indexer := transform.NewCompositeIndexer(service)
+	solr := buildSolrClient(service)
 	db := buildDatabase()
-	return NewRegistry(client, indexer, service, db)
+	return NewRegistry(service, solr, db)
 }
 
-func buildSolrClient() *derivative.SolrClient {
+func buildSolrClient(service *repository.Service) *derivative.SolrClient {
+	indexer := transform.NewCompositeIndexer(service)
+
 	host := os.Getenv("SOLR_HOST")
 	collection := os.Getenv("SOLR_COLLECTION")
-	return derivative.NewSolrClient(host, collection)
+	return derivative.NewSolrClient(host, collection, indexer)
 }
 
 func buildSparqlService() *repository.Service {
@@ -31,11 +34,23 @@ func buildSparqlService() *repository.Service {
 	return repository.NewService(sparqlReader)
 }
 
-func buildDatabase() *pg.DB {
-	return pg.Connect(&pg.Options{
-		User:     os.Getenv("RDS_USERNAME"),
-		Password: os.Getenv("RDS_PASSWORD"),
-		Database: os.Getenv("RDS_DB_NAME"),
-		Addr:     fmt.Sprintf("%v:%v", os.Getenv("RDS_HOSTNAME"), os.Getenv("RDS_PORT")),
-	})
+func buildDatabase() *derivative.PostgresClient {
+	conf := derivative.NewPostgresConfig().
+		WithUser(os.Getenv("RDS_USERNAME")).
+		WithPassword(os.Getenv("RDS_PASSWORD")).
+		WithDbname(os.Getenv("RDS_DB_NAME")).
+		WithHost(os.Getenv("RDS_HOSTNAME")).
+		WithPort(os.Getenv("RDS_PORT"))
+
+	return derivative.NewPostgresClient(conf)
+}
+
+func addField(b bytes.Buffer, field string, variable string) {
+	val := os.Getenv(variable)
+	if len(val) != 0 {
+		b.WriteString(field)
+		b.WriteString("=")
+		b.WriteString(val)
+		b.WriteString(" ")
+	}
 }

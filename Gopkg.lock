@@ -19,25 +19,6 @@
   version = "v1.1.0"
 
 [[projects]]
-  name = "github.com/go-pg/pg"
-  packages = [
-    ".",
-    "internal",
-    "internal/parser",
-    "internal/pool",
-    "orm",
-    "types"
-  ]
-  revision = "c0368cd6ee62269f0a5c3d6c9c02c6d192760bc6"
-  version = "v6.14.3"
-
-[[projects]]
-  branch = "master"
-  name = "github.com/jinzhu/inflection"
-  packages = ["."]
-  revision = "04140366298a54a039076d798123ffa108fff46c"
-
-[[projects]]
   branch = "master"
   name = "github.com/knakk/digest"
   packages = ["."]
@@ -54,6 +35,15 @@
   name = "github.com/knakk/sparql"
   packages = ["."]
   revision = "3de19ad6a5dcee30dd5e101b47e3aedc7f69ef57"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/lib/pq"
+  packages = [
+    ".",
+    "oid"
+  ]
+  revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
 
 [[projects]]
   name = "github.com/pmezard/go-difflib"
@@ -85,6 +75,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "04a09b83995dad5e3685dad56b0e7b09c28bd50ac1352fb0a5e43876b83b871f"
+  inputs-digest = "f770283f3ba09d84f5d7c9d40637fe87957c98d36330a7829e1717f75b113a21"
   solver-name = "gps-cdcl"
   solver-version = 1
