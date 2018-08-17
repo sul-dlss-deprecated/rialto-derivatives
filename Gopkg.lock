@@ -19,6 +19,25 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "github.com/go-pg/pg"
+  packages = [
+    ".",
+    "internal",
+    "internal/parser",
+    "internal/pool",
+    "orm",
+    "types"
+  ]
+  revision = "c0368cd6ee62269f0a5c3d6c9c02c6d192760bc6"
+  version = "v6.14.3"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/jinzhu/inflection"
+  packages = ["."]
+  revision = "04140366298a54a039076d798123ffa108fff46c"
+
+[[projects]]
   branch = "master"
   name = "github.com/knakk/digest"
   packages = ["."]
@@ -66,6 +85,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "5ac798e70a9e1fce5978c802f815dbabb3e14817842ae3dbb0e2748180fc30d1"
+  inputs-digest = "04a09b83995dad5e3685dad56b0e7b09c28bd50ac1352fb0a5e43876b83b871f"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,8 +1,10 @@
 package runtime
 
 import (
+	"fmt"
 	"os"
 
+	"github.com/go-pg/pg"
 	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/sul-dlss-labs/rialto-derivatives/transform"
@@ -13,8 +15,8 @@ func BuildServiceRegistry() *Registry {
 	client := buildSolrClient()
 	service := buildSparqlService()
 	indexer := transform.NewCompositeIndexer(service)
-
-	return NewRegistry(client, indexer, service)
+	db := buildDatabase()
+	return NewRegistry(client, indexer, service, db)
 }
 
 func buildSolrClient() *derivative.SolrClient {
@@ -27,4 +29,13 @@ func buildSparqlService() *repository.Service {
 	endpoint := os.Getenv("SPARQL_ENDPOINT")
 	sparqlReader := repository.NewSparqlReader(endpoint)
 	return repository.NewService(sparqlReader)
+}
+
+func buildDatabase() *pg.DB {
+	return pg.Connect(&pg.Options{
+		User:     os.Getenv("RDS_USERNAME"),
+		Password: os.Getenv("RDS_PASSWORD"),
+		Database: os.Getenv("RDS_DB_NAME"),
+		Addr:     fmt.Sprintf("%v:%v", os.Getenv("RDS_HOSTNAME"), os.Getenv("RDS_PORT")),
+	})
 }
