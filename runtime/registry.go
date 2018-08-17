@@ -7,14 +7,14 @@ import (
 
 // Registry is the object that holds all the external services
 type Registry struct {
-	Canonical *repository.Service
+	Canonical repository.Repository
 	Writer    derivative.Writer
 }
 
 // NewRegistry creates a new instance of the service registry
-func NewRegistry(service *repository.Service, writer derivative.Writer) *Registry {
+func NewRegistry(repo repository.Repository, writer derivative.Writer) *Registry {
 	return &Registry{
-		Canonical: service,
+		Canonical: repo,
 		Writer:    writer,
 	}
 }

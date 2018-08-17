@@ -5,13 +5,19 @@ import (
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 )
 
-// Service is the main component of the repository
+// Repository is an interface that rialto-derivatives reads from as its source
+type Repository interface {
+	SubjectToResource(subject string) (models.Resource, error)
+	AllResources() ([]models.Resource, error)
+}
+
+// Service is the Neptune implementation of the repository
 type Service struct {
 	reader Reader
 }
 
 // NewService creates a new Service instance
-func NewService(reader Reader) *Service {
+func NewService(reader Reader) Repository {
 	return &Service{reader: reader}
 }
 

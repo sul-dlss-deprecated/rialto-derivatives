@@ -5,27 +5,85 @@ import (
 
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 
 	"github.com/knakk/rdf"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 )
 
-func TestPostgresAdd(t *testing.T) {
+// MockRepository is a mocked object that implements the repository interface
+type MockRepository struct {
+	mock.Mock
+}
+
+func (f *MockRepository) SubjectToResource(id string) (models.Resource, error) {
+	args := f.Called(id)
+	return args.Get(0).(models.Resource), args.Error(1)
+}
+
+func (f *MockRepository) AllResources() ([]models.Resource, error) {
+	return []models.Resource{}, nil
+}
+
+func makeName(subject string, given string, family string) models.Resource {
+	nameData := make(map[string][]rdf.Term)
+	fname, _ := rdf.NewLiteral("Barbara")
+	lname, _ := rdf.NewLiteral("Liskov")
+	nameData[models.Predicates["vcard"]["given-name"]] = []rdf.Term{fname}
+	nameData[models.Predicates["vcard"]["family-name"]] = []rdf.Term{lname}
+	return models.NewResource(subject, nameData)
+}
+
+func TestPostgresAddPerson(t *testing.T) {
 	conf := NewPostgresConfig().WithDbname("rialto_test").WithSSL(false)
-	client := NewPostgresClient(conf)
+	repo := new(MockRepository)
+
+	nameID := "http://example.com/names/123"
+	repo.On("SubjectToResource", nameID).
+		Return(makeName(nameID, "Barbara", "Liskov"), nil)
+
+	client := NewPostgresClient(conf, repo)
 	client.RemoveAll()
 
 	data := make(map[string][]rdf.Term)
-	document, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
-	title, _ := rdf.NewLiteral("Hello world!")
+	name, _ := rdf.NewIRI(nameID)
 
-	data[models.Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[models.Predicates["dct"]["title"]] = []rdf.Term{title}
+	data[models.Predicates["vcard"]["hasName"]] = []rdf.Term{name}
 
 	resource := models.NewResource("http://example.com/record1", data)
 
 	err := client.addPerson(resource)
-
 	assert.Nil(t, err)
+
+	person, err := client.retrieveOnePerson("http://example.com/record1")
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(t, `{"name": "Barbara Liskov"}`, person)
+
+}
+
+func TestPostgresAddOrganization(t *testing.T) {
+	conf := NewPostgresConfig().WithDbname("rialto_test").WithSSL(false)
+	repo := new(MockRepository)
+
+	client := NewPostgresClient(conf, repo)
+	client.RemoveAll()
+
+	data := make(map[string][]rdf.Term)
+	name, _ := rdf.NewLiteral("School of Engineering")
+
+	data[models.Predicates["skos"]["prefLabel"]] = []rdf.Term{name}
+
+	resource := models.NewResource("http://example.com/record1", data)
+
+	err := client.addOrganization(resource)
+	assert.Nil(t, err)
+
+	organization, err := client.retrieveOneOrganization("http://example.com/record1")
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(t, `{"name": "School of Engineering"}`, organization)
 
 }

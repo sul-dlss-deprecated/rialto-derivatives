@@ -11,12 +11,12 @@ import (
 
 // PersonIndexer transforms person resource types into solr Documents
 type PersonIndexer struct {
-	Canonical *repository.Service
+	Canonical repository.Repository
 }
 
 // NewPersonIndexer creates a new instance of the Person indexer
-func NewPersonIndexer(service *repository.Service) Indexer {
-	return &PersonIndexer{Canonical: service}
+func NewPersonIndexer(repository repository.Repository) Indexer {
+	return &PersonIndexer{Canonical: repository}
 }
 
 // Index adds fields from the resource to the Solr Document

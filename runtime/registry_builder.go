@@ -14,28 +14,28 @@ import (
 
 // BuildServiceRegistry builds a Registry with the services initialized from the environment variables
 func BuildServiceRegistry() *Registry {
-	service := buildSparqlService()
-	solr := buildSolrClient(service)
-	db := buildDatabase()
+	repo := buildRepository()
+	solr := buildSolrClient(repo)
+	db := buildDatabase(repo)
 	writer := derivative.NewCompositeWriter(db, solr)
-	return NewRegistry(service, writer)
+	return NewRegistry(repo, writer)
 }
 
-func buildSolrClient(service *repository.Service) *derivative.SolrClient {
-	indexer := transform.NewCompositeIndexer(service)
+func buildSolrClient(repo repository.Repository) *derivative.SolrClient {
+	indexer := transform.NewCompositeIndexer(repo)
 
 	host := os.Getenv("SOLR_HOST")
 	collection := os.Getenv("SOLR_COLLECTION")
 	return derivative.NewSolrClient(host, collection, indexer)
 }
 
-func buildSparqlService() *repository.Service {
+func buildRepository() repository.Repository {
 	endpoint := os.Getenv("SPARQL_ENDPOINT")
 	sparqlReader := repository.NewSparqlReader(endpoint)
 	return repository.NewService(sparqlReader)
 }
 
-func buildDatabase() *derivative.PostgresClient {
+func buildDatabase(repo repository.Repository) *derivative.PostgresClient {
 	conf := derivative.NewPostgresConfig().
 		WithUser(os.Getenv("RDS_USERNAME")).
 		WithPassword(os.Getenv("RDS_PASSWORD")).
@@ -43,7 +43,7 @@ func buildDatabase() *derivative.PostgresClient {
 		WithHost(os.Getenv("RDS_HOSTNAME")).
 		WithPort(os.Getenv("RDS_PORT"))
 
-	return derivative.NewPostgresClient(conf)
+	return derivative.NewPostgresClient(conf, repo)
 }
 
 func addField(b bytes.Buffer, field string, variable string) {

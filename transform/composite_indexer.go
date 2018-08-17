@@ -19,13 +19,13 @@ type CompositeIndexer struct {
 }
 
 // NewCompositeIndexer creates a new CompositeIndexer instance
-func NewCompositeIndexer(service *repository.Service) *CompositeIndexer {
+func NewCompositeIndexer(repository repository.Repository) *CompositeIndexer {
 	return &CompositeIndexer{
 		conceptIndexer:      &ConceptIndexer{},
 		defaultIndexer:      &DefaultIndexer{},
 		grantIndexer:        &GrantIndexer{},
 		organizationIndexer: &OrganizationIndexer{},
-		personIndexer:       NewPersonIndexer(service),
+		personIndexer:       NewPersonIndexer(repository),
 		projectIndexer:      &ProjectIndexer{},
 		publicationIndexer:  &PublicationIndexer{},
 		typeIndexer:         &TypeIndexer{},
