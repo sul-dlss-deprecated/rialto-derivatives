@@ -32,7 +32,7 @@ func (m *TypeIndexer) Index(resource models.Resource, doc solr.Document) solr.Do
 
 func (m *TypeIndexer) bestType(types []rdf.Term) string {
 	try := types[0].String()
-	if try == "http://xmlns.com/foaf/0.1/Agent" && len(types) > 1 {
+	if try == agent && len(types) > 1 {
 		try = types[1].String()
 	}
 	return try

@@ -72,18 +72,18 @@ func TestPostgresAddOrganization(t *testing.T) {
 
 	data := make(map[string][]rdf.Term)
 	name, _ := rdf.NewLiteral("School of Engineering")
-
+	school, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#School")
 	data[models.Predicates["skos"]["prefLabel"]] = []rdf.Term{name}
+	data[models.Predicates["rdf"]["type"]] = []rdf.Term{school}
 
 	resource := models.NewResource("http://example.com/record1", data)
 
 	err := client.addOrganization(resource)
 	assert.Nil(t, err)
 
-	organization, err := client.retrieveOneOrganization("http://example.com/record1")
+	org, err := client.retrieveOneOrganization("http://example.com/record1")
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"name": "School of Engineering"}`, organization)
-
+	assert.Equal(t, `{"name": "School of Engineering", "type": "http://vivoweb.org/ontology/core#School"}`, org)
 }
