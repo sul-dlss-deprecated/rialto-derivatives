@@ -39,7 +39,7 @@ var Predicates = map[string]map[string]string{
 		"family-name": "http://www.w3.org/2006/vcard/ns#family-name",
 	},
 	"skos": map[string]string{
-		"prefLabel": "http://www.w3.org/2008/05/skos#prefLabel",
+		"prefLabel": "http://www.w3.org/2004/02/skos/core#prefLabel",
 	},
 	"frapo": map[string]string{
 		"hasStartDate": "http://purl.org/cerif/frapo/hasStartDate",
