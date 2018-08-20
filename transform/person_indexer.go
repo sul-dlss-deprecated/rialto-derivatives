@@ -26,7 +26,8 @@ func (m *PersonIndexer) Index(resource models.Resource, doc solr.Document) solr.
 	// 1. Get the associated name resource
 	doc.Set("name_ssim", m.retrieveAssociatedName(resource))
 
-	// TODO 2. department
+	// 2. department
+	doc.Set("department_ssim", m.retrieveDepartmentURI(resource))
 	// TODO 3. institution
 
 	return doc
@@ -50,4 +51,15 @@ func (m *PersonIndexer) retrieveAssociatedName(resource models.Resource) string 
 		return ""
 	}
 	return fmt.Sprintf("%v %v", givenName[0], familyName[0])
+}
+
+func (m *PersonIndexer) retrieveDepartmentURI(resource models.Resource) *string {
+	uri, err := m.Canonical.QueryForDepartment(resource.Subject())
+	if err != nil {
+		panic(err)
+	}
+	if uri == nil {
+		log.Printf("No department URI found for %s", resource.Subject())
+	}
+	return uri
 }

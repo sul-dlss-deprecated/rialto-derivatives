@@ -23,6 +23,9 @@ var Predicates = map[string]map[string]string{
 		"hasFundingVehicle":              "http://vivoweb.org/ontology/core#hasFundingVehicle",
 		"publisher":                      "http://vivoweb.org/ontology/core#publisher",
 		"informationResourceSupportedBy": "http://vivoweb.org/ontology/core#informationResourceSupportedBy",
+		"relatedBy":                      "http://vivoweb.org/ontology/core#relatedBy",
+		"Position":                       "http://vivoweb.org/ontology/core#Position",
+		"relates":                        "http://vivoweb.org/ontology/core#relates",
 	},
 	"gcis": map[string]string{
 		"hasInstrument": "http://data.globalchange.gov/gcis.owl#hasInstrument",

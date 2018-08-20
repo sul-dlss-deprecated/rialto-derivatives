@@ -9,6 +9,7 @@ import (
 type Repository interface {
 	SubjectToResource(subject string) (models.Resource, error)
 	AllResources() ([]models.Resource, error)
+	QueryForDepartment(subject string) (*string, error)
 }
 
 // Service is the Neptune implementation of the repository
@@ -43,6 +44,24 @@ func (m *Service) SubjectToResource(subject string) (models.Resource, error) {
 	}
 	resource := models.NewResource(subject, data)
 	return resource, nil
+}
+
+// QueryForDepartment returns the deparment URI for the given Person resource
+func (m *Service) QueryForDepartment(subject string) (*string, error) {
+	response, err := m.reader.QueryThroughNode(subject,
+		models.Predicates["vivo"]["relatedBy"],
+		models.Predicates["vivo"]["Position"],
+		models.Predicates["vivo"]["relates"])
+
+	if err != nil {
+		return nil, err
+	}
+
+	var predicate string
+	for _, triple := range response.Solutions() {
+		predicate = triple["d"].String()
+	}
+	return &predicate, nil
 }
 
 // AllResources returns a full list of resources

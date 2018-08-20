@@ -38,6 +38,10 @@ func (f *MockedReader) QueryByID(id string) (*sparql.Results, error) {
 	return &sparql.Results{}, nil
 }
 
+func (f *MockedReader) QueryThroughNode(id string, localPredicate string, localType string, remotePredicate string) (*sparql.Results, error) {
+	return &sparql.Results{}, nil
+}
+
 func TestRebuildRepository(t *testing.T) {
 	msg := &message.Message{}
 	fakeWriter := new(MockedWriter)

@@ -39,3 +39,14 @@ func (r *SparqlReader) QueryByID(id string) (*sparql.Results, error) {
 	query := fmt.Sprintf("SELECT ?p ?o WHERE { <%s> ?p ?o } LIMIT %v", id, tripleLimit)
 	return r.repo.Query(query)
 }
+
+// QueryThroughNode is similar to a HasAndBelongsTo query in an RDBMS where
+// we're querying though some intermittent node for the data we need.
+// e.g. Person -> <relatedBy> -> Position -> <relates> -> Department
+func (r *SparqlReader) QueryThroughNode(id string, localPredicate string, localType string, remotePredicate string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`select ?d where
+		{ <%s> <%s> ?o .
+			?o a <%s> .
+			?o <%s> ?d } limit 10`, id, localPredicate, localType, remotePredicate)
+	return r.repo.Query(query)
+}

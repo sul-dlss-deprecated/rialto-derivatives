@@ -1,6 +1,7 @@
 package transform
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -11,6 +12,12 @@ import (
 // PersonSerializer transforms person resource types into JSON Documents
 type PersonSerializer struct {
 	repo repository.Repository
+}
+
+type person struct {
+	Name        string  `json:"name"`
+	Department  *string `json:"department"`
+	Institution *string `json:"institutionalAffiliation"`
 }
 
 // NewPersonSerializer makes a new instance of the PersonSerializer
@@ -25,7 +32,15 @@ func NewPersonSerializer(repo repository.Repository) *PersonSerializer {
 //   department (URI)
 //   institutionalAffiliation (URI)
 func (m *PersonSerializer) Serialize(resource models.Resource) string {
-	return fmt.Sprintf(`{"name": "%s"}`, m.retrieveAssociatedName(resource))
+	p := &person{
+		Name:       m.retrieveAssociatedName(resource),
+		Department: m.retrieveDepartmentURI(resource)}
+
+	b, err := json.Marshal(p)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
 }
 
 // TODO: This method is copied from PersonIndexer.  In order to be more efficient,
@@ -49,4 +64,18 @@ func (m *PersonSerializer) retrieveAssociatedName(resource models.Resource) stri
 		return ""
 	}
 	return fmt.Sprintf("%v %v", givenName[0], familyName[0])
+}
+
+// TODO: This method is copied from PersonIndexer.  In order to be more efficient,
+// we should lookup names before passing to the postgres/solr writers.
+func (m *PersonSerializer) retrieveDepartmentURI(resource models.Resource) *string {
+
+	uri, err := m.repo.QueryForDepartment(resource.Subject())
+	if err != nil {
+		panic(err)
+	}
+	if uri == nil {
+		log.Printf("No department URI found for %s", resource.Subject())
+	}
+	return uri
 }

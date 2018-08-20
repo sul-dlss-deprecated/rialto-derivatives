@@ -25,6 +25,10 @@ func (f *MockRepository) AllResources() ([]models.Resource, error) {
 	return []models.Resource{}, nil
 }
 
+func (f *MockRepository) QueryForDepartment(subject string) (*string, error) {
+	return nil, nil
+}
+
 func makeName(subject string, given string, family string) models.Resource {
 	nameData := make(map[string][]rdf.Term)
 	fname, _ := rdf.NewLiteral("Barbara")
@@ -59,7 +63,7 @@ func TestPostgresAddPerson(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"name": "Barbara Liskov"}`, person)
+	assert.Equal(t, `{"name": "Barbara Liskov", "department": null, "institutionalAffiliation": null}`, person)
 
 }
 
