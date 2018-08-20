@@ -12,7 +12,8 @@ type SolrClient struct {
 	si *solr.SolrInterface
 }
 
-const typeField = "type_ssi"
+// SolrTypeField is the field that holds the type assertion in Solr
+const SolrTypeField = "type_ssi"
 
 // NewSolrClient returns a new SolrClient instance
 func NewSolrClient(host string, collection string) *SolrClient {
@@ -24,7 +25,7 @@ func NewSolrClient(host string, collection string) *SolrClient {
 
 // RemoveResourcesOfType clears the index of all the data with the matching type
 func (d *SolrClient) RemoveResourcesOfType(resourceType string) error {
-	query := fmt.Sprintf("%s:%s", typeField, resourceType)
+	query := fmt.Sprintf("%s:%s", SolrTypeField, resourceType)
 	data := map[string]interface{}{"query": query}
 	_, err := d.si.Delete(data, nil)
 	return err
