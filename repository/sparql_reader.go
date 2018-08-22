@@ -30,7 +30,9 @@ func NewSparqlReader(url string) *SparqlReader {
 // TODO: this could overflow our memory if we get too many records in the store.
 //       Should we set a lower limit and paginate the result set?
 func (r *SparqlReader) QueryEverything() (*sparql.Results, error) {
-	query := fmt.Sprintf("SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT %v", tripleLimit)
+	query := fmt.Sprintf(`SELECT ?s ?p ?o
+		WHERE { ?s ?p ?o .
+			?s a <http://xmlns.com/foaf/0.1/Agent>|<http://vivoweb.org/ontology/core#Grant>|<http://www.w3.org/2004/02/skos/core#Concept>} LIMIT %v`, tripleLimit)
 	return r.repo.Query(query)
 }
 
