@@ -21,8 +21,8 @@ func (f *MockRepository) SubjectToResource(id string) (models.Resource, error) {
 	return args.Get(0).(models.Resource), args.Error(1)
 }
 
-func (f *MockRepository) AllResources() ([]models.Resource, error) {
-	return []models.Resource{}, nil
+func (f *MockRepository) AllResources(fun func([]models.Resource) error) error {
+	return nil
 }
 
 func (f *MockRepository) QueryForDepartment(subject string) (*string, error) {

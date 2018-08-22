@@ -30,8 +30,8 @@ type MockedReader struct {
 	mock.Mock
 }
 
-func (f *MockedReader) QueryEverything() (*sparql.Results, error) {
-	return &sparql.Results{}, nil
+func (f *MockedReader) QueryEverything(fun func(*sparql.Results) error) error {
+	return nil
 }
 
 func (f *MockedReader) QueryByID(id string) (*sparql.Results, error) {

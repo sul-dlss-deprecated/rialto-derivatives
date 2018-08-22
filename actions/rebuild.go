@@ -22,20 +22,14 @@ func (r *RebuildAction) Run(message *message.Message) error {
 	if err != nil {
 		return err
 	}
-	resourceList, err := r.queryResources()
-	if err != nil {
-		return err
-	}
-
-	err = r.registry.Writer.Add(resourceList)
+	err = r.queryResources(func(resourceList []models.Resource) error {
+		return r.registry.Writer.Add(resourceList)
+	})
 	return err
 }
 
-// Return a list of resources populated by querying for everything in the triplestore
-func (r *RebuildAction) queryResources() ([]models.Resource, error) {
-	list, err := r.registry.Canonical.AllResources()
-	if err != nil {
-		return nil, err
-	}
-	return list, nil
+// Calls the function with a list of resources (in managable sized chunks) populated
+// by querying for everything in the triplestore
+func (r *RebuildAction) queryResources(f func([]models.Resource) error) error {
+	return r.registry.Canonical.AllResources(f)
 }
