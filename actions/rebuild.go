@@ -18,7 +18,7 @@ func NewRebuildAction(registry *runtime.Registry) Action {
 
 // Run does the rebuilding
 func (r *RebuildAction) Run(message *message.Message) error {
-	err := r.registry.Derivatives.RemoveAll()
+	err := r.registry.Writer.RemoveAll()
 	if err != nil {
 		return err
 	}
@@ -27,7 +27,7 @@ func (r *RebuildAction) Run(message *message.Message) error {
 		return err
 	}
 
-	err = r.registry.Derivatives.Add(r.registry.Indexer.Map(resourceList))
+	err = r.registry.Writer.Add(resourceList)
 	return err
 }
 

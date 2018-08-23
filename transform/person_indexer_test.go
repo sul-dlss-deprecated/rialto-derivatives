@@ -50,7 +50,7 @@ func (f *MockResource) IsConcept() bool {
 }
 
 func (f *MockResource) Subject() string {
-	return ""
+	return "http://example.com/record1"
 }
 
 func (f *MockResource) ValueOf(key string) []rdf.Term {
@@ -70,6 +70,16 @@ func (f *MockedReader) QueryEverything() (*sparql.Results, error) {
 func (f *MockedReader) QueryByID(id string) (*sparql.Results, error) {
 	args := f.Called(id)
 	return args.Get(0).(*sparql.Results), args.Error(1)
+}
+
+func (f *MockedReader) QueryByIDAndPredicate(id string, predicate string) (*sparql.Results, error) {
+	args := f.Called(id)
+	return args.Get(0).(*sparql.Results), args.Error(1)
+}
+
+func (f *MockedReader) QueryThroughNode(id string, localPredicate string, localType string, remotePredicate string) (*sparql.Results, error) {
+	args := f.Called(id)
+	return args.Get(0).(*sparql.Results), nil
 }
 
 func TestPersonResourceWithName(t *testing.T) {
@@ -94,6 +104,32 @@ func TestPersonResourceWithName(t *testing.T) {
 	fakeSparql.On("QueryByID", "http://example.com/name1").
 		Return(sparql.ParseJSON(json))
 
+	departmentJSON := strings.NewReader(`{
+    "head": { "vars": [ "d" ] } ,
+    "results": {
+      "bindings": [
+        {
+          "d": { "type": "uri" , "value": "http://example.com/department1" }
+        }
+      ]
+    }
+  }`)
+	fakeSparql.On("QueryThroughNode", "http://example.com/record1").
+		Return(sparql.ParseJSON(departmentJSON))
+
+	institutionJSON := strings.NewReader(`{
+	    "head": { "vars": [ "o" ] } ,
+	    "results": {
+	      "bindings": [
+	        {
+	          "o": { "type": "uri" , "value": "http://example.com/institution1" }
+	        }
+	      ]
+	    }
+	  }`)
+	fakeSparql.On("QueryByIDAndPredicate", "http://example.com/department1").
+		Return(sparql.ParseJSON(institutionJSON))
+
 	indexer := &PersonIndexer{
 		Canonical: repository.NewService(fakeSparql),
 	}
@@ -111,11 +147,15 @@ func TestPersonResourceWithName(t *testing.T) {
 	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
 }
 
-func TestPersonWithoutNameUri(t *testing.T) {
+func TestPersonWithoutNameUriOrDepartment(t *testing.T) {
 	fakeSparql := new(MockedReader)
 	json := strings.NewReader(`{}`)
 	fakeSparql.On("QueryByID", "http://example.com/name1").
 		Return(sparql.ParseJSON(json))
+
+	departmentJSON := strings.NewReader(`{}`)
+	fakeSparql.On("QueryThroughNode", "http://example.com/record1").
+		Return(sparql.ParseJSON(departmentJSON))
 
 	indexer := &PersonIndexer{
 		Canonical: repository.NewService(fakeSparql),
@@ -137,6 +177,10 @@ func TestPersonWhenNameIsNotFound(t *testing.T) {
 	json := strings.NewReader(`{}`)
 	fakeSparql.On("QueryByID", "http://example.com/name1").
 		Return(sparql.ParseJSON(json))
+
+	departmentJSON := strings.NewReader(`{}`)
+	fakeSparql.On("QueryThroughNode", "http://example.com/record1").
+		Return(sparql.ParseJSON(departmentJSON))
 
 	indexer := &PersonIndexer{
 		Canonical: repository.NewService(fakeSparql),

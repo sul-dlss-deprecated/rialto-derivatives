@@ -5,13 +5,21 @@ import (
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 )
 
-// Service is the main component of the repository
+// Repository is an interface that rialto-derivatives reads from as its source
+type Repository interface {
+	SubjectToResource(subject string) (models.Resource, error)
+	AllResources() ([]models.Resource, error)
+	QueryForDepartment(subject string) (*string, error)
+	QueryForInstitution(subject string) (*string, error)
+}
+
+// Service is the Neptune implementation of the repository
 type Service struct {
 	reader Reader
 }
 
 // NewService creates a new Service instance
-func NewService(reader Reader) *Service {
+func NewService(reader Reader) Repository {
 	return &Service{reader: reader}
 }
 
@@ -37,6 +45,39 @@ func (m *Service) SubjectToResource(subject string) (models.Resource, error) {
 	}
 	resource := models.NewResource(subject, data)
 	return resource, nil
+}
+
+// QueryForDepartment returns the deparment URI for the given Person resource
+func (m *Service) QueryForDepartment(subject string) (*string, error) {
+	response, err := m.reader.QueryThroughNode(subject,
+		models.Predicates["vivo"]["relatedBy"],
+		models.Predicates["vivo"]["Position"],
+		models.Predicates["vivo"]["relates"])
+
+	if err != nil {
+		return nil, err
+	}
+
+	var predicate string
+	for _, triple := range response.Solutions() {
+		predicate = triple["d"].String()
+	}
+	return &predicate, nil
+}
+
+// QueryForInstitution returns the institution URI for the given department resource
+func (m *Service) QueryForInstitution(subject string) (*string, error) {
+	response, err := m.reader.QueryByIDAndPredicate(subject, models.Predicates["obo"]["BFO_0000050"])
+
+	if err != nil {
+		return nil, err
+	}
+
+	var predicate string
+	for _, triple := range response.Solutions() {
+		predicate = triple["o"].String()
+	}
+	return &predicate, nil
 }
 
 // AllResources returns a full list of resources

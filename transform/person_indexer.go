@@ -11,12 +11,12 @@ import (
 
 // PersonIndexer transforms person resource types into solr Documents
 type PersonIndexer struct {
-	Canonical *repository.Service
+	Canonical repository.Repository
 }
 
 // NewPersonIndexer creates a new instance of the Person indexer
-func NewPersonIndexer(service *repository.Service) Indexer {
-	return &PersonIndexer{Canonical: service}
+func NewPersonIndexer(repository repository.Repository) Indexer {
+	return &PersonIndexer{Canonical: repository}
 }
 
 // Index adds fields from the resource to the Solr Document
@@ -26,7 +26,8 @@ func (m *PersonIndexer) Index(resource models.Resource, doc solr.Document) solr.
 	// 1. Get the associated name resource
 	doc.Set("name_ssim", m.retrieveAssociatedName(resource))
 
-	// TODO 2. department
+	// 2. department
+	doc.Set("department_ssim", m.retrieveDepartmentURI(resource))
 	// TODO 3. institution
 
 	return doc
@@ -50,4 +51,15 @@ func (m *PersonIndexer) retrieveAssociatedName(resource models.Resource) string 
 		return ""
 	}
 	return fmt.Sprintf("%v %v", givenName[0], familyName[0])
+}
+
+func (m *PersonIndexer) retrieveDepartmentURI(resource models.Resource) *string {
+	uri, err := m.Canonical.QueryForDepartment(resource.Subject())
+	if err != nil {
+		panic(err)
+	}
+	if uri == nil {
+		log.Printf("No department URI found for %s", resource.Subject())
+	}
+	return uri
 }
