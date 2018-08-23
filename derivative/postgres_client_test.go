@@ -29,6 +29,10 @@ func (f *MockRepository) QueryForDepartment(subject string) (*string, error) {
 	return nil, nil
 }
 
+func (f *MockRepository) QueryForInstitution(subject string) (*string, error) {
+	return nil, nil
+}
+
 func makeName(subject string, given string, family string) models.Resource {
 	nameData := make(map[string][]rdf.Term)
 	fname, _ := rdf.NewLiteral("Barbara")

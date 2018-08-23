@@ -45,6 +45,19 @@ func TestSerializePersonResourceWithName(t *testing.T) {
 	fakeSparql.On("QueryThroughNode", "http://example.com/record1").
 		Return(sparql.ParseJSON(departmentJSON))
 
+	institutionJSON := strings.NewReader(`{
+	    "head": { "vars": [ "o" ] } ,
+	    "results": {
+	      "bindings": [
+	        {
+	          "o": { "type": "uri" , "value": "http://example.com/institution1" }
+	        }
+	      ]
+	    }
+	  }`)
+	fakeSparql.On("QueryByIDAndPredicate", "http://example.com/department1").
+		Return(sparql.ParseJSON(institutionJSON))
+
 	indexer := NewPersonSerializer(repository.NewService(fakeSparql))
 
 	resource := new(MockResource)
@@ -54,5 +67,5 @@ func TestSerializePersonResourceWithName(t *testing.T) {
 
 	doc := indexer.Serialize(resource)
 
-	assert.Equal(t, `{"name":"Harry Potter","department":"http://example.com/department1","institutionalAffiliation":null}`, doc)
+	assert.Equal(t, `{"name":"Harry Potter","department":"http://example.com/department1","institutionalAffiliation":"http://example.com/institution1"}`, doc)
 }

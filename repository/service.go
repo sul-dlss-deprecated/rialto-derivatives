@@ -10,6 +10,7 @@ type Repository interface {
 	SubjectToResource(subject string) (models.Resource, error)
 	AllResources() ([]models.Resource, error)
 	QueryForDepartment(subject string) (*string, error)
+	QueryForInstitution(subject string) (*string, error)
 }
 
 // Service is the Neptune implementation of the repository
@@ -60,6 +61,21 @@ func (m *Service) QueryForDepartment(subject string) (*string, error) {
 	var predicate string
 	for _, triple := range response.Solutions() {
 		predicate = triple["d"].String()
+	}
+	return &predicate, nil
+}
+
+// QueryForInstitution returns the institution URI for the given department resource
+func (m *Service) QueryForInstitution(subject string) (*string, error) {
+	response, err := m.reader.QueryByIDAndPredicate(subject, models.Predicates["obo"]["BFO_0000050"])
+
+	if err != nil {
+		return nil, err
+	}
+
+	var predicate string
+	for _, triple := range response.Solutions() {
+		predicate = triple["o"].String()
 	}
 	return &predicate, nil
 }

@@ -32,9 +32,11 @@ func NewPersonSerializer(repo repository.Repository) *PersonSerializer {
 //   department (URI)
 //   institutionalAffiliation (URI)
 func (m *PersonSerializer) Serialize(resource models.Resource) string {
+	deptURI := m.retrieveDepartmentURI(resource)
 	p := &person{
-		Name:       m.retrieveAssociatedName(resource),
-		Department: m.retrieveDepartmentURI(resource)}
+		Name:        m.retrieveAssociatedName(resource),
+		Department:  deptURI,
+		Institution: m.retrieveInstitutionURI(deptURI)}
 
 	b, err := json.Marshal(p)
 	if err != nil {
@@ -76,6 +78,20 @@ func (m *PersonSerializer) retrieveDepartmentURI(resource models.Resource) *stri
 	}
 	if uri == nil {
 		log.Printf("No department URI found for %s", resource.Subject())
+	}
+	return uri
+}
+
+func (m *PersonSerializer) retrieveInstitutionURI(departmentURI *string) *string {
+	if departmentURI == nil {
+		return nil
+	}
+	uri, err := m.repo.QueryForInstitution(*departmentURI)
+	if err != nil {
+		panic(err)
+	}
+	if uri == nil {
+		log.Printf("No institution URI found for %s", *departmentURI)
 	}
 	return uri
 }

@@ -50,3 +50,10 @@ func (r *SparqlReader) QueryThroughNode(id string, localPredicate string, localT
 			?o <%s> ?d } limit 10`, id, localPredicate, localType, remotePredicate)
 	return r.repo.Query(query)
 }
+
+// QueryByIDAndPredicate returns the list of objects that match the given subject, predicate tuple
+func (r *SparqlReader) QueryByIDAndPredicate(id string, predicate string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`select ?o where
+		{ <%s> <%s> ?o . } limit 10`, id, predicate)
+	return r.repo.Query(query)
+}
