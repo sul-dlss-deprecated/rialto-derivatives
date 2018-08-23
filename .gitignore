@@ -1,4 +1,6 @@
-main
-lambda.zip
+solr_derivative
+solr_derivative.zip
+postgres_derivative
+postgres_derivative.zip
 result.log
 vendor/*
