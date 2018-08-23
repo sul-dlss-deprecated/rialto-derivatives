@@ -8,7 +8,7 @@ import (
 	"github.com/knakk/sparql"
 )
 
-const tripleLimit = 10000000
+const tripleLimit = 100000
 
 // SparqlReader represents the functions we do on the triplestore
 type SparqlReader struct {
@@ -18,7 +18,7 @@ type SparqlReader struct {
 // NewSparqlReader creates a new instance of the sparqlReader for the provided endpoint
 func NewSparqlReader(url string) *SparqlReader {
 	repo, err := sparql.NewRepo(url,
-		sparql.Timeout(time.Second*10),
+		sparql.Timeout(time.Second*20),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -29,12 +29,30 @@ func NewSparqlReader(url string) *SparqlReader {
 // QueryEverything returns all triples in the datastore
 // TODO: this could overflow our memory if we get too many records in the store.
 //       Should we set a lower limit and paginate the result set?
-func (r *SparqlReader) QueryEverything() (*sparql.Results, error) {
-	query := fmt.Sprintf(`SELECT ?s ?p ?o
-		WHERE { ?s ?p ?o .
-			?s a ?type .
-			FILTER (?type IN (<http://xmlns.com/foaf/0.1/Agent>,<http://vivoweb.org/ontology/core#Grant>,<http://www.w3.org/2004/02/skos/core#Concept>)} LIMIT %v`, tripleLimit)
-	return r.repo.Query(query)
+func (r *SparqlReader) QueryEverything(f func(*sparql.Results) error) error {
+	page := 0
+
+	for {
+		offset := page * tripleLimit
+		query := fmt.Sprintf(`SELECT ?s ?p ?o
+			WHERE { ?s ?p ?o .
+				?s a ?type .
+				FILTER (?type IN (<http://xmlns.com/foaf/0.1/Agent>,<http://vivoweb.org/ontology/core#Grant>,<http://www.w3.org/2004/02/skos/core#Concept>)) }
+			ORDER BY ?s OFFSET %v LIMIT %v`, offset, tripleLimit)
+		log.Printf("[SPARQL] %s", query)
+		results, err := r.repo.Query(query)
+		if err != nil {
+			return err
+		}
+		if resultCount := len(results.Solutions()); resultCount == 0 {
+			break
+		}
+		if err = f(results); err != nil {
+			return err
+		}
+		page++
+	}
+	return nil
 }
 
 // QueryByID returns all triples that match the subject the datastore
