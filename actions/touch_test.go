@@ -5,19 +5,20 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
-	"github.com/sul-dlss-labs/rialto-derivatives/repository"
+	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
 )
 
-func TestRecordToResource(t *testing.T) {
-	fakeSparql := new(MockedReader)
-
+func TestRecordToResourceList(t *testing.T) {
+	repo := new(MockedRepository)
+	repo.On("SubjectToResource", "http://example.com/record2").
+		Return(&models.Person{URI: "http://example.com/record2"})
 	reg := &runtime.Registry{
-		Canonical: repository.NewService(fakeSparql),
+		Canonical: repo,
 	}
 	msg := &message.Message{Entities: []string{"http://example.com/record2"}}
 	action := NewTouchAction(reg)
-	doc, _ := action.(*TouchAction).recordToResource(msg)
+	list, _ := action.(*TouchAction).recordToResourceList(msg)
 
-	assert.Equal(t, "http://example.com/record2", doc.Subject())
+	assert.Equal(t, "http://example.com/record2", list[0].Subject())
 }

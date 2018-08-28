@@ -12,32 +12,36 @@ import (
 func TestResourceToDoc(t *testing.T) {
 	service := repository.NewService(new(MockedReader))
 	indexer := NewCompositeIndexer(service)
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
 	document, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
+	book, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Book")
+
 	title, _ := rdf.NewLiteral("Hello world!")
+	data["id"] = id
+	data["type"] = document
+	data["title"] = title
+	data["subtype"] = book
 
-	data[models.Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[models.Predicates["dct"]["title"]] = []rdf.Term{title}
-
-	resource := models.NewResource("http://example.com/record1", data)
+	resource := models.NewResource(data)
 	resourceList := []models.Resource{resource}
 	docs := indexer.Map(resourceList)
 
-	assert.Equal(t, []string{"Hello world!"}, docs[0].Get("title_tesi"))
+	assert.Equal(t, "Hello world!", docs[0].Get("title_tesi"))
 	assert.Equal(t, "http://example.com/record1", docs[0].Get("id"))
 }
 
 func TestUntypedResourceToDoc(t *testing.T) {
 	service := repository.NewService(new(MockedReader))
 	indexer := NewCompositeIndexer(service)
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
 	title, _ := rdf.NewLiteral("Hello world!")
-	data[models.Predicates["dct"]["title"]] = []rdf.Term{title}
+	data["id"] = id
+	data["title"] = title
 
-	resource := models.NewResource("http://example.com/record1", data)
+	resource := models.NewResource(data)
 	resourceList := []models.Resource{resource}
 	docs := indexer.Map(resourceList)
-	assert.Equal(t, []string{"Hello world!"}, docs[0].Get("title_tesi"))
-	assert.Equal(t, "http://example.com/record1", docs[0].Get("id"))
-
+	assert.Nil(t, docs[0])
 }

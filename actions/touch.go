@@ -1,8 +1,6 @@
 package actions
 
 import (
-	"log"
-
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
@@ -23,22 +21,24 @@ func NewTouchAction(registry *runtime.Registry) Action {
 	return &TouchAction{registry: registry}
 }
 
-// Run updates the record
+// Run fetches a record from Neptune and updates the configured writer
 func (r *TouchAction) Run(message *message.Message) error {
-	resourceList := []models.Resource{}
-	resource, err := r.recordToResource(message)
+	resourceList, err := r.recordToResourceList(message)
 	if err != nil {
 		return err
 	}
-
-	resourceList = append(resourceList, resource)
-	log.Printf("Retrieved: %s", resourceList)
 	err = r.registry.Writer.Add(resourceList)
 	return err
 }
 
 // This will take an SNS message and retrieve a resource from Neptune
-func (r *TouchAction) recordToResource(msg *message.Message) (models.Resource, error) {
+func (r *TouchAction) recordToResourceList(msg *message.Message) ([]models.Resource, error) {
 	subject := msg.Entities[0]
-	return r.registry.Canonical.SubjectToResource(subject)
+	resource, err := r.registry.Canonical.SubjectToResource(subject)
+	if err != nil {
+		return nil, err
+	}
+	resourceList := []models.Resource{}
+	resourceList = append(resourceList, resource)
+	return resourceList, err
 }

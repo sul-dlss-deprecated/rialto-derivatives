@@ -59,11 +59,12 @@ func (d *PostgresClient) Add(resourceList []models.Resource) error {
 }
 
 func (d *PostgresClient) addOne(resource models.Resource) error {
-	if resource.IsPerson() {
-		d.addPerson(resource)
-	} else if resource.IsOrganization() {
-		d.addOrganization(resource)
-	} else {
+	switch v := resource.(type) {
+	case *models.Person:
+		d.addPerson(v)
+	case *models.Organization:
+		d.addOrganization(v)
+	default:
 		return fmt.Errorf("Unrecognized resource type: %v", resource)
 	}
 
@@ -91,11 +92,11 @@ func (d *PostgresClient) retrieveOneRecord(table string, subject string) (string
 	return name, nil
 }
 
-func (d *PostgresClient) addPerson(resource models.Resource) error {
+func (d *PostgresClient) addPerson(resource *models.Person) error {
 	return d.addResource("people", resource.Subject(), d.personSerializer.Serialize(resource))
 }
 
-func (d *PostgresClient) addOrganization(resource models.Resource) error {
+func (d *PostgresClient) addOrganization(resource *models.Organization) error {
 	return d.addResource("organizations", resource.Subject(), d.organizationSerializer.Serialize(resource))
 }
 

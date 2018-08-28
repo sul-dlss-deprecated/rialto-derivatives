@@ -9,17 +9,19 @@ import (
 )
 
 func TestOrganizationSerializer(t *testing.T) {
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
 	name, _ := rdf.NewLiteral("School of Engineering")
-	agent, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Agent")
 	organization, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Organization")
 	school, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#School")
 
-	data[models.Predicates["skos"]["prefLabel"]] = []rdf.Term{name}
-	data[models.Predicates["rdf"]["type"]] = []rdf.Term{agent, organization, school}
+	data["id"] = id
+	data["name"] = name
+	data["type"] = organization
+	data["subtype"] = school
 
-	resource := models.NewResource("http://example.com/record1", data)
+	resource := models.NewResource(data)
 
-	org := (&OrganizationSerializer{}).Serialize(resource)
+	org := (&OrganizationSerializer{}).Serialize(resource.(*models.Organization))
 	assert.Equal(t, `{"name": "School of Engineering", "type": "http://vivoweb.org/ontology/core#School"}`, org)
 }

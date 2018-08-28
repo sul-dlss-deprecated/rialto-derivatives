@@ -10,15 +10,12 @@ type ProjectIndexer struct {
 }
 
 // Index adds fields from the resource to the Solr Document
-func (m *ProjectIndexer) Index(resource models.Resource, doc solr.Document) solr.Document {
-	mapping := map[string]string{
-		"title":          "title_tesi",
-		"alternateTitle": "alternative_title_tesim",
-		"hasStartDate":   "start_date_ssi",
-		"hasEndDate":     "end_date_ssi",
-	}
-
-	doc = indexMapping(resource, doc, mapping)
+func (m *ProjectIndexer) Index(resource *models.Project, doc solr.Document) solr.Document {
+	doc.Set("type_ssi", "Project")
+	doc.Set("title_tesi", resource.Title)
+	doc.Set("alternative_title_tesim", resource.AlternativeTitle)
+	doc.Set("start_date_ssi", resource.StartDate)
+	doc.Set("end_date_ssi", resource.EndDate)
 
 	return doc
 }

@@ -3,12 +3,10 @@ package actions
 import (
 	"testing"
 
-	"github.com/knakk/sparql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/sul-dlss-labs/rialto-derivatives/message"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
-	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
 )
 
@@ -25,34 +23,31 @@ func (f *MockedWriter) RemoveAll() error {
 	return nil
 }
 
-// MockedReader is a mocked object that implements the Reader interface
-type MockedReader struct {
+// MockedRepository is a mocked object that implements the Repository interface
+type MockedRepository struct {
 	mock.Mock
 }
 
-func (f *MockedReader) QueryEverything(fun func(*sparql.Results) error) error {
+func (f *MockedRepository) AllResources(fun func([]models.Resource) error) error {
 	return nil
 }
 
-func (f *MockedReader) QueryByID(id string) (*sparql.Results, error) {
-	return &sparql.Results{}, nil
+func (f *MockedRepository) SubjectToResource(id string) (models.Resource, error) {
+	args := f.Called(id)
+	return args.Get(0).(models.Resource), nil
 }
 
-func (f *MockedReader) QueryByIDAndPredicate(id string, predicate string) (*sparql.Results, error) {
-	return &sparql.Results{}, nil
-}
-
-func (f *MockedReader) QueryThroughNode(id string, localPredicate string, localType string, remotePredicate string) (*sparql.Results, error) {
-	return &sparql.Results{}, nil
+func (f *MockedRepository) QueryForInstitution(id string) (*string, error) {
+	return nil, nil
 }
 
 func TestRebuildRepository(t *testing.T) {
 	msg := &message.Message{}
 	fakeWriter := new(MockedWriter)
-	fakeSparql := new(MockedReader)
+	fakeRepo := new(MockedRepository)
 	reg := &runtime.Registry{
 		Writer:    fakeWriter,
-		Canonical: repository.NewService(fakeSparql),
+		Canonical: fakeRepo,
 	}
 	action := NewRebuildAction(reg)
 	err := action.Run(msg)

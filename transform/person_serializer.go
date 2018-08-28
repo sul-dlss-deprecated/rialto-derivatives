@@ -31,12 +31,11 @@ func NewPersonSerializer(repo repository.Repository) *PersonSerializer {
 //   name (string)
 //   department (URI)
 //   institutionalAffiliation (URI)
-func (m *PersonSerializer) Serialize(resource models.Resource) string {
-	deptURI := m.retrieveDepartmentURI(resource)
+func (m *PersonSerializer) Serialize(resource *models.Person) string {
 	p := &person{
 		Name:        m.retrieveAssociatedName(resource),
-		Department:  deptURI,
-		Institution: m.retrieveInstitutionURI(deptURI)}
+		Department:  resource.Department,
+		Institution: m.retrieveInstitutionURI(resource.Department)}
 
 	b, err := json.Marshal(p)
 	if err != nil {
@@ -45,41 +44,11 @@ func (m *PersonSerializer) Serialize(resource models.Resource) string {
 	return string(b)
 }
 
-// TODO: This method is copied from PersonIndexer.  In order to be more efficient,
-// we should lookup names before passing to the postgres/solr writers.
-func (m *PersonSerializer) retrieveAssociatedName(resource models.Resource) string {
-	nameURI := resource.ValueOf("name")
-	if len(nameURI) == 0 {
-		log.Printf("No name URI found for %s", resource.Subject())
-		return ""
-	}
-
-	nameResource, err := m.repo.SubjectToResource(nameURI[0].String())
-
-	if err != nil {
-		panic(err)
-	}
-	givenName := nameResource.ValueOf("given-name")
-	familyName := nameResource.ValueOf("family-name")
-
-	if len(givenName) == 0 || len(familyName) == 0 {
-		return ""
-	}
-	return fmt.Sprintf("%v %v", givenName[0], familyName[0])
-}
-
-// TODO: This method is copied from PersonIndexer.  In order to be more efficient,
-// we should lookup names before passing to the postgres/solr writers.
-func (m *PersonSerializer) retrieveDepartmentURI(resource models.Resource) *string {
-
-	uri, err := m.repo.QueryForDepartment(resource.Subject())
-	if err != nil {
-		panic(err)
-	}
-	if uri == nil {
-		log.Printf("No department URI found for %s", resource.Subject())
-	}
-	return uri
+// TODO: This method is copied from PersonIndexer. reduce duplication?
+func (m *PersonSerializer) retrieveAssociatedName(resource *models.Person) string {
+	givenName := resource.Firstname
+	familyName := resource.Lastname
+	return fmt.Sprintf("%v %v", givenName, familyName)
 }
 
 func (m *PersonSerializer) retrieveInstitutionURI(departmentURI *string) *string {

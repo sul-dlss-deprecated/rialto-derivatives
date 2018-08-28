@@ -11,18 +11,19 @@ import (
 
 func TestConceptIndexerToDoc(t *testing.T) {
 	indexer := &ConceptIndexer{}
-	data := make(map[string][]rdf.Term)
-	document, _ := rdf.NewIRI("http://www.w3.org/2004/02/skos/core#Concept")
-	title, _ := rdf.NewLiteral("animals")
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
+	document, _ := rdf.NewIRI("http://www.w3.org/2008/05/skos#Concept")
+	label, _ := rdf.NewLiteral("animals")
+	data["id"] = id
+	data["type"] = document
+	data["label"] = label
 
-	data[models.Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[models.Predicates["skos"]["prefLabel"]] = []rdf.Term{title}
-
-	resource := models.NewResource("http://www.example.com/animals", data)
+	resource := models.NewResource(data)
 	in := make(solr.Document)
 	in.Set("id", "http://www.example.com/animals")
-	doc := indexer.Index(resource, in)
+	doc := indexer.Index(resource.(*models.Concept), in)
 
-	assert.Equal(t, []string{"animals"}, doc.Get("title_tesi"))
+	assert.Equal(t, "animals", doc.Get("title_tesi"))
 	assert.Equal(t, "http://www.example.com/animals", doc.Get("id"))
 }

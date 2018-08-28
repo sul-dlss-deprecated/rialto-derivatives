@@ -11,18 +11,19 @@ import (
 
 func TestGrantIndexerToDoc(t *testing.T) {
 	indexer := &GrantIndexer{}
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
 	document, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#Grant")
-	title, _ := rdf.NewLiteral("Hydra in a Box")
+	name, _ := rdf.NewLiteral("Hydra in a Box")
+	data["id"] = id
+	data["type"] = document
+	data["name"] = name
 
-	data[models.Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[models.Predicates["skos"]["prefLabel"]] = []rdf.Term{title}
-
-	resource := models.NewResource("http://example.com/record1", data)
+	resource := models.NewResource(data)
 	in := make(solr.Document)
 	in.Set("id", "http://example.com/record1")
-	doc := indexer.Index(resource, in)
+	doc := indexer.Index(resource.(*models.Grant), in)
 
-	assert.Equal(t, []string{"Hydra in a Box"}, doc.Get("title_tesi"))
+	assert.Equal(t, "Hydra in a Box", doc.Get("title_tesi"))
 	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
 }
