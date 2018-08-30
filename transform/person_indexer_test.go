@@ -13,12 +13,19 @@ import (
 	"github.com/vanng822/go-solr/solr"
 )
 
-func createPersonResource() models.Resource {
-	data := make(map[string][]rdf.Term)
-	name, _ := rdf.NewIRI("http://example.com/name1")
-	data[models.Predicates["vcard"]["hasName"]] = []rdf.Term{name}
+func createPersonResource() *models.Person {
+	data := make(map[string]rdf.Term)
+	fname, _ := rdf.NewLiteral("Christina")
+	lname, _ := rdf.NewLiteral("Harlow")
+	id, _ := rdf.NewIRI("http://example.com/record1")
+	person, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Person")
 
-	return models.NewResource("http://example.com/record1", data)
+	data["id"] = id
+	data["type"] = person
+	data["firstname"] = fname
+	data["lastname"] = lname
+
+	return models.NewResource(data).(*models.Person)
 }
 
 type MockResource struct {
@@ -77,45 +84,8 @@ func (f *MockedReader) QueryByIDAndPredicate(id string, predicate string) (*spar
 	return args.Get(0).(*sparql.Results), args.Error(1)
 }
 
-func (f *MockedReader) QueryThroughNode(id string, localPredicate string, localType string, remotePredicate string) (*sparql.Results, error) {
-	args := f.Called(id)
-	return args.Get(0).(*sparql.Results), nil
-}
-
 func TestPersonResourceWithName(t *testing.T) {
 	fakeSparql := new(MockedReader)
-	json := strings.NewReader(`{
-    "head": { "vars": [ "s" , "p", "o" ] } ,
-    "results": {
-      "bindings": [
-        {
-          "s": { "type": "uri" , "value": "http://example.com/name1" } ,
-          "p": { "type": "uri" , "value": "http://www.w3.org/2006/vcard/ns#given-name" } ,
-          "o": { "type": "literal" , "value": "Harry" }
-        },
-        {
-          "s": { "type": "uri" , "value": "http://example.com/name1" } ,
-          "p": { "type": "uri" , "value": "http://www.w3.org/2006/vcard/ns#family-name" } ,
-          "o": { "type": "literal" , "value": "Potter" }
-        }
-      ]
-    }
-  }`)
-	fakeSparql.On("QueryByID", "http://example.com/name1").
-		Return(sparql.ParseJSON(json))
-
-	departmentJSON := strings.NewReader(`{
-    "head": { "vars": [ "d" ] } ,
-    "results": {
-      "bindings": [
-        {
-          "d": { "type": "uri" , "value": "http://example.com/department1" }
-        }
-      ]
-    }
-  }`)
-	fakeSparql.On("QueryThroughNode", "http://example.com/record1").
-		Return(sparql.ParseJSON(departmentJSON))
 
 	institutionJSON := strings.NewReader(`{
 	    "head": { "vars": [ "o" ] } ,
@@ -134,63 +104,24 @@ func TestPersonResourceWithName(t *testing.T) {
 		Canonical: repository.NewService(fakeSparql),
 	}
 
-	resource := new(MockResource)
-	nameURI, _ := rdf.NewIRI("http://example.com/name1")
-	resource.On("ValueOf", "name").
-		Return([]rdf.Term{nameURI})
+	resource := &models.Person{Firstname: "Harry", Lastname: "Potter", URI: "http://example.com/record1"}
 
 	in := make(solr.Document)
-	in.Set("id", "http://example.com/record1")
 	doc := indexer.Index(resource, in)
 
 	assert.Equal(t, "Harry Potter", doc.Get("name_ssim"))
-	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
 }
 
-func TestPersonWithoutNameUriOrDepartment(t *testing.T) {
+func TestPersonWithoutDepartment(t *testing.T) {
 	fakeSparql := new(MockedReader)
-	json := strings.NewReader(`{}`)
-	fakeSparql.On("QueryByID", "http://example.com/name1").
-		Return(sparql.ParseJSON(json))
-
-	departmentJSON := strings.NewReader(`{}`)
-	fakeSparql.On("QueryThroughNode", "http://example.com/record1").
-		Return(sparql.ParseJSON(departmentJSON))
 
 	indexer := &PersonIndexer{
 		Canonical: repository.NewService(fakeSparql),
 	}
 
-	resource := new(MockResource)
-	resource.On("ValueOf", "name").
-		Return([]rdf.Term{})
+	resource := &models.Person{Firstname: "Hermione", Lastname: "Granger", URI: "http://example.com/record1"}
 	in := make(solr.Document)
-	in.Set("id", "http://example.com/record1")
 	doc := indexer.Index(resource, in)
 
-	assert.Equal(t, "", doc.Get("name_ssim"))
-	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
-}
-
-func TestPersonWhenNameIsNotFound(t *testing.T) {
-	fakeSparql := new(MockedReader)
-	json := strings.NewReader(`{}`)
-	fakeSparql.On("QueryByID", "http://example.com/name1").
-		Return(sparql.ParseJSON(json))
-
-	departmentJSON := strings.NewReader(`{}`)
-	fakeSparql.On("QueryThroughNode", "http://example.com/record1").
-		Return(sparql.ParseJSON(departmentJSON))
-
-	indexer := &PersonIndexer{
-		Canonical: repository.NewService(fakeSparql),
-	}
-
-	resource := createPersonResource()
-	in := make(solr.Document)
-	in.Set("id", "http://example.com/record1")
-	doc := indexer.Index(resource, in)
-
-	assert.Equal(t, "", doc.Get("name_ssim"))
-	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
+	assert.Equal(t, "Hermione Granger", doc.Get("name_ssim"))
 }

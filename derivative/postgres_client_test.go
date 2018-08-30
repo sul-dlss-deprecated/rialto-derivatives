@@ -25,42 +25,33 @@ func (f *MockRepository) AllResources(fun func([]models.Resource) error) error {
 	return nil
 }
 
-func (f *MockRepository) QueryForDepartment(subject string) (*string, error) {
-	return nil, nil
-}
-
 func (f *MockRepository) QueryForInstitution(subject string) (*string, error) {
 	return nil, nil
-}
-
-func makeName(subject string, given string, family string) models.Resource {
-	nameData := make(map[string][]rdf.Term)
-	fname, _ := rdf.NewLiteral("Barbara")
-	lname, _ := rdf.NewLiteral("Liskov")
-	nameData[models.Predicates["vcard"]["given-name"]] = []rdf.Term{fname}
-	nameData[models.Predicates["vcard"]["family-name"]] = []rdf.Term{lname}
-	return models.NewResource(subject, nameData)
 }
 
 func TestPostgresAddPerson(t *testing.T) {
 	conf := NewPostgresConfig().WithDbname("rialto_test").WithSSL(false)
 	repo := new(MockRepository)
 
-	nameID := "http://example.com/names/123"
-	repo.On("SubjectToResource", nameID).
-		Return(makeName(nameID, "Barbara", "Liskov"), nil)
-
 	client := NewPostgresClient(conf, repo)
 	client.RemoveAll()
 
-	data := make(map[string][]rdf.Term)
-	name, _ := rdf.NewIRI(nameID)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
+	resourceType, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Person")
+	student, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#Student")
+	fname, _ := rdf.NewLiteral("Barbara")
+	lname, _ := rdf.NewLiteral("Liskov")
 
-	data[models.Predicates["vcard"]["hasName"]] = []rdf.Term{name}
+	data["id"] = id
+	data["type"] = resourceType
+	data["subtype"] = student
+	data["firstname"] = fname
+	data["lastname"] = lname
 
-	resource := models.NewResource("http://example.com/record1", data)
+	resource := models.NewResource(data)
 
-	err := client.addPerson(resource)
+	err := client.addPerson(resource.(*models.Person))
 	assert.Nil(t, err)
 
 	person, err := client.retrieveOnePerson("http://example.com/record1")
@@ -78,15 +69,20 @@ func TestPostgresAddOrganization(t *testing.T) {
 	client := NewPostgresClient(conf, repo)
 	client.RemoveAll()
 
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
 	name, _ := rdf.NewLiteral("School of Engineering")
 	school, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#School")
-	data[models.Predicates["skos"]["prefLabel"]] = []rdf.Term{name}
-	data[models.Predicates["rdf"]["type"]] = []rdf.Term{school}
+	id, _ := rdf.NewIRI("http://example.com/record1")
+	resourceType, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Organization")
 
-	resource := models.NewResource("http://example.com/record1", data)
+	data["id"] = id
+	data["type"] = resourceType
+	data["name"] = name
+	data["subtype"] = school
 
-	err := client.addOrganization(resource)
+	resource := models.NewResource(data)
+
+	err := client.addOrganization(resource.(*models.Organization))
 	assert.Nil(t, err)
 
 	org, err := client.retrieveOneOrganization("http://example.com/record1")

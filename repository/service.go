@@ -1,6 +1,9 @@
 package repository
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/knakk/rdf"
 	"github.com/knakk/sparql"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
@@ -10,7 +13,6 @@ import (
 type Repository interface {
 	SubjectToResource(subject string) (models.Resource, error)
 	AllResources(func([]models.Resource) error) error
-	QueryForDepartment(subject string) (*string, error)
 	QueryForInstitution(subject string) (*string, error)
 }
 
@@ -27,43 +29,18 @@ func NewService(reader Reader) Repository {
 // SubjectToResource takes a subject string and returns a resource
 func (m *Service) SubjectToResource(subject string) (models.Resource, error) {
 	response, err := m.reader.QueryByID(subject)
-	if err != nil {
-		return nil, err
-	}
-
-	data := map[string][]rdf.Term{}
-	for _, triple := range response.Solutions() {
-		predicate := triple["p"].String()
-		object := triple["o"]
-
-		if data[predicate] == nil {
-			// First time we encounter a predicate
-			data[predicate] = []rdf.Term{object}
-		} else {
-			// subsequent encounters
-			data[predicate] = append(data[predicate], object)
-		}
-	}
-	resource := models.NewResource(subject, data)
-	return resource, nil
-}
-
-// QueryForDepartment returns the deparment URI for the given Person resource
-func (m *Service) QueryForDepartment(subject string) (*string, error) {
-	response, err := m.reader.QueryThroughNode(subject,
-		models.Predicates["vivo"]["relatedBy"],
-		models.Predicates["vivo"]["Position"],
-		models.Predicates["vivo"]["relates"])
 
 	if err != nil {
 		return nil, err
 	}
 
-	var predicate string
-	for _, triple := range response.Solutions() {
-		predicate = triple["d"].String()
+	log.Printf("Solutions: %v", response.Solutions())
+	list := m.toResourceList(response.Solutions())
+	if len(list) == 0 {
+		return nil, fmt.Errorf("Record not found: %s", subject)
 	}
-	return &predicate, nil
+
+	return list[0], nil
 }
 
 // QueryForInstitution returns the institution URI for the given department resource
@@ -87,40 +64,17 @@ func (m *Service) AllResources(f func([]models.Resource) error) error {
 		// Solutions look like this:
 		// [map[o:AA00 s:http://rialto.stanford.edu/stanford p:http://rialto.stanford.edu/vocab/organizationCodes]]
 		// log.Printf("Solutions %s", response.Solutions())
-		list := m.toResourceList(m.groupBySubject(response.Solutions()))
+		list := m.toResourceList(response.Solutions())
 		return f(list)
 	})
 	return err
 }
 
-func (m *Service) toResourceList(grouped map[string]map[string][]rdf.Term) []models.Resource {
+func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resource {
 	list := []models.Resource{}
-	for subject, predicates := range grouped {
-		list = append(list, models.NewResource(subject, predicates))
+	for _, solution := range solutions {
+
+		list = append(list, models.NewResource(solution))
 	}
 	return list
-}
-
-// Returns a map with subjects as keys and a map with predicates as values
-func (m *Service) groupBySubject(raw []map[string]rdf.Term) map[string]map[string][]rdf.Term {
-	result := map[string]map[string][]rdf.Term{}
-	for _, triple := range raw {
-		// Subjects and Predicates are always IRIs so it's safe to cast to String
-		subject := triple["s"].String()
-		predicate := triple["p"].String()
-		object := triple["o"]
-
-		if result[subject] == nil {
-			// The first time we encounter a subject
-			result[subject] = map[string][]rdf.Term{}
-		}
-		if result[subject][predicate] == nil {
-			// First time we encounter a predicate
-			result[subject][predicate] = []rdf.Term{object}
-		} else {
-			// subsequent encounters
-			result[subject][predicate] = append(result[subject][predicate], object)
-		}
-	}
-	return result
 }

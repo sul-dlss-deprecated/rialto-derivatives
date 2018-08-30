@@ -8,89 +8,100 @@ import (
 )
 
 func TestPublicationResource(t *testing.T) {
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
 	document, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
+	subtype, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Book")
 	title, _ := rdf.NewLiteral("Hello world!")
 
-	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[Predicates["dct"]["title"]] = []rdf.Term{title}
+	data["id"] = id
+	data["type"] = document
+	data["subtype"] = subtype
+	data["title"] = title
 
-	resource := NewResource("http://example.com/record1", data)
-
-	assert.Equal(t, "Hello world!", resource.ValueOf("title")[0].String())
-	assert.Equal(t, "http://purl.org/ontology/bibo/Document", resource.ValueOf("type")[0].String())
-	assert.True(t, resource.IsPublication())
-
+	resource := NewResource(data)
+	assert.IsType(t, &Publication{}, resource)
 }
 
 func TestPersonResource(t *testing.T) {
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
 	document, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Person")
-	name, _ := rdf.NewIRI("http://example.com/name1")
+	fname, _ := rdf.NewLiteral("Justin")
+	lname, _ := rdf.NewLiteral("Coyne")
+	student, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#Student")
 
-	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[Predicates["vcard"]["hasName"]] = []rdf.Term{name}
+	data["id"] = id
+	data["type"] = document
+	data["subtype"] = student
+	data["firstname"] = fname
+	data["lastname"] = lname
 
-	resource := NewResource("http://example.com/record1", data)
-
-	assert.Equal(t, "http://example.com/name1", resource.ValueOf("name")[0].String())
-	assert.Equal(t, "http://xmlns.com/foaf/0.1/Person", resource.ValueOf("type")[0].String())
-	assert.True(t, resource.IsPerson())
-
+	resource := NewResource(data)
+	assert.IsType(t, &Person{}, resource)
 }
 
 func TestOrganizationResource(t *testing.T) {
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record2")
 	document, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Organization")
+	subtype, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#Department")
+	abbreviation, _ := rdf.NewLiteral("FOO")
+	parent, _ := rdf.NewIRI("http://example.com/record1")
+
 	name, _ := rdf.NewLiteral("Cornell")
 
-	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[Predicates["skos"]["prefLabel"]] = []rdf.Term{name}
-	resource := NewResource("http://example.com/record1", data)
-
-	assert.Equal(t, "Cornell", resource.ValueOf("orgName")[0].String())
-	assert.Equal(t, "http://xmlns.com/foaf/0.1/Organization", resource.ValueOf("type")[0].String())
-	assert.True(t, resource.IsOrganization())
+	data["id"] = id
+	data["type"] = document
+	data["subtype"] = subtype
+	data["name"] = name
+	data["abbreviation"] = abbreviation
+	data["parent"] = parent
+	resource := NewResource(data)
+	assert.IsType(t, &Organization{}, resource)
 }
 
 func TestGrantResource(t *testing.T) {
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
 	document, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#Grant")
-	title, _ := rdf.NewLiteral("Hydra in a Box")
+	name, _ := rdf.NewLiteral("Hydra in a Box")
 
-	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[Predicates["skos"]["prefLabel"]] = []rdf.Term{title}
-	resource := NewResource("http://example.com/record1", data)
-
-	assert.Equal(t, "Hydra in a Box", resource.ValueOf("grantName")[0].String())
-	assert.Equal(t, "http://vivoweb.org/ontology/core#Grant", resource.ValueOf("type")[0].String())
-	assert.True(t, resource.IsGrant())
+	data["id"] = id
+	data["type"] = document
+	data["name"] = name
+	resource := NewResource(data)
+	assert.IsType(t, &Grant{}, resource)
 }
 
 func TestProjectResource(t *testing.T) {
-	data := make(map[string][]rdf.Term)
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
 	document, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Project")
 	title, _ := rdf.NewLiteral("Hydra in a Box")
+	alt, _ := rdf.NewLiteral("Hybox")
+	startdate, _ := rdf.NewLiteral("Oct 1st")
+	enddate, _ := rdf.NewLiteral("23rd century")
 
-	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[Predicates["skos"]["prefLabel"]] = []rdf.Term{title}
-	resource := NewResource("http://example.com/record1", data)
-
-	assert.Equal(t, "Hydra in a Box", resource.ValueOf("grantName")[0].String())
-	assert.Equal(t, "http://xmlns.com/foaf/0.1/Project", resource.ValueOf("type")[0].String())
-	assert.True(t, resource.IsProject())
+	data["id"] = id
+	data["type"] = document
+	data["title"] = title
+	data["alternativetitle"] = alt
+	data["startdate"] = startdate
+	data["enddate"] = enddate
+	resource := NewResource(data)
+	assert.IsType(t, &Project{}, resource)
 }
 
 func TestConceptResource(t *testing.T) {
-	data := make(map[string][]rdf.Term)
-	document, _ := rdf.NewIRI("http://www.w3.org/2004/02/skos/core#Concept")
-	title, _ := rdf.NewLiteral("Hydra in a Box")
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
+	document, _ := rdf.NewIRI("http://www.w3.org/2008/05/skos#Concept")
+	label, _ := rdf.NewLiteral("Hydra in a Box")
 
-	data[Predicates["rdf"]["type"]] = []rdf.Term{document}
-	data[Predicates["skos"]["prefLabel"]] = []rdf.Term{title}
-	resource := NewResource("http://example.com/record1", data)
-
-	assert.Equal(t, "Hydra in a Box", resource.ValueOf("grantName")[0].String())
-	assert.Equal(t, "http://www.w3.org/2004/02/skos/core#Concept", resource.ValueOf("type")[0].String())
-	assert.True(t, resource.IsConcept())
+	data["id"] = id
+	data["type"] = document
+	data["label"] = label
+	resource := NewResource(data)
+	assert.IsType(t, &Concept{}, resource)
 }
