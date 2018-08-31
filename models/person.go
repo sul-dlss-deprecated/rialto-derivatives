@@ -1,8 +1,6 @@
 package models
 
 import (
-	"log"
-
 	"github.com/knakk/rdf"
 )
 
@@ -21,8 +19,6 @@ func NewPerson(data map[string]rdf.Term) *Person {
 		URI:     data["id"].String(),
 		Subtype: data["subtype"].String(),
 	}
-	log.Printf("Creating person with %v", data)
-
 	if firstname := data["firstname"]; firstname != nil {
 		obj.Firstname = firstname.String()
 	}

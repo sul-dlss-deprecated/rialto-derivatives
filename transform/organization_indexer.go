@@ -13,6 +13,7 @@ type OrganizationIndexer struct {
 func (m *OrganizationIndexer) Index(resource *models.Organization, doc solr.Document) solr.Document {
 	doc.Set("type_ssi", "Organization")
 	doc.Set("organization_type_ssi", resource.Subtype)
+	// Organization names are typically parsable, so use _tesi
 	doc.Set("title_tesi", resource.Name)
 	doc.Set("abbreviation_ssim", resource.Abbreviation)
 	doc.Set("parent_ssim", resource.Parent)

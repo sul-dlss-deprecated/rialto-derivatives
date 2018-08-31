@@ -6,21 +6,26 @@ import "github.com/knakk/rdf"
 // If feasible, there should be a link to manifestations of that Work (i.e. DOI).
 type Publication struct {
 	URI     string
-	Subtype string
+	Subtype *string
 	Title   string
-	DOI     string
+	DOI     *string
 }
 
 // NewPublication instantiates a publication from sparql results
 func NewPublication(data map[string]rdf.Term) *Publication {
 	pub := &Publication{
-		URI:     data["id"].String(),
-		Subtype: data["subtype"].String(),
-		Title:   data["title"].String(),
+		URI:   data["id"].String(),
+		Title: data["title"].String(),
+	}
+
+	if subtype := data["subtype"]; subtype != nil {
+		subtypeStr := subtype.String()
+		pub.Subtype = &subtypeStr
 	}
 
 	if doi := data["doi"]; doi != nil {
-		pub.DOI = doi.String()
+		doiStr := doi.String()
+		pub.DOI = &doiStr
 	}
 	return pub
 }

@@ -13,7 +13,9 @@ type PublicationIndexer struct {
 func (m *PublicationIndexer) Index(resource *models.Publication, doc solr.Document) solr.Document {
 	doc.Set("type_ssi", "Publication")
 	doc.Set("title_tesi", resource.Title)
-	doc.Set("doi_ssim", resource.DOI)
+	if resource.DOI != nil {
+		doc.Set("doi_ssim", *resource.DOI)
+	}
 
 	// "abstract":         "abstract_tesim",
 	// "cites":            "cites_ssim",
