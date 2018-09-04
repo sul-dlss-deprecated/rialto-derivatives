@@ -5,10 +5,11 @@ import "github.com/knakk/rdf"
 // Publication is a representation of articles, research outputs, datasets, etc.
 // If feasible, there should be a link to manifestations of that Work (i.e. DOI).
 type Publication struct {
-	URI     string
-	Subtype *string
-	Title   string
-	DOI     *string
+	URI      string
+	Subtype  *string
+	Title    string
+	DOI      *string
+	Abstract *string
 }
 
 // NewPublication instantiates a publication from sparql results
@@ -26,6 +27,11 @@ func NewPublication(data map[string]rdf.Term) *Publication {
 	if doi := data["doi"]; doi != nil {
 		doiStr := doi.String()
 		pub.DOI = &doiStr
+	}
+
+	if abstract := data["abstract"]; abstract != nil {
+		abstractStr := abstract.String()
+		pub.Abstract = &abstractStr
 	}
 	return pub
 }
