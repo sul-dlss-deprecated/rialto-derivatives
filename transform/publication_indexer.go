@@ -17,9 +17,11 @@ func (m *PublicationIndexer) Index(resource *models.Publication, doc solr.Docume
 		doc.Set("doi_ssim", *resource.DOI)
 	}
 
-	// "abstract":         "abstract_tesim",
+	if resource.Abstract != nil {
+		doc.Set("abstract_tesim", *resource.Abstract)
+	}
+
 	// "cites":            "cites_ssim",
-	// "doi":              "doi_ssim",
 	// "identifier":       "identifier_ssim",
 	// "link":             "link_ssim",
 	// "description":      "description_tesim",
