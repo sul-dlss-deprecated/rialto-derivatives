@@ -30,3 +30,71 @@ jobs:
           command: sudo apt-get install postgresql-client
       - run: psql -h localhost -p 5432 rialto_test < database.dump
       - run: go test -v ./...
+      - run: GOOS=linux go build -o solr_derivative cmd/solr/main.go
+      - run: GOOS=linux go build -o postgres_derivative cmd/postgres/main.go
+
+  deploy:
+    docker:
+      - image: circleci/golang:latest
+    working_directory: /go/src/github.com/sul-dlss-labs/rialto-derivatives
+    steps:
+      - run:
+          name: Install AWS CLI
+          command: |
+            sudo apt-get install -y python-pip libyaml-dev python-dev jq
+            sudo pip install awscli
+      - checkout
+      - run: go get github.com/golang/dep/cmd/dep
+      - run: dep ensure
+      - run: GOOS=linux go build -o solr_derivative cmd/solr/main.go
+      - run: GOOS=linux go build -o postgres_derivative cmd/postgres/main.go
+      - run: zip lambda.zip solr_derivative
+      - run:
+          name: Update Lambda Function
+          command: |
+            mkdir ~/.aws
+            echo -e "[rialto]\naws_access_key_id=$CIRCLE_ACCESS_KEY_ID\naws_secret_access_key=$CIRCLE_SECRET_KEY\n" > ~/.aws/credentials
+            unset  AWS_SESSION_TOKEN
+            temp_role=$(aws sts assume-role \
+                  --role-session-name "DevelopersRole" \
+                  --role-arn $DEV_ROLE_ARN \
+                  --profile rialto)
+            export AWS_ACCESS_KEY_ID=$(echo $temp_role | jq .Credentials.AccessKeyId | xargs)
+            export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)
+            export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)
+            aws configure set region $AWS_REGION
+            aws configure set default.output json
+            aws configure list  # Get confirmation it worked in your logs
+            aws lambda update-function-code --function-name rialto-derivatives-solr-development --zip-file fileb://lambda.zip
+      - run: zip lambda.zip postgres_derivative
+      - run:
+          name: Update Lambda Function
+          command: |
+            mkdir ~/.aws
+            echo -e "[rialto]\naws_access_key_id=$CIRCLE_ACCESS_KEY_ID\naws_secret_access_key=$CIRCLE_SECRET_KEY\n" > ~/.aws/credentials
+            unset  AWS_SESSION_TOKEN
+            temp_role=$(aws sts assume-role \
+                  --role-session-name "DevelopersRole" \
+                  --role-arn $DEV_ROLE_ARN \
+                  --profile rialto)
+            export AWS_ACCESS_KEY_ID=$(echo $temp_role | jq .Credentials.AccessKeyId | xargs)
+            export AWS_SECRET_ACCESS_KEY=$(echo $temp_role | jq .Credentials.SecretAccessKey | xargs)
+            export AWS_SESSION_TOKEN=$(echo $temp_role | jq .Credentials.SessionToken | xargs)
+            aws configure set region $AWS_REGION
+            aws configure set default.output json
+            aws configure list  # Get confirmation it worked in your logs
+            aws lambda update-function-code --function-name rialto-derivatives-postgres-development --zip-file fileb://lambda.zip
+
+workflows:
+  version: 2
+  
+  deploy-dev:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: master
+      - deploy:
+          filters:
+            branches:
+              only: master
