@@ -82,3 +82,17 @@ jobs:
             aws configure set default.output json
             aws configure list  # Get confirmation it worked in your logs
             aws lambda update-function-code --function-name rialto-derivatives-postgres-development --zip-file fileb://lambda.zip
+
+workflows:
+  version: 2
+  
+  deploy-dev:
+    jobs:
+      - build:
+          filters:
+            branches:
+              ignore: master
+      - deploy:
+          filters:
+            branches:
+              only: master
