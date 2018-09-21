@@ -13,7 +13,7 @@ func TestConceptIndexerToDoc(t *testing.T) {
 	indexer := &ConceptIndexer{}
 	data := make(map[string]rdf.Term)
 	id, _ := rdf.NewIRI("http://example.com/record1")
-	document, _ := rdf.NewIRI("http://www.w3.org/2008/05/skos#Concept")
+	document, _ := rdf.NewIRI("http://www.w3.org/2004/02/skos/core#Concept")
 	label, _ := rdf.NewLiteral("animals")
 	data["id"] = id
 	data["type"] = document

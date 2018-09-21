@@ -100,13 +100,13 @@ func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...
 			WHERE {
 			  ?id a <http://xmlns.com/foaf/0.1/Organization> .
 				?id a ?type .
-				?id <http://www.w3.org/2008/05/skos#prefLabel>|<http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?name .
+				?id <http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?name .
 			  ?id a ?subtype .
 				%s
 			  FILTER ( ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Agent>))
 				FILTER ( ?type = <http://xmlns.com/foaf/0.1/Organization>)
 			  OPTIONAL {
-			    ?id <http://www.w3.org/2008/05/skos#altLabel> ?altLabel .
+			    ?id <http://www.w3.org/2004/02/skos/core#altLabel> ?altLabel .
 					?id <http://vivoweb.org/ontology/core#abbreviation> ?abbreviation .
 					?id <http://purl.obolibrary.org/obo/BFO_0000050> ?parent .
 			  }
@@ -122,7 +122,7 @@ func (r *SparqlReader) queryGrants(f func(*sparql.Results) error, ids ...string)
 			WHERE {
 			  ?id a <http://vivoweb.org/ontology/core#Grant> .
 				?id a ?type .
-			  ?id <http://www.w3.org/2008/05/skos#prefLabel>|<http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?name .
+			  ?id <http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?name .
 				%s
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)
@@ -142,9 +142,9 @@ func (r *SparqlReader) queryConcepts(f func(*sparql.Results) error, ids ...strin
 		func(offset int) string {
 			return fmt.Sprintf(`SELECT ?id ?type ?label
 			WHERE {
-			  ?id a <http://www.w3.org/2008/05/skos#Concept> .
+			  ?id a <http://www.w3.org/2004/02/skos/core#Concept> .
 				?id a ?type .
-			  ?id <http://www.w3.org/2008/05/skos#prefLabel>|<http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?label .
+			  ?id <http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?label .
 				%s
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)
@@ -222,7 +222,7 @@ func (r *SparqlReader) QueryByID(id string) (*sparql.Results, error) {
 func (r *SparqlReader) queryTypeForID(id string) (string, error) {
 	query := fmt.Sprintf(`SELECT ?type WHERE {
 		<%s> a ?type .
-		FILTER ( ?type IN (<http://xmlns.com/foaf/0.1/Organization>,<http://xmlns.com/foaf/0.1/Person>,<http://vivoweb.org/ontology/core#Grant>,<http://www.w3.org/2008/05/skos#Concept>,<http://purl.org/ontology/bibo/Document>,<http://xmlns.com/foaf/0.1/Project>))
+		FILTER ( ?type IN (<http://xmlns.com/foaf/0.1/Organization>,<http://xmlns.com/foaf/0.1/Person>,<http://vivoweb.org/ontology/core#Grant>,<http://www.w3.org/2004/02/skos/core#Concept>,<http://purl.org/ontology/bibo/Document>,<http://xmlns.com/foaf/0.1/Project>))
 	}
 	LIMIT 1`, id)
 	res, err := r.repo.Query(query)
@@ -246,7 +246,7 @@ func (r *SparqlReader) QueryByTypeAndID(doctype string, id string) (*sparql.Resu
 		r.queryPeople(copyToLocal, id)
 	case "http://vivoweb.org/ontology/core#Grant":
 		r.queryGrants(copyToLocal, id)
-	case "http://www.w3.org/2008/05/skos#Concept":
+	case "http://www.w3.org/2004/02/skos/core#Concept":
 		r.queryConcepts(copyToLocal, id)
 	case "http://purl.org/ontology/bibo/Document":
 		r.queryPublications(copyToLocal, id)

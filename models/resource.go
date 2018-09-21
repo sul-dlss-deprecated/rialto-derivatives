@@ -23,7 +23,7 @@ func NewResource(data map[string]rdf.Term) Resource {
 		return NewPerson(data)
 	case "http://vivoweb.org/ontology/core#Grant":
 		return NewGrant(data)
-	case "http://www.w3.org/2008/05/skos#Concept":
+	case "http://www.w3.org/2004/02/skos/core#Concept":
 		return NewConcept(data)
 	case "http://purl.org/ontology/bibo/Document":
 		return NewPublication(data)
