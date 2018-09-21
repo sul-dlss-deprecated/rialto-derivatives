@@ -8,5 +8,5 @@ import (
 type Reader interface {
 	QueryEverything(f func(*sparql.Results) error) error
 	QueryByID(id string) (*sparql.Results, error)
-	QueryByIDAndPredicate(id string, predcate string) (*sparql.Results, error)
+	GetOrganizationInfo(id *string) (*sparql.Results, error)
 }

@@ -37,10 +37,6 @@ func (f *MockedRepository) SubjectToResource(id string) (models.Resource, error)
 	return args.Get(0).(models.Resource), nil
 }
 
-func (f *MockedRepository) QueryForInstitution(id string) (*string, error) {
-	return nil, nil
-}
-
 func TestRebuildRepository(t *testing.T) {
 	msg := &message.Message{}
 	fakeWriter := new(MockedWriter)

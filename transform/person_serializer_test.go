@@ -1,10 +1,8 @@
 package transform
 
 import (
-	"strings"
 	"testing"
 
-	"github.com/knakk/sparql"
 	"github.com/stretchr/testify/assert"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
@@ -13,27 +11,17 @@ import (
 func TestSerializePersonResourceWithName(t *testing.T) {
 	fakeSparql := new(MockedReader)
 
-	institutionJSON := strings.NewReader(`{
-	    "head": { "vars": [ "o" ] } ,
-	    "results": {
-	      "bindings": [
-	        {
-	          "o": { "type": "uri" , "value": "http://example.com/institution1" }
-	        }
-	      ]
-	    }
-	  }`)
-	fakeSparql.On("QueryByIDAndPredicate", "http://example.com/department1").
-		Return(sparql.ParseJSON(institutionJSON))
-
+	// TODO Fix
 	indexer := NewPersonSerializer(repository.NewService(fakeSparql))
 
 	dept := "http://example.com/department1"
+	inst := "http://example.com/institution1"
 	resource := &models.Person{
-		Firstname:  "Harry",
-		Lastname:   "Potter",
-		URI:        "http://example.com/record1",
-		Department: &dept,
+		Firstname:      "Harry",
+		Lastname:       "Potter",
+		URI:            "http://example.com/record1",
+		DepartmentURI:  &dept,
+		InstitutionURI: &inst,
 	}
 
 	doc := indexer.Serialize(resource)

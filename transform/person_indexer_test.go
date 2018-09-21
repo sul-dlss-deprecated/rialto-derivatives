@@ -1,7 +1,6 @@
 package transform
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/knakk/rdf"
@@ -79,27 +78,14 @@ func (f *MockedReader) QueryByID(id string) (*sparql.Results, error) {
 	return args.Get(0).(*sparql.Results), args.Error(1)
 }
 
-func (f *MockedReader) QueryByIDAndPredicate(id string, predicate string) (*sparql.Results, error) {
-	args := f.Called(id)
-	return args.Get(0).(*sparql.Results), args.Error(1)
+func (f *MockedReader) GetOrganizationInfo(id *string) (*sparql.Results, error) {
+	return nil, nil
 }
 
 func TestPersonResourceWithName(t *testing.T) {
 	fakeSparql := new(MockedReader)
 
-	institutionJSON := strings.NewReader(`{
-	    "head": { "vars": [ "o" ] } ,
-	    "results": {
-	      "bindings": [
-	        {
-	          "o": { "type": "uri" , "value": "http://example.com/institution1" }
-	        }
-	      ]
-	    }
-	  }`)
-	fakeSparql.On("QueryByIDAndPredicate", "http://example.com/department1").
-		Return(sparql.ParseJSON(institutionJSON))
-
+	// TODO Fix
 	indexer := &PersonIndexer{
 		Canonical: repository.NewService(fakeSparql),
 	}

@@ -28,8 +28,13 @@ func (m *PersonIndexer) Index(resource *models.Person, doc solr.Document) solr.D
 	doc.Set("name_ssim", m.retrieveAssociatedName(resource))
 
 	// 2. department
-	doc.Set("department_ssim", resource.Department)
-	// TODO 3. institution
+	doc.Set("department_label_ssim", resource.DepartmentLabel)
+
+	// 3. school
+	doc.Set("school_label_ssim", resource.SchoolLabel)
+
+	// 4. institution
+	doc.Set("institution_label_ssim", resource.InstitutionLabel)
 
 	return doc
 }
