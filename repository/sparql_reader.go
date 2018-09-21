@@ -83,6 +83,8 @@ func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string)
 					?id <http://www.w3.org/2006/vcard/ns#hasName> ?n .
 					?n <http://www.w3.org/2006/vcard/ns#given-name> ?firstname .
 					?n <http://www.w3.org/2006/vcard/ns#family-name> ?lastname .
+				}
+				OPTIONAL {
 					?id <http://vivoweb.org/ontology/core#relatedBy> ?pos .
 					?pos a <http://vivoweb.org/ontology/core#Position> .
 					?pos <http://vivoweb.org/ontology/core#relates> ?department .
