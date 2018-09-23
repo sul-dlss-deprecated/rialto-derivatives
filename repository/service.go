@@ -13,7 +13,6 @@ import (
 type Repository interface {
 	SubjectToResource(subject string) (models.Resource, error)
 	AllResources(func([]models.Resource) error) error
-	QueryForInstitution(subject string) (*string, error)
 }
 
 // Service is the Neptune implementation of the repository
@@ -43,21 +42,6 @@ func (m *Service) SubjectToResource(subject string) (models.Resource, error) {
 	return list[0], nil
 }
 
-// QueryForInstitution returns the institution URI for the given department resource
-func (m *Service) QueryForInstitution(subject string) (*string, error) {
-	response, err := m.reader.QueryByIDAndPredicate(subject, models.Predicates["obo"]["BFO_0000050"])
-
-	if err != nil {
-		return nil, err
-	}
-
-	var predicate string
-	for _, triple := range response.Solutions() {
-		predicate = triple["o"].String()
-	}
-	return &predicate, nil
-}
-
 // AllResources returns a full list of resources
 func (m *Service) AllResources(f func([]models.Resource) error) error {
 	err := m.reader.QueryEverything(func(response *sparql.Results) error {
@@ -73,8 +57,16 @@ func (m *Service) AllResources(f func([]models.Resource) error) error {
 func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resource {
 	list := []models.Resource{}
 	for _, solution := range solutions {
-
-		list = append(list, models.NewResource(solution))
+		resource := models.NewResource(solution)
+		if v, ok := resource.(models.Person); ok {
+			// People also need to be informed of their organization membership.
+			results, err := m.reader.GetOrganizationInfo(v.Organization)
+			if err != nil {
+				panic(err)
+			}
+			v.SetOrganizationInfo(results)
+		}
+		list = append(list, resource)
 	}
 	return list
 }

@@ -25,10 +25,6 @@ func (f *MockRepository) AllResources(fun func([]models.Resource) error) error {
 	return nil
 }
 
-func (f *MockRepository) QueryForInstitution(subject string) (*string, error) {
-	return nil, nil
-}
-
 func TestPostgresAddPerson(t *testing.T) {
 	conf := NewPostgresConfig().WithDbname("rialto_test").WithSSL(false)
 	repo := new(MockRepository)

@@ -3,7 +3,6 @@ package transform
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
@@ -34,8 +33,9 @@ func NewPersonSerializer(repo repository.Repository) *PersonSerializer {
 func (m *PersonSerializer) Serialize(resource *models.Person) string {
 	p := &person{
 		Name:        m.retrieveAssociatedName(resource),
-		Department:  resource.Department,
-		Institution: m.retrieveInstitutionURI(resource.Department)}
+		Department:  resource.DepartmentURI,
+		Institution: resource.InstitutionURI,
+	}
 
 	b, err := json.Marshal(p)
 	if err != nil {
@@ -49,18 +49,4 @@ func (m *PersonSerializer) retrieveAssociatedName(resource *models.Person) strin
 	givenName := resource.Firstname
 	familyName := resource.Lastname
 	return fmt.Sprintf("%v %v", givenName, familyName)
-}
-
-func (m *PersonSerializer) retrieveInstitutionURI(departmentURI *string) *string {
-	if departmentURI == nil {
-		return nil
-	}
-	uri, err := m.repo.QueryForInstitution(*departmentURI)
-	if err != nil {
-		panic(err)
-	}
-	if uri == nil {
-		log.Printf("No institution URI found for %s", *departmentURI)
-	}
-	return uri
 }

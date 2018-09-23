@@ -47,6 +47,8 @@ func (r *SparqlReader) QueryEverything(f func(*sparql.Results) error) error {
 	return r.queryPublications(f)
 }
 
+// Calls sparqlForOffset once for each page to generate the query
+// Calls f() on each page of results
 func (r *SparqlReader) queryPage(sparqlForOffset func(offset int) string, f func(*sparql.Results) error) error {
 	page := 0
 	for {
@@ -71,7 +73,7 @@ func (r *SparqlReader) queryPage(sparqlForOffset func(offset int) string, f func
 func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
-			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?firstname ?lastname ?department
+			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?firstname ?lastname ?org
 			WHERE {
 				?id a ?type .
 				?id a <http://xmlns.com/foaf/0.1/Person> .
@@ -87,12 +89,27 @@ func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string)
 				OPTIONAL {
 					?id <http://vivoweb.org/ontology/core#relatedBy> ?pos .
 					?pos a <http://vivoweb.org/ontology/core#Position> .
-					?pos <http://vivoweb.org/ontology/core#relates> ?department .
-					?department a <http://xmlns.com/foaf/0.1/Organization> .
+					?pos <http://vivoweb.org/ontology/core#relates> ?org .
+					?org a <http://xmlns.com/foaf/0.1/Organization> .
 				}
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)
 		}, f)
+}
+
+// GetOrganizationInfo retrieves a hierarchical list of organizations the give organization subject is part of
+func (r *SparqlReader) GetOrganizationInfo(org *string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`SELECT ?org ?type ?name
+  						 WHERE {
+				FILTER ( ?id = <%s> )
+			 	FILTER ( ?type NOT IN (<http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Agent>))
+
+        ?id <http://purl.obolibrary.org/obo/BFO_0000050>* ?org .
+        ?org <http://www.w3.org/2004/02/skos/core#prefLabel> ?name .
+        ?org a ?type .
+			}
+			ORDER BY ?org OFFSET 0 LIMIT 100`, *org)
+	return r.repo.Query(query)
 }
 
 func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...string) error {
@@ -258,11 +275,4 @@ func (r *SparqlReader) QueryByTypeAndID(doctype string, id string) (*sparql.Resu
 		return nil, fmt.Errorf("No type for %v", id)
 	}
 	return retval, nil
-}
-
-// QueryByIDAndPredicate returns the list of objects that match the given subject, predicate tuple
-func (r *SparqlReader) QueryByIDAndPredicate(id string, predicate string) (*sparql.Results, error) {
-	query := fmt.Sprintf(`select ?o where
-		{ <%s> <%s> ?o . } limit 10`, id, predicate)
-	return r.repo.Query(query)
 }
