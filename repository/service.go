@@ -58,7 +58,7 @@ func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resou
 	list := []models.Resource{}
 	for _, solution := range solutions {
 		resource := models.NewResource(solution)
-		if v, ok := resource.(*models.Person); ok {
+		if v, ok := resource.(*models.Person); ok && v.Organization != nil {
 			// People also need to be informed of their organization membership.
 			results, err := m.reader.GetOrganizationInfo(v.Organization)
 			if err != nil {
