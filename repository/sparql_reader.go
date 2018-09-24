@@ -19,7 +19,7 @@ type SparqlReader struct {
 // NewSparqlReader creates a new instance of the sparqlReader for the provided endpoint
 func NewSparqlReader(url string) *SparqlReader {
 	repo, err := sparql.NewRepo(url,
-		sparql.Timeout(time.Second*20),
+		sparql.Timeout(time.Second*60),
 	)
 	if err != nil {
 		log.Fatal(err)
