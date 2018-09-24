@@ -95,7 +95,7 @@ func TestPersonResourceWithName(t *testing.T) {
 	in := make(solr.Document)
 	doc := indexer.Index(resource, in)
 
-	assert.Equal(t, "Harry Potter", doc.Get("name_ssim"))
+	assert.Equal(t, "Harry Potter", doc.Get("name_tsim"))
 }
 
 func TestPersonWithoutDepartment(t *testing.T) {
@@ -109,5 +109,5 @@ func TestPersonWithoutDepartment(t *testing.T) {
 	in := make(solr.Document)
 	doc := indexer.Index(resource, in)
 
-	assert.Equal(t, "Hermione Granger", doc.Get("name_ssim"))
+	assert.Equal(t, "Hermione Granger", doc.Get("name_tsim"))
 }
