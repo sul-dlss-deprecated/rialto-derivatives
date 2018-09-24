@@ -8,7 +8,10 @@ import (
 	"github.com/knakk/sparql"
 )
 
-const tripleLimit = 100000
+// Number of records to pull per requst.  If this is too large, then the SPARQL proxy
+// lambda will hit a 6mb limit. See: https://github.com/sul-dlss-labs/sparql-loader/issues/44
+// When this was set to anything over 10000, it failed.
+const tripleLimit = 9000
 const idVariable = "?id"
 
 // SparqlReader represents the functions we do on the triplestore
