@@ -34,7 +34,7 @@ func TestNewPersonAllFields(t *testing.T) {
 	data["subtype"] = faculty
 	data["lastname"] = lname
 	data["firstname"] = fname
-	data["organization"] = organization
+	data["org"] = organization
 
 	resource := NewPerson(data)
 	assert.IsType(t, &Person{}, resource)
@@ -53,7 +53,7 @@ func TestSetOrganizationInfo(t *testing.T) {
 
 	data["id"] = id
 	data["subtype"] = faculty
-	data["organization"] = organization
+	data["org"] = organization
 
 	resource := NewPerson(data)
 

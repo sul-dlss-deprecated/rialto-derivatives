@@ -34,7 +34,7 @@ func NewPerson(data map[string]rdf.Term) *Person {
 		obj.Lastname = lastname.String()
 	}
 
-	if organization := data["organization"]; organization != nil {
+	if organization := data["org"]; organization != nil {
 		str := organization.String()
 		obj.Organization = &str
 	}
