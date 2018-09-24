@@ -25,7 +25,7 @@ func (m *PersonIndexer) Index(resource *models.Person, doc solr.Document) solr.D
 	doc.Set("type_ssi", "Person")
 
 	// 1. Get the associated name resource
-	doc.Set("name_ssim", m.retrieveAssociatedName(resource))
+	doc.Set("name_tsim", m.retrieveAssociatedName(resource))
 
 	// 2. department
 	doc.Set("department_label_ssim", resource.DepartmentLabel)
