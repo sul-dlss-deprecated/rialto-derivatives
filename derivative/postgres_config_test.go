@@ -15,7 +15,7 @@ func TestPostgresConfig(t *testing.T) {
 		WithUser("rialto").
 		WithPassword("seckret")
 
-	assert.Equal(t, conf.toConnString(), "user=rialto host=123.45.67.89 port=5479 dbname=my_instance password=seckret ")
+	assert.Equal(t, conf.ToConnString(), "user=rialto host=123.45.67.89 port=5479 dbname=my_instance password=seckret ")
 }
 
 func TestPostgresConfigWithSSLDisabled(t *testing.T) {
@@ -23,5 +23,5 @@ func TestPostgresConfigWithSSLDisabled(t *testing.T) {
 		WithSSL(false).
 		WithDbname("my_instance")
 
-	assert.Equal(t, conf.toConnString(), "dbname=my_instance sslmode=disable")
+	assert.Equal(t, conf.ToConnString(), "dbname=my_instance sslmode=disable")
 }

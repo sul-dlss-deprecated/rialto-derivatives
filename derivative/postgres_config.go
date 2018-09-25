@@ -17,7 +17,8 @@ func NewPostgresConfig() *PostgresConfig {
 	return &PostgresConfig{SSL: true}
 }
 
-func (c *PostgresConfig) toConnString() string {
+// ToConnString casts the config to a connection string
+func (c *PostgresConfig) ToConnString() string {
 	var b bytes.Buffer
 	if c.User != nil {
 		b.WriteString("user=")

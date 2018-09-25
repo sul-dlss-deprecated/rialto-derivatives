@@ -21,7 +21,7 @@ type PostgresClient struct {
 
 // NewPostgresClient returns a new PostgresClient instance
 func NewPostgresClient(config *PostgresConfig, repo repository.Repository) *PostgresClient {
-	db, err := sql.Open("postgres", config.toConnString())
+	db, err := sql.Open("postgres", config.ToConnString())
 	if err != nil {
 		log.Fatal(err)
 	}
