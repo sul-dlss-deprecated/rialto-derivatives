@@ -15,12 +15,3 @@ func TestTouchAction(t *testing.T) {
 
 	assert.IsType(t, &TouchAction{}, action)
 }
-
-func TestRebuildAction(t *testing.T) {
-	msg := &message.Message{
-		Action: "rebuild",
-	}
-	action := DispatchMessage(msg, nil)
-
-	assert.IsType(t, &RebuildAction{}, action)
-}
