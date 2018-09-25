@@ -14,7 +14,7 @@ import (
 
 // PostgresClient represents the functions on the Postgres derivative tables
 type PostgresClient struct {
-	db                     *sql.DB
+	DB                     *sql.DB
 	personSerializer       *transform.PersonSerializer
 	organizationSerializer *transform.OrganizationSerializer
 }
@@ -26,7 +26,7 @@ func NewPostgresClient(config *PostgresConfig, repo repository.Repository) *Post
 		log.Fatal(err)
 	}
 	return &PostgresClient{
-		db:                     db,
+		DB:                     db,
 		personSerializer:       transform.NewPersonSerializer(repo),
 		organizationSerializer: &transform.OrganizationSerializer{},
 	}
@@ -34,19 +34,19 @@ func NewPostgresClient(config *PostgresConfig, repo repository.Repository) *Post
 
 // RemoveAll clears the index of all the data
 func (d *PostgresClient) RemoveAll() error {
-	_, err := d.db.Exec(`TRUNCATE TABLE people_publications`)
+	_, err := d.DB.Exec(`TRUNCATE TABLE people_publications`)
 	if err != nil {
 		return err
 	}
-	_, err = d.db.Exec(`TRUNCATE TABLE people`)
+	_, err = d.DB.Exec(`TRUNCATE TABLE people`)
 	if err != nil {
 		return err
 	}
-	_, err = d.db.Exec(`TRUNCATE TABLE publications`)
+	_, err = d.DB.Exec(`TRUNCATE TABLE publications`)
 	if err != nil {
 		return err
 	}
-	_, err = d.db.Exec(`TRUNCATE TABLE organizations`)
+	_, err = d.DB.Exec(`TRUNCATE TABLE organizations`)
 	return err
 }
 
@@ -81,7 +81,7 @@ func (d *PostgresClient) retrieveOneOrganization(subject string) (string, error)
 
 func (d *PostgresClient) retrieveOneRecord(table string, subject string) (string, error) {
 	query := fmt.Sprintf("SELECT metadata FROM %v WHERE uri = $1", table)
-	rows, err := d.db.Query(query, subject)
+	rows, err := d.DB.Query(query, subject)
 	if err != nil {
 		return "", err
 	}
@@ -102,6 +102,6 @@ func (d *PostgresClient) addOrganization(resource *models.Organization) error {
 
 func (d *PostgresClient) addResource(table string, subject string, data string) error {
 	sql := fmt.Sprintf(`INSERT INTO "%v" ("uri", "metadata", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"`, table)
-	_, err := d.db.Exec(sql, subject, data, time.Now(), time.Now())
+	_, err := d.DB.Exec(sql, subject, data, time.Now(), time.Now())
 	return err
 }
