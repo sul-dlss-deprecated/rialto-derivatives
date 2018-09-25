@@ -16,7 +16,11 @@ const idVariable = "?id"
 
 // SparqlReader represents the functions we do on the triplestore
 type SparqlReader struct {
-	repo *sparql.Repo
+	repo SparqlRepository
+}
+
+type SparqlRepository interface {
+	Query(q string) (*sparql.Results, error)
 }
 
 // NewSparqlReader creates a new instance of the sparqlReader for the provided endpoint
@@ -251,7 +255,12 @@ func (r *SparqlReader) queryTypeForID(id string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return res.Solutions()[0]["type"].String(), nil
+	solutions := res.Solutions()
+	if len(solutions) < 1 {
+		log.Printf("No type found for %s", id)
+		return "", err
+	}
+	return solutions[0]["type"].String(), nil
 }
 
 // QueryByTypeAndID issues the query for the provided type with the given ID
