@@ -207,6 +207,7 @@ func (r *SparqlReader) queryPublications(f func(*sparql.Results) error, ids ...s
 				?id a ?type .
 			  ?id <http://purl.org/dc/terms/title> ?title .
 				%s
+				FILTER ( ?type = <http://purl.org/ontology/bibo/Document>)
 				OPTIONAL {
 					?id a ?subtype .
 					FILTER ( ?subtype != <http://purl.org/ontology/bibo/Document> )
