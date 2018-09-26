@@ -73,9 +73,9 @@ func (f *MockedReader) QueryEverything(fun func(*sparql.Results) error) error {
 	return nil
 }
 
-func (f *MockedReader) QueryByID(id string) (*sparql.Results, error) {
-	args := f.Called(id)
-	return args.Get(0).(*sparql.Results), args.Error(1)
+func (f *MockedReader) QueryByIDs(ids []string) ([]*sparql.Results, error) {
+	args := f.Called(ids)
+	return args.Get(0).([]*sparql.Results), args.Error(1)
 }
 
 func (f *MockedReader) GetOrganizationInfo(id *string) (*sparql.Results, error) {

@@ -32,15 +32,15 @@ func (f *MockedRepository) AllResources(fun func([]models.Resource) error) error
 	return nil
 }
 
-func (f *MockedRepository) SubjectToResource(id string) (models.Resource, error) {
-	args := f.Called(id)
-	return args.Get(0).(models.Resource), nil
+func (f *MockedRepository) SubjectsToResources(ids []string) ([]models.Resource, error) {
+	args := f.Called(ids)
+	return args.Get(0).([]models.Resource), nil
 }
 
 func TestRecordToResourceList(t *testing.T) {
 	repo := new(MockedRepository)
-	repo.On("SubjectToResource", "http://example.com/record2").
-		Return(&models.Person{URI: "http://example.com/record2"})
+	repo.On("SubjectsToResources", []string{"http://example.com/record2"}).
+		Return([]models.Resource{&models.Person{URI: "http://example.com/record2"}})
 	reg := &runtime.Registry{
 		Canonical: repo,
 	}

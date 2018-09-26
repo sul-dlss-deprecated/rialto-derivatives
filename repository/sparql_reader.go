@@ -236,13 +236,21 @@ func (r *SparqlReader) queryProjects(f func(*sparql.Results) error, ids ...strin
 }
 
 // QueryByID returns all triples that match the subject the datastore
-func (r *SparqlReader) QueryByID(id string) (*sparql.Results, error) {
-	// First step is to find out what type this object has:
-	doctype, err := r.queryTypeForID(id)
-	if err != nil {
-		return nil, err
+func (r *SparqlReader) QueryByIDs(ids []string) ([]*sparql.Results, error) {
+	results := []*sparql.Results{}
+	for _, id := range ids {
+		// First step is to find out what type this object has:
+		doctype, err := r.queryTypeForID(id)
+		if err != nil {
+			return nil, err
+		}
+		result, err := r.QueryByTypeAndID(doctype, id)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, result)
 	}
-	return r.QueryByTypeAndID(doctype, id)
+	return results, nil
 }
 
 func (r *SparqlReader) queryTypeForID(id string) (string, error) {

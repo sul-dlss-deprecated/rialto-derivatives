@@ -11,7 +11,7 @@ import (
 
 // Repository is an interface that rialto-derivatives reads from as its source
 type Repository interface {
-	SubjectToResource(subject string) (models.Resource, error)
+	SubjectsToResources(subjects []string) ([]models.Resource, error)
 	AllResources(func([]models.Resource) error) error
 }
 
@@ -25,21 +25,23 @@ func NewService(reader Reader) Repository {
 	return &Service{reader: reader}
 }
 
-// SubjectToResource takes a subject string and returns a resource
-func (m *Service) SubjectToResource(subject string) (models.Resource, error) {
-	response, err := m.reader.QueryByID(subject)
-
+// SubjectsToResources takes a subject string and returns a resource
+func (m *Service) SubjectsToResources(subjects []string) ([]models.Resource, error) {
+	responseSet, err := m.reader.QueryByIDs(subjects)
+	results := []models.Resource{}
 	if err != nil {
 		return nil, err
 	}
-
-	log.Printf("Solutions: %v", response.Solutions())
-	list := m.toResourceList(response.Solutions())
-	if len(list) == 0 {
-		return nil, fmt.Errorf("Record not found: %s", subject)
+	for n, response := range responseSet {
+		log.Printf("Solutions: %v", response.Solutions())
+		list := m.toResourceList(response.Solutions())
+		if len(list) == 0 {
+			return nil, fmt.Errorf("Record not found: %s", subjects[n])
+		}
+		results = append(results, list[0])
 	}
 
-	return list[0], nil
+	return results, nil
 }
 
 // AllResources returns a full list of resources
