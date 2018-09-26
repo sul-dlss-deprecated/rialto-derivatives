@@ -61,7 +61,7 @@ func (r *SparqlReader) queryPage(sparqlForOffset func(offset int) string, f func
 	for {
 		offset := page * tripleLimit
 		query := sparqlForOffset(offset)
-		log.Printf("[SPARQL] %s", query)
+		// log.Printf("[SPARQL] %s", query)
 		results, err := r.repo.Query(query)
 		if err != nil {
 			return err
