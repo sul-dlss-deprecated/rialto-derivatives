@@ -16,9 +16,9 @@ type MockRepository struct {
 	mock.Mock
 }
 
-func (f *MockRepository) SubjectToResource(id string) (models.Resource, error) {
-	args := f.Called(id)
-	return args.Get(0).(models.Resource), args.Error(1)
+func (f *MockRepository) SubjectsToResources(ids []string) ([]models.Resource, error) {
+	args := f.Called(ids)
+	return args.Get(0).([]models.Resource), args.Error(1)
 }
 
 func (f *MockRepository) AllResources(fun func([]models.Resource) error) error {
