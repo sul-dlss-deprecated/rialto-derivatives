@@ -245,6 +245,10 @@ func (r *SparqlReader) QueryByIDs(ids []string) ([]*sparql.Results, error) {
 		if err != nil {
 			return nil, err
 		}
+		if doctype == "" {
+			// No registered type was found
+			continue
+		}
 		result, err := r.QueryByTypeAndID(doctype, id)
 		if err != nil {
 			return nil, err
@@ -293,7 +297,7 @@ func (r *SparqlReader) QueryByTypeAndID(doctype string, id string) (*sparql.Resu
 	case "http://xmlns.com/foaf/0.1/Project":
 		r.queryProjects(copyToLocal, id)
 	default:
-		return nil, fmt.Errorf("No type for %v", id)
+		return nil, fmt.Errorf("No registered type '%s' (%v)", doctype, id)
 	}
 	return retval, nil
 }
