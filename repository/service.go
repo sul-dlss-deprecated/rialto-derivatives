@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/knakk/rdf"
 	"github.com/knakk/sparql"
@@ -33,7 +32,6 @@ func (m *Service) SubjectsToResources(subjects []string) ([]models.Resource, err
 		return nil, err
 	}
 	for n, response := range responseSet {
-		log.Printf("Solutions: %v", response.Solutions())
 		list := m.toResourceList(response.Solutions())
 		if len(list) == 0 {
 			return nil, fmt.Errorf("Record not found: %s", subjects[n])

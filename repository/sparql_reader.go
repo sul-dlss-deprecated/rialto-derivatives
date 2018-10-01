@@ -236,7 +236,10 @@ func (r *SparqlReader) queryProjects(f func(*sparql.Results) error, ids ...strin
 		}, f)
 }
 
-// QueryByID returns all triples that match the subject the datastore
+// QueryByIDs returns a list of SPARQL results for all the triples that match the
+// provided subjects the datastore. If there are no results for a particular subject,
+// then it will be removed from the list.  Therefore, the input list may be
+// longer than the output list.
 func (r *SparqlReader) QueryByIDs(ids []string) ([]*sparql.Results, error) {
 	results := []*sparql.Results{}
 	for _, id := range ids {
@@ -253,6 +256,12 @@ func (r *SparqlReader) QueryByIDs(ids []string) ([]*sparql.Results, error) {
 		if err != nil {
 			return nil, err
 		}
+		// If result is nil don't append it.
+		if result == nil {
+			log.Printf("No results found for %s and %s", doctype, id)
+			continue
+		}
+
 		results = append(results, result)
 	}
 	return results, nil
