@@ -16,12 +16,16 @@ func TestResourceToDoc(t *testing.T) {
 	id, _ := rdf.NewIRI("http://example.com/record1")
 	document, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
 	book, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Book")
+	created, _ := rdf.NewLiteral("2004-06-11?")
+	identifier, _ := rdf.NewLiteral("1234567")
 
 	title, _ := rdf.NewLiteral("Hello world!")
 	data["id"] = id
 	data["type"] = document
 	data["title"] = title
 	data["subtype"] = book
+	data["created"] = created
+	data["identifier"] = identifier
 
 	resource := models.NewResource(data)
 	resourceList := []models.Resource{resource}

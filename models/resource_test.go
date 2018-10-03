@@ -13,11 +13,15 @@ func TestPublicationResource(t *testing.T) {
 	document, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
 	subtype, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Book")
 	title, _ := rdf.NewLiteral("Hello world!")
+	created, _ := rdf.NewLiteral("2004-06-11?")
+	identifier, _ := rdf.NewLiteral("1234567")
 
 	data["id"] = id
 	data["type"] = document
 	data["subtype"] = subtype
 	data["title"] = title
+	data["created"] = created
+	data["identifier"] = identifier
 
 	resource := NewResource(data)
 	assert.IsType(t, &Publication{}, resource)
