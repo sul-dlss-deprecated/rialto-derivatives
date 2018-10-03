@@ -104,7 +104,7 @@ func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string)
 		}, f)
 }
 
-// GetOrganizationInfo retrieves a hierarchical list of organizations the give organization subject is part of
+// GetOrganizationInfo retrieves a hierarchical list of organizations the given organization subject is part of
 func (r *SparqlReader) GetOrganizationInfo(org *string) (*sparql.Results, error) {
 	query := fmt.Sprintf(`SELECT ?org ?type ?name
   						 WHERE {
@@ -116,6 +116,19 @@ func (r *SparqlReader) GetOrganizationInfo(org *string) (*sparql.Results, error)
         ?org a ?type .
 			}
 			ORDER BY ?org OFFSET 0 LIMIT 100`, *org)
+	return r.repo.Query(query)
+}
+
+// GetAuthorInfo retrieves a list of authors the given publication subject is part of
+func (r *SparqlReader) GetAuthorInfo(publication string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`SELECT ?author ?author_label
+		 WHERE {
+				 <%s> <http://vivoweb.org/ontology/core#relatedBy> ?authorship .
+				 ?authorship a <http://vivoweb.org/ontology/core#Authorship> .
+				 ?authorship <http://vivoweb.org/ontology/core#relates> ?author .
+				 ?author <http://www.w3.org/2006/vcard/ns#fn> ?author_label .
+			}
+			ORDER BY ?org OFFSET 0 LIMIT 100`, publication)
 	return r.repo.Query(query)
 }
 
