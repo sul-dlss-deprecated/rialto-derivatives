@@ -8,12 +8,16 @@ import (
 // Publication is a representation of articles, research outputs, datasets, etc.
 // If feasible, there should be a link to manifestations of that Work (i.e. DOI).
 type Publication struct {
-	URI      string
-	Subtype  *string
-	Title    string
-	DOI      *string
-	Abstract *string
-	Authors  []*Author
+	URI         string
+	Subtype     *string
+	Title       string
+	DOI         *string
+	Abstract    *string
+	Identifier  string
+	Publisher   *string
+	Description *string
+	Created     string
+	Authors     []*Author
 }
 
 type Author struct {
@@ -24,9 +28,11 @@ type Author struct {
 // NewPublication instantiates a publication from sparql results
 func NewPublication(data map[string]rdf.Term) *Publication {
 	pub := &Publication{
-		URI:     data["id"].String(),
-		Title:   data["title"].String(),
-		Authors: []*Author{},
+		URI:        data["id"].String(),
+		Title:      data["title"].String(),
+		Authors:    []*Author{},
+		Created:    data["created"].String(),
+		Identifier: data["identifier"].String(),
 	}
 
 	if subtype := data["subtype"]; subtype != nil {
@@ -42,6 +48,16 @@ func NewPublication(data map[string]rdf.Term) *Publication {
 	if abstract := data["abstract"]; abstract != nil {
 		abstractStr := abstract.String()
 		pub.Abstract = &abstractStr
+	}
+
+	if publisher := data["publisher"]; publisher != nil {
+		publisherStr := publisher.String()
+		pub.Publisher = &publisherStr
+	}
+
+	if description := data["description"]; description != nil {
+		descriptionStr := description.String()
+		pub.Description = &descriptionStr
 	}
 	return pub
 }

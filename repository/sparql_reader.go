@@ -190,20 +190,13 @@ func (r *SparqlReader) queryConcepts(f func(*sparql.Results) error, ids ...strin
 		}, f)
 }
 
-// 	Publication resource types
-// 	"abstract":       Predicates["bibo"]["abstract"],
-// 	"doi":            Predicates["bibo"]["doi"],
+// 	Publication resource types yet to map:
 // 	"cites":          Predicates["bibo"]["cites"],
-// 	"identifier":     Predicates["bibo"]["identifier"],
 // 	"link":           Predicates["bibo"]["uri"],
-// 	"created":        Predicates["dct"]["created"],
 // 	"journalIssue":   Predicates["dct"]["hasPart"],
 // 	"subject":        Predicates["dct"]["subject"],
-// 	"title":          Predicates["dct"]["title"],
 // 	"alternateTitle": Predicates["dct"]["alternate"],
-// 	"description":    Predicates["vivo"]["description"],
 // 	"fundedBy":       Predicates["vivo"]["hasFundingVehicle"],
-// 	"publisher":      Predicates["vivo"]["publisher"],
 // 	"sponsor":        Predicates["vivo"]["informationResourceSupportedBy"],
 // 	"hasInstrument":  Predicates["gcis"]["hasInstrument"],
 // 	"sameAs":         Predicates["owl"]["sameAs"],
@@ -214,16 +207,31 @@ func (r *SparqlReader) queryConcepts(f func(*sparql.Results) error, ids ...strin
 func (r *SparqlReader) queryPublications(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
-			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?title
+			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?title ?abstract ?doi
+				?identifier ?publisher ?description ?created
 			WHERE {
 			  ?id a <http://purl.org/ontology/bibo/Document> .
 				?id a ?type .
 			  ?id <http://purl.org/dc/terms/title> ?title .
+				?id <http://purl.org/ontology/bibo/identifier> ?identifier .
+				?id <http://purl.org/dc/terms/created> ?created .
 				%s
 				FILTER ( ?type = <http://purl.org/ontology/bibo/Document>)
 				OPTIONAL {
 					?id a ?subtype .
 					FILTER ( ?subtype != <http://purl.org/ontology/bibo/Document> )
+				}
+				OPTIONAL {
+					?id <http://purl.org/ontology/bibo/abstract> ?abstract .
+				}
+				OPTIONAL {
+					?id <http://purl.org/ontology/bibo/doi> ?doi .
+				}
+				OPTIONAL {
+					?id <http://vivoweb.org/ontology/core#publisher> ?publisher .
+				}
+				OPTIONAL {
+					?id <http://vivoweb.org/ontology/core#description> ?description .
 				}
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)
