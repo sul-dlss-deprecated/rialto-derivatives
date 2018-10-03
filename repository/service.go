@@ -65,6 +65,13 @@ func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resou
 				panic(err)
 			}
 			v.SetOrganizationInfo(results)
+		} else if v, ok := resource.(*models.Publication); ok {
+			// Publications need to be informed of their authors.
+			results, err := m.reader.GetAuthorInfo(v.Subject())
+			if err != nil {
+				panic(err)
+			}
+			v.SetAuthorInfo(results)
 		}
 		list = append(list, resource)
 	}

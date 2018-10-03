@@ -12,21 +12,6 @@ import (
 	"github.com/vanng822/go-solr/solr"
 )
 
-func createPersonResource() *models.Person {
-	data := make(map[string]rdf.Term)
-	fname, _ := rdf.NewLiteral("Christina")
-	lname, _ := rdf.NewLiteral("Harlow")
-	id, _ := rdf.NewIRI("http://example.com/record1")
-	person, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Person")
-
-	data["id"] = id
-	data["type"] = person
-	data["firstname"] = fname
-	data["lastname"] = lname
-
-	return models.NewResource(data).(*models.Person)
-}
-
 type MockResource struct {
 	mock.Mock
 }
@@ -79,6 +64,10 @@ func (f *MockedReader) QueryByIDs(ids []string) ([]*sparql.Results, error) {
 }
 
 func (f *MockedReader) GetOrganizationInfo(id *string) (*sparql.Results, error) {
+	return nil, nil
+}
+
+func (f *MockedReader) GetAuthorInfo(id string) (*sparql.Results, error) {
 	return nil, nil
 }
 
