@@ -279,7 +279,11 @@ func (r *SparqlReader) QueryByIDs(ids []string) ([]*sparql.Results, error) {
 		}
 		// If result is nil don't append it.
 		if result == nil {
-			log.Printf("No results found for %s and %s", doctype, id)
+			// Non-Stanford Organizations aren't expected to have a more specific type.
+			// (e.g. Grant funders or Publishers)
+			if doctype != "http://xmlns.com/foaf/0.1/Organization" {
+				log.Printf("No results found for %s and %s", doctype, id)
+			}
 			continue
 		}
 
