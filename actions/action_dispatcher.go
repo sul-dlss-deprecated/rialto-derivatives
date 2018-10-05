@@ -13,6 +13,6 @@ func DispatchMessage(msg *message.Message, registry *runtime.Registry) Action {
 	case "touch":
 		return NewTouchAction(registry)
 	}
-	log.Panicf("Unknown action '%s'. Allowed actions: touch, rebuild.", msg.Action)
+	log.Panicf("Unknown action '%s'. Allowed actions: touch.", msg.Action)
 	return nil
 }
