@@ -53,7 +53,10 @@ func (d *PostgresClient) RemoveAll() error {
 // Add puts a bunch of documents in Solr
 func (d *PostgresClient) Add(resourceList []models.Resource) error {
 	for _, resource := range resourceList {
-		d.addOne(resource)
+		err := d.addOne(resource)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -61,14 +64,12 @@ func (d *PostgresClient) Add(resourceList []models.Resource) error {
 func (d *PostgresClient) addOne(resource models.Resource) error {
 	switch v := resource.(type) {
 	case *models.Person:
-		d.addPerson(v)
+		return d.addPerson(v)
 	case *models.Organization:
-		d.addOrganization(v)
+		return d.addOrganization(v)
 	default:
 		return fmt.Errorf("Unrecognized resource type: %v", resource)
 	}
-
-	return nil
 }
 
 func (d *PostgresClient) retrieveOnePerson(subject string) (string, error) {
