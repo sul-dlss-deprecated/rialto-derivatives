@@ -2,79 +2,108 @@
 
 
 [[projects]]
+  digest = "1:6c8d51660e50d38116fe8c29eefc00ce856300329993980f7ce7333a522a6a99"
   name = "github.com/aws/aws-lambda-go"
   packages = [
     "events",
     "lambda",
     "lambda/messages",
-    "lambdacontext"
+    "lambdacontext",
   ]
+  pruneopts = "UT"
   revision = "4d30d0ff60440c2d0480a15747c96ee71c3c53d4"
   version = "v1.2.0"
 
 [[projects]]
+  digest = "1:a2c1d0e43bd3baaa071d1b9ed72c27d78169b2b269f71c105ac4ba34b1be4a39"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
+  pruneopts = "UT"
   revision = "346938d642f2ec3594ed81d874461961cd0faa76"
   version = "v1.1.0"
 
 [[projects]]
   branch = "master"
+  digest = "1:df71a8e1aa331e103df66c276d9fa8bd58728d0f6d851117f99f4b357a853262"
   name = "github.com/knakk/digest"
   packages = ["."]
+  pruneopts = "UT"
   revision = "fd45becddc49e7c583e46de4af3b9b3b37e629e3"
 
 [[projects]]
   branch = "master"
+  digest = "1:54454d1714007685a7d8053c375c2f6c12a08beca0380bdb868de875437f133e"
   name = "github.com/knakk/rdf"
   packages = ["."]
+  pruneopts = "UT"
   revision = "b6ee24f8f40ff0580683aefb6831dad263a3f751"
 
 [[projects]]
   branch = "master"
+  digest = "1:e639e5fcdaa608b4e808e451c82803af7f74b36d9e6f29766ba9fd1da207923c"
   name = "github.com/knakk/sparql"
   packages = ["."]
+  pruneopts = "UT"
   revision = "3de19ad6a5dcee30dd5e101b47e3aedc7f69ef57"
 
 [[projects]]
   branch = "master"
+  digest = "1:37ce7d7d80531b227023331002c0d42b4b4b291a96798c82a049d03a54ba79e4"
   name = "github.com/lib/pq"
   packages = [
     ".",
-    "oid"
+    "oid",
   ]
+  pruneopts = "UT"
   revision = "90697d60dd844d5ef6ff15135d0203f65d2f53b8"
 
 [[projects]]
+  digest = "1:0028cb19b2e4c3112225cd871870f2d9cf49b9b4276531f03438a88e94be86fe"
   name = "github.com/pmezard/go-difflib"
   packages = ["difflib"]
+  pruneopts = "UT"
   revision = "792786c7400a136282c1664665ae0a8db921c6c2"
   version = "v1.0.0"
 
 [[projects]]
+  digest = "1:ac83cf90d08b63ad5f7e020ef480d319ae890c208f8524622a2f3136e2686b02"
   name = "github.com/stretchr/objx"
   packages = ["."]
+  pruneopts = "UT"
   revision = "477a77ecc69700c7cdeb1fa9e129548e1c1c393c"
   version = "v0.1.1"
 
 [[projects]]
+  digest = "1:15a4a7e5afac3cea801fa24831fce3bf3b5bd3620cbf8355a07b7dbf06877883"
   name = "github.com/stretchr/testify"
   packages = [
     "assert",
-    "mock"
+    "mock",
   ]
+  pruneopts = "UT"
   revision = "f35b8ab0b5a2cef36673838d662e249dd9c94686"
   version = "v1.2.2"
 
 [[projects]]
+  digest = "1:bd47272b91ae389bc63993534f459740a116361ae427a33c6020490631b8132e"
   name = "github.com/vanng822/go-solr"
   packages = ["solr"]
+  pruneopts = "UT"
   revision = "1bb020926a25e5470a9b7c61ba6f38cd92e83283"
   version = "v0.5"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "f770283f3ba09d84f5d7c9d40637fe87957c98d36330a7829e1717f75b113a21"
+  input-imports = [
+    "github.com/aws/aws-lambda-go/events",
+    "github.com/aws/aws-lambda-go/lambda",
+    "github.com/knakk/rdf",
+    "github.com/knakk/sparql",
+    "github.com/lib/pq",
+    "github.com/stretchr/testify/assert",
+    "github.com/stretchr/testify/mock",
+    "github.com/vanng822/go-solr/solr",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1

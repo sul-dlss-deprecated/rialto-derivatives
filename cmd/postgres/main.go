@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -20,7 +21,6 @@ import (
 func Handler(ctx context.Context, snsEvent events.SNSEvent) {
 	repo := repository.BuildRepository()
 	registry := runtime.NewRegistry(repo, buildDatabase(repo))
-
 	for _, record := range snsEvent.Records {
 		msg, err := message.Parse(record)
 		if err != nil {
@@ -39,7 +39,8 @@ func buildDatabase(repo repository.Repository) *derivative.PostgresClient {
 		WithPassword(os.Getenv("RDS_PASSWORD")).
 		WithDbname(os.Getenv("RDS_DB_NAME")).
 		WithHost(os.Getenv("RDS_HOSTNAME")).
-		WithPort(os.Getenv("RDS_PORT"))
+		WithPort(os.Getenv("RDS_PORT")).
+		WithSSL(os.Getenv("RDS_SSL") == "" || strings.ToLower(os.Getenv("RDS_SSL")) == "true")
 
 	return derivative.NewPostgresClient(conf, repo)
 }
