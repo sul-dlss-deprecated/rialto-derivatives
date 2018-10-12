@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"strings"
 
 	"github.com/knakk/sparql"
 )
@@ -14,6 +15,9 @@ import (
 const tripleLimit = 9000
 const idVariable = "?id"
 
+// Number of times to retry connecting to the triplestore
+const retries = 90
+
 // SparqlReader represents the functions we do on the triplestore
 type SparqlReader struct {
 	repo SparqlRepository
@@ -21,6 +25,21 @@ type SparqlReader struct {
 
 type SparqlRepository interface {
 	Query(q string) (*sparql.Results, error)
+}
+
+type RetryingSparqlRepository struct {
+	repo *sparql.Repo
+}
+
+func (r *RetryingSparqlRepository) Query(q string) (*sparql.Results, error) {
+	results, err := r.repo.Query(q)
+	// Retrying because when running under Localstack, triplestore may not be immediately available.
+	for i := 0; i < retries && err != nil && strings.Contains(err.Error(), "no such host"); i ++ {
+		log.Printf("Retrying repo, time %d", i+1)
+		time.Sleep(1 * time.Second)
+		results, err = r.repo.Query(q)
+	}
+	return results, err
 }
 
 // NewSparqlReader creates a new instance of the sparqlReader for the provided endpoint
@@ -31,7 +50,7 @@ func NewSparqlReader(url string) *SparqlReader {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &SparqlReader{repo: repo}
+	return &SparqlReader{repo: &RetryingSparqlRepository{repo: repo}}
 }
 
 // QueryEverything returns all triples in the datastore
