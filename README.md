@@ -113,3 +113,15 @@ To restore it:
 ```
 psql circle_test < database.dump
 ```
+
+Alternatively, the test database can be run in a docker container:
+```
+# To start db
+docker run --rm --name rialto_test_db -e POSTGRES_DB=rialto_test -p "5432:5432" -e POSTGRES_USER=$USER -d postgres:9.6.2-alpine
+# To load test data
+cat database.dump | docker exec -i rialto_test_db psql -U $USER rialto_test
+# Run tests
+go test ./...
+# Stop container
+docker stop rialto_test_db
+```
