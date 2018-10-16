@@ -67,6 +67,10 @@ func (f *MockedReader) GetOrganizationInfo(id *string) (*sparql.Results, error) 
 	return nil, nil
 }
 
+func (f *MockedReader) GetPositionOrganizationInfo(id string) (*sparql.Results, error) {
+	return nil, nil
+}
+
 func (f *MockedReader) GetAuthorInfo(id string) (*sparql.Results, error) {
 	return nil, nil
 }

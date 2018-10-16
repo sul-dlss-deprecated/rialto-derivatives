@@ -28,13 +28,13 @@ func (m *PersonIndexer) Index(resource *models.Person, doc solr.Document) solr.D
 	doc.Set("name_tsim", m.retrieveAssociatedName(resource))
 
 	// 2. department
-	doc.Set("department_label_ssim", resource.DepartmentLabel)
+	doc.Set("department_label_ssim", m.retrievePositionOrganizationNames(resource.DepartmentOrgs))
 
 	// 3. school
-	doc.Set("school_label_ssim", resource.SchoolLabel)
+	doc.Set("school_label_ssim", m.retrievePositionOrganizationNames(resource.SchoolOrgs))
 
 	// 4. institution
-	doc.Set("institution_label_ssim", resource.InstitutionLabel)
+	doc.Set("institution_label_ssim", m.retrievePositionOrganizationNames(resource.InstitutionOrgs))
 
 	return doc
 }
@@ -43,4 +43,12 @@ func (m *PersonIndexer) retrieveAssociatedName(resource *models.Person) string {
 	givenName := resource.Firstname
 	familyName := resource.Lastname
 	return fmt.Sprintf("%v %v", givenName, familyName)
+}
+
+func (m *PersonIndexer) retrievePositionOrganizationNames(resources []*models.PositionOrganization) *[]string {
+	orgs := make([]string, len(resources))
+	for n, resource := range resources {
+		orgs[n] = resource.Label
+	}
+	return &orgs
 }

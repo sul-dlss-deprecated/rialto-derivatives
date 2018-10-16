@@ -2,7 +2,6 @@ package repository
 
 import (
 	"fmt"
-
 	"github.com/knakk/rdf"
 	"github.com/knakk/sparql"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
@@ -58,13 +57,13 @@ func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resou
 	list := []models.Resource{}
 	for _, solution := range solutions {
 		resource := models.NewResource(solution)
-		if v, ok := resource.(*models.Person); ok && v.Organization != nil {
+		if v, ok := resource.(*models.Person); ok {
 			// People also need to be informed of their organization membership.
-			results, err := m.reader.GetOrganizationInfo(v.Organization)
+			results, err := m.reader.GetPositionOrganizationInfo(v.Subject())
 			if err != nil {
 				panic(err)
 			}
-			v.SetOrganizationInfo(results)
+			v.SetPositionOrganizationInfo(results)
 		} else if v, ok := resource.(*models.Publication); ok {
 			// Publications need to be informed of their authors.
 			results, err := m.reader.GetAuthorInfo(v.Subject())

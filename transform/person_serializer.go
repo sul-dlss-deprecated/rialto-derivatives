@@ -15,8 +15,8 @@ type PersonSerializer struct {
 
 type person struct {
 	Name        string  `json:"name"`
-	Department  *string `json:"department"`
-	Institution *string `json:"institutionalAffiliation"`
+	Departments  *[]string `json:"departments"`
+	Institutions *[]string `json:"institutionalAffiliations"`
 }
 
 // NewPersonSerializer makes a new instance of the PersonSerializer
@@ -28,13 +28,13 @@ func NewPersonSerializer(repo repository.Repository) *PersonSerializer {
 // Must include the following properties:
 //
 //   name (string)
-//   department (URI)
-//   institutionalAffiliation (URI)
+//   department ([URI])
+//   institution ([URI])
 func (m *PersonSerializer) Serialize(resource *models.Person) string {
 	p := &person{
-		Name:        m.retrieveAssociatedName(resource),
-		Department:  resource.DepartmentURI,
-		Institution: resource.InstitutionURI,
+		Name:         m.retrieveAssociatedName(resource),
+		Departments:  m.retrievePositionOrganizationURIs(resource.DepartmentOrgs),
+		Institutions: m.retrievePositionOrganizationURIs(resource.InstitutionOrgs),
 	}
 
 	b, err := json.Marshal(p)
@@ -49,4 +49,12 @@ func (m *PersonSerializer) retrieveAssociatedName(resource *models.Person) strin
 	givenName := resource.Firstname
 	familyName := resource.Lastname
 	return fmt.Sprintf("%v %v", givenName, familyName)
+}
+
+func (m *PersonSerializer) retrievePositionOrganizationURIs(resources []*models.PositionOrganization) *[]string {
+	orgs := make([]string, len(resources))
+	for n, resource := range resources {
+		orgs[n] = resource.URI
+	}
+	return &orgs
 }
