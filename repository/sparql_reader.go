@@ -3,8 +3,8 @@ package repository
 import (
 	"fmt"
 	"log"
-	"time"
 	"strings"
+	"time"
 
 	"github.com/knakk/sparql"
 )
@@ -34,7 +34,7 @@ type RetryingSparqlRepository struct {
 func (r *RetryingSparqlRepository) Query(q string) (*sparql.Results, error) {
 	results, err := r.repo.Query(q)
 	// Retrying because when running under Localstack, triplestore may not be immediately available.
-	for i := 0; i < retries && err != nil && strings.Contains(err.Error(), "no such host"); i ++ {
+	for i := 0; i < retries && err != nil && strings.Contains(err.Error(), "no such host"); i++ {
 		log.Printf("Retrying repo, time %d", i+1)
 		time.Sleep(1 * time.Second)
 		results, err = r.repo.Query(q)
@@ -102,11 +102,12 @@ func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string)
 			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?firstname ?lastname ?org
 			WHERE {
 				?id a ?type .
-				?id a <http://xmlns.com/foaf/0.1/Person> .
-				?id a ?subtype .
 				%s
-				FILTER ( ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Person>, <http://xmlns.com/foaf/0.1/Agent>))
 				FILTER ( ?type = <http://xmlns.com/foaf/0.1/Person>)
+				OPTIONAL {
+					?id a ?subtype .
+					FILTER ( ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Person>, <http://xmlns.com/foaf/0.1/Agent>))
+				}
 				OPTIONAL {
 					?id <http://www.w3.org/2006/vcard/ns#hasName> ?n .
 					?n <http://www.w3.org/2006/vcard/ns#given-name> ?firstname .
