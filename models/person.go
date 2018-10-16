@@ -7,17 +7,19 @@ import (
 
 // Person is a human actor involved in creating works
 type Person struct {
-	URI              string
-	Subtype          string
-	Firstname        string
-	Lastname         string
-	Organization     *string // URI
-	DepartmentLabel  *string
-	DepartmentURI    *string // URI
-	SchoolLabel      *string
-	SchoolURI        *string // URI
-	InstitutionLabel *string
-	InstitutionURI   *string // URI
+	URI             string
+	Subtype         string
+	Firstname       string
+	Lastname        string
+	DepartmentOrgs  []*PositionOrganization
+	SchoolOrgs      []*PositionOrganization
+	InstitutionOrgs []*PositionOrganization
+}
+
+// PositionOrganization is an organization that the person is affiliated with via a position that the person holds
+type PositionOrganization struct {
+	URI   string
+	Label string
 }
 
 // NewPerson instantiates a person from sparql results
@@ -34,11 +36,6 @@ func NewPerson(data map[string]rdf.Term) *Person {
 		obj.Lastname = lastname.String()
 	}
 
-	if organization := data["org"]; organization != nil {
-		str := organization.String()
-		obj.Organization = &str
-	}
-
 	return obj
 }
 
@@ -47,22 +44,18 @@ func (c Person) Subject() string {
 	return c.URI
 }
 
-// SetOrganizationInfo allow organization relationships to be passed in
-func (c *Person) SetOrganizationInfo(results *sparql.Results) {
+// SetPositionOrganizationInfo adds organization relationships to a person from sparql results
+func (c *Person) SetPositionOrganizationInfo(results *sparql.Results) {
 	solutions := results.Solutions()
 	for _, solution := range solutions {
-		name := solution["name"].String()
-		uri := solution["org"].String()
+		org := &PositionOrganization{solution["org"].String(), solution["name"].String()}
 		switch solution["type"].String() {
 		case "http://vivoweb.org/ontology/core#Department":
-			c.DepartmentLabel = &name
-			c.DepartmentURI = &uri
+			c.DepartmentOrgs = append(c.DepartmentOrgs, org)
 		case "http://vivoweb.org/ontology/core#School":
-			c.SchoolLabel = &name
-			c.SchoolURI = &uri
+			c.SchoolOrgs = append(c.SchoolOrgs, org)
 		case "http://vivoweb.org/ontology/core#University":
-			c.InstitutionLabel = &name
-			c.InstitutionURI = &uri
+			c.InstitutionOrgs = append(c.InstitutionOrgs, org)
 		}
 	}
 }

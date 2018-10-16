@@ -26,7 +26,6 @@ func TestNewPersonAllFields(t *testing.T) {
 	data := make(map[string]rdf.Term)
 	id, _ := rdf.NewIRI("http://example.com/record1")
 	faculty, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#FacultyMember")
-	organization, _ := rdf.NewIRI("http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/electrical-engineering")
 
 	fname, _ := rdf.NewLiteral("Justin")
 	lname, _ := rdf.NewLiteral("Coyne")
@@ -34,26 +33,22 @@ func TestNewPersonAllFields(t *testing.T) {
 	data["subtype"] = faculty
 	data["lastname"] = lname
 	data["firstname"] = fname
-	data["org"] = organization
 
 	resource := NewPerson(data)
 	assert.IsType(t, &Person{}, resource)
 	assert.Equal(t, faculty.String(), resource.Subtype)
 	assert.Equal(t, resource.Firstname, fname.String())
 	assert.Equal(t, resource.Lastname, lname.String())
-	assert.Equal(t, *resource.Organization, organization.String())
 
 }
 
-func TestSetOrganizationInfo(t *testing.T) {
+func TestSetPositionOrganizationInfo(t *testing.T) {
 	data := make(map[string]rdf.Term)
 	id, _ := rdf.NewIRI("http://example.com/record1")
 	faculty, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#FacultyMember")
-	organization, _ := rdf.NewIRI("http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/electrical-engineering")
 
 	data["id"] = id
 	data["subtype"] = faculty
-	data["org"] = organization
 
 	resource := NewPerson(data)
 
@@ -76,6 +71,19 @@ func TestSetOrganizationInfo(t *testing.T) {
       "value" : "http://vivoweb.org/ontology/core#Department"
     }
   }, {
+	 	"org" : {
+	 		"type" : "uri",
+	 		"value" : "http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/nuclear-engineering"
+	 	},
+	 	"name" : {
+	 		"type" : "literal",
+	 		"value" : "Nuclear Engineering"
+	 	},
+	 	"type" : {
+	 		"type" : "uri",
+	 		"value" : "http://vivoweb.org/ontology/core#Department"
+	 	}
+	 }, {
     "org" : {
       "type" : "uri",
       "value" : "http://sul.stanford.edu/rialto/agents/orgs/stanford"
@@ -105,10 +113,16 @@ func TestSetOrganizationInfo(t *testing.T) {
 }
 	  }`)
 	results, _ := sparql.ParseJSON(organizationJSON)
-	resource.SetOrganizationInfo(results)
+	resource.SetPositionOrganizationInfo(results)
 	assert.IsType(t, &Person{}, resource)
-	assert.Equal(t, "Electrical Engineering", *resource.DepartmentLabel)
-	assert.Equal(t, "School of Engineering", *resource.SchoolLabel)
-	assert.Equal(t, "Stanford University", *resource.InstitutionLabel)
-
+	assert.Equal(t, []*PositionOrganization{
+		&PositionOrganization{ "http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/electrical-engineering", "Electrical Engineering" },
+		&PositionOrganization{ "http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/nuclear-engineering", "Nuclear Engineering" }},
+		resource.DepartmentOrgs)
+	assert.Equal(t, []*PositionOrganization{
+		&PositionOrganization{ "http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering", "School of Engineering" }},
+		resource.SchoolOrgs)
+	assert.Equal(t, []*PositionOrganization{
+		&PositionOrganization{ "http://sul.stanford.edu/rialto/agents/orgs/stanford", "Stanford University" }},
+		resource.InstitutionOrgs)
 }

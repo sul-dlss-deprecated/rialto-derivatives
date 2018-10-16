@@ -54,7 +54,7 @@ func TestPostgresAddPerson(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"name": "Barbara Liskov", "department": null, "institutionalAffiliation": null}`, person)
+	assert.Equal(t, `{"name": "Barbara Liskov", "departments": [], "institutionalAffiliations": []}`, person)
 
 }
 

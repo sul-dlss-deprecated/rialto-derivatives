@@ -20,6 +20,7 @@ type Publication struct {
 	Authors     []*Author
 }
 
+// Author is a representation of a person that authored a publication.
 type Author struct {
 	URI   string
 	Label string
