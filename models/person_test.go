@@ -12,10 +12,8 @@ import (
 func TestNewPersonMinimalFields(t *testing.T) {
 	data := make(map[string]rdf.Term)
 	id, _ := rdf.NewIRI("http://example.com/record1")
-	faculty, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#FacultyMember")
 
 	data["id"] = id
-	data["subtype"] = faculty
 
 	resource := NewPerson(data)
 	assert.IsType(t, &Person{}, resource)
@@ -116,13 +114,13 @@ func TestSetPositionOrganizationInfo(t *testing.T) {
 	resource.SetPositionOrganizationInfo(results)
 	assert.IsType(t, &Person{}, resource)
 	assert.Equal(t, []*PositionOrganization{
-		&PositionOrganization{ "http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/electrical-engineering", "Electrical Engineering" },
-		&PositionOrganization{ "http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/nuclear-engineering", "Nuclear Engineering" }},
+		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/electrical-engineering", "Electrical Engineering"},
+		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/nuclear-engineering", "Nuclear Engineering"}},
 		resource.DepartmentOrgs)
 	assert.Equal(t, []*PositionOrganization{
-		&PositionOrganization{ "http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering", "School of Engineering" }},
+		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering", "School of Engineering"}},
 		resource.SchoolOrgs)
 	assert.Equal(t, []*PositionOrganization{
-		&PositionOrganization{ "http://sul.stanford.edu/rialto/agents/orgs/stanford", "Stanford University" }},
+		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/stanford", "Stanford University"}},
 		resource.InstitutionOrgs)
 }

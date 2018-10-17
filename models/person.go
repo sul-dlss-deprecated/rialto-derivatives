@@ -25,9 +25,12 @@ type PositionOrganization struct {
 // NewPerson instantiates a person from sparql results
 func NewPerson(data map[string]rdf.Term) *Person {
 	obj := &Person{
-		URI:     data["id"].String(),
-		Subtype: data["subtype"].String(),
+		URI: data["id"].String(),
 	}
+	if subtype := data["subtype"]; subtype != nil {
+		obj.Subtype = subtype.String()
+	}
+
 	if firstname := data["firstname"]; firstname != nil {
 		obj.Firstname = firstname.String()
 	}
