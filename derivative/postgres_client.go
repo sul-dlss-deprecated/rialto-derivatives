@@ -207,7 +207,6 @@ func (d *PostgresClient) addRelationship(table string, oneField string, oneTable
 		return err
 	}
 	for _, manyKey := range manyKeys {
-		log.Printf("Inserting %v for %v", manyKey, oneKey)
 		_, err := insertStmt.Exec(oneKey, manyKey)
 		if err != nil {
 			return err
