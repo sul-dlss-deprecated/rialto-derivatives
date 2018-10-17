@@ -58,6 +58,47 @@ func TestPostgresAddPerson(t *testing.T) {
 
 }
 
+func TestPostgresUpdatePerson(t *testing.T) {
+	conf := NewPostgresConfig().WithDbname("rialto_test").WithSSL(false)
+	repo := new(MockRepository)
+
+	client := NewPostgresClient(conf, repo)
+	client.RemoveAll()
+
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
+	resourceType, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Person")
+	student, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#Student")
+	fname, _ := rdf.NewLiteral("Barbara")
+	lname, _ := rdf.NewLiteral("Liskov")
+
+	data["id"] = id
+	data["type"] = resourceType
+	data["subtype"] = student
+	data["firstname"] = fname
+	data["lastname"] = lname
+
+	resource := models.NewResource(data)
+
+	err := client.addPerson(resource.(*models.Person))
+	assert.Nil(t, err)
+
+	fname, _ = rdf.NewLiteral("B.")
+	data["firstname"] = fname
+
+	resource = models.NewResource(data)
+
+	err = client.addPerson(resource.(*models.Person))
+	assert.Nil(t, err)
+
+	person, err := client.retrieveOnePerson("http://example.com/record1")
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(t, `{"name": "B. Liskov", "departments": [], "institutionalAffiliations": []}`, person)
+
+}
+
 func TestPostgresAddOrganization(t *testing.T) {
 	conf := NewPostgresConfig().WithDbname("rialto_test").WithSSL(false)
 	repo := new(MockRepository)

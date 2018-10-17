@@ -102,7 +102,9 @@ func (d *PostgresClient) addOrganization(resource *models.Organization) error {
 }
 
 func (d *PostgresClient) addResource(table string, subject string, data string) error {
-	sql := fmt.Sprintf(`INSERT INTO "%v" ("uri", "metadata", "created_at", "updated_at") VALUES ($1, $2, $3, $4) RETURNING "id"`, table)
+	sql := fmt.Sprintf(`INSERT INTO "%v" ("uri", "metadata", "created_at", "updated_at")
+		VALUES ($1, $2, $3, $4)
+		ON CONFLICT (uri) DO UPDATE SET metadata=$2, updated_at=$4 WHERE %v.uri=$1`, table, table)
 	_, err := d.DB.Exec(sql, subject, data, time.Now(), time.Now())
 	return err
 }
