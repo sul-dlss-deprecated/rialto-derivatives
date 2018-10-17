@@ -146,7 +146,7 @@ func (r *SparqlReader) GetAuthorInfo(publication string) (*sparql.Results, error
 				 <%s> <http://vivoweb.org/ontology/core#relatedBy> ?authorship .
 				 ?authorship a <http://vivoweb.org/ontology/core#Authorship> .
 				 ?authorship <http://vivoweb.org/ontology/core#relates> ?author .
-				 ?author <http://www.w3.org/2006/vcard/ns#fn> ?author_label .
+				 ?author <http://www.w3.org/2004/02/skos/core#prefLabel> ?author_label .
 			}
 			ORDER BY ?org OFFSET 0 LIMIT 100`, publication)
 	return r.repo.Query(query)
