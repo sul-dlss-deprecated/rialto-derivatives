@@ -34,6 +34,16 @@ func (m *PublicationIndexer) Index(resource *models.Publication, doc solr.Docume
 	doc.Set("authors_ssim", authors)
 	doc.Set("author_labels_tsim", authorLabels)
 
+	var concepts = []string{}
+	var conceptLabels = []string{}
+	for _, concept := range resource.Concepts {
+		concepts = append(concepts, concept.URI)
+		conceptLabels = append(conceptLabels, concept.Label)
+	}
+
+	doc.Set("concepts_ssim", concepts)
+	doc.Set("concept_labels_ssim", conceptLabels)
+
 	if resource.Description != nil {
 		doc.Set("description_tesim", *resource.Description)
 	}
