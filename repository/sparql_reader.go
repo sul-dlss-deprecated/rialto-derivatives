@@ -171,12 +171,12 @@ func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...
 			WHERE {
 			  ?id a <http://xmlns.com/foaf/0.1/Organization> .
 				?id a ?type .
-				?id <http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?name .
-			  ?id a ?subtype .
+				?id <http://www.w3.org/2004/02/skos/core#prefLabel> ?name .
 				%s
-			  FILTER ( ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Agent>))
+			  FILTER ( ! bound(?subtype) || ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Agent>))
 				FILTER ( ?type = <http://xmlns.com/foaf/0.1/Organization>)
 			  OPTIONAL {
+					?id a ?subtype .
 			    ?id <http://www.w3.org/2004/02/skos/core#altLabel> ?altLabel .
 					?id <http://vivoweb.org/ontology/core#abbreviation> ?abbreviation .
 					?id <http://purl.obolibrary.org/obo/BFO_0000050> ?parent .
@@ -339,7 +339,9 @@ func (r *SparqlReader) queryTypeForID(id string) (string, error) {
 		log.Printf("No type found for %s", id)
 		return "", err
 	}
-	return solutions[0]["type"].String(), nil
+	t := solutions[0]["type"].String()
+	log.Printf("%s is a %s", id, t)
+	return t, nil
 }
 
 // QueryByTypeAndID issues the query for the provided type with the given ID
