@@ -148,7 +148,19 @@ func (r *SparqlReader) GetAuthorInfo(publication string) (*sparql.Results, error
 				 ?authorship <http://vivoweb.org/ontology/core#relates> ?author .
 				 ?author <http://www.w3.org/2004/02/skos/core#prefLabel> ?author_label .
 			}
-			ORDER BY ?org OFFSET 0 LIMIT 100`, publication)
+			ORDER BY ?author OFFSET 0 LIMIT 100`, publication)
+	return r.repo.Query(query)
+}
+
+// GetConceptInfo retrieves a list of concepts for a subject
+func (r *SparqlReader) GetConceptInfo(subject string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`SELECT ?id ?label
+		 WHERE {
+				 <%s> <http://purl.org/dc/terms/subject> ?id .
+				 ?id a <http://www.w3.org/2004/02/skos/core#Concept> .
+				 ?id <http://purl.org/dc/terms/subject> ?label .
+			}
+			ORDER BY ?id OFFSET 0 LIMIT 100`, subject)
 	return r.repo.Query(query)
 }
 

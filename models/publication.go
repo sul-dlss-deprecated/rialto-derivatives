@@ -18,6 +18,7 @@ type Publication struct {
 	Description *string
 	Created     string
 	Authors     []*Author
+	Concepts    []*Concept
 }
 
 // Author is a representation of a person that authored a publication.
@@ -70,6 +71,14 @@ func (c *Publication) SetAuthorInfo(results *sparql.Results) {
 		uri := solution["author"].String()
 		label := solution["author_label"].String()
 		c.Authors = append(c.Authors, &Author{URI: uri, Label: label})
+	}
+}
+
+// SetConceptInfo allow concept relationships to be passed in
+func (c *Publication) SetConceptInfo(results *sparql.Results) {
+	solutions := results.Solutions()
+	for _, solution := range solutions {
+		c.Concepts = append(c.Concepts, NewConcept(solution))
 	}
 }
 

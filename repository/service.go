@@ -2,6 +2,7 @@ package repository
 
 import (
 	"fmt"
+
 	"github.com/knakk/rdf"
 	"github.com/knakk/sparql"
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
@@ -71,6 +72,13 @@ func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resou
 				panic(err)
 			}
 			v.SetAuthorInfo(results)
+			// Publications need to be informed of their concepts.
+			results, err = m.reader.GetConceptInfo(v.Subject())
+			if err != nil {
+				panic(err)
+			}
+			v.SetConceptInfo(results)
+
 		}
 		list = append(list, resource)
 	}
