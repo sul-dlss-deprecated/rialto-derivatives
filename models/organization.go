@@ -14,10 +14,14 @@ type Organization struct {
 // NewOrganization instantiates an organization from sparql results
 func NewOrganization(data map[string]rdf.Term) *Organization {
 	org := &Organization{
-		URI:     data["id"].String(),
-		Subtype: data["subtype"].String(),
-		Name:    data["name"].String(),
+		URI:  data["id"].String(),
+		Name: data["name"].String(),
 	}
+
+	if subtype := data["subtype"]; subtype != nil {
+		org.Subtype = subtype.String()
+	}
+
 	if abbrev := data["abbreviation"]; abbrev != nil {
 		org.Abbreviation = abbrev.String()
 	}
