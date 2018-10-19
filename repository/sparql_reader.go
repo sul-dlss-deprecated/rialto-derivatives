@@ -124,16 +124,19 @@ func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string)
 // GetPositionOrganizationInfo retrieves a hierarchical list of organizations the given organization subject is part of
 func (r *SparqlReader) GetPositionOrganizationInfo(personID string) (*sparql.Results, error) {
 	query := fmt.Sprintf(`SELECT DISTINCT ?org ?type ?name
-  						 WHERE {
-			 	FILTER ( ?type NOT IN (<http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Agent>))
+			WHERE {
 				?org rdfs:label ?label .
-				?org a ?type .
 				?org <http://www.w3.org/2004/02/skos/core#prefLabel> ?name .
     		?pos_org a <http://xmlns.com/foaf/0.1/Organization> .
 				?pos_org <http://purl.obolibrary.org/obo/BFO_0000050>* ?org .
     		?pos_org <http://vivoweb.org/ontology/core#relatedBy> ?pos .
     		?pos a <http://vivoweb.org/ontology/core#Position> .
     		?pos <http://vivoweb.org/ontology/core#relates> <%s> .
+			     OPTIONAL {
+				      ?org a ?type .
+			 	      FILTER ( ?type NOT IN (<http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Agent>))
+
+           }
 			}
 			ORDER BY ?org OFFSET 0 LIMIT 100`, personID)
 	return r.repo.Query(query)

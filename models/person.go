@@ -52,12 +52,17 @@ func (c *Person) SetPositionOrganizationInfo(results *sparql.Results) {
 	solutions := results.Solutions()
 	for _, solution := range solutions {
 		org := &PositionOrganization{solution["org"].String(), solution["name"].String()}
-		switch solution["type"].String() {
-		case "http://vivoweb.org/ontology/core#Department":
-			c.DepartmentOrgs = append(c.DepartmentOrgs, org)
-		case "http://vivoweb.org/ontology/core#School":
-			c.SchoolOrgs = append(c.SchoolOrgs, org)
-		case "http://vivoweb.org/ontology/core#University":
+		if solution["type"] != nil {
+			switch solution["type"].String() {
+			case "http://vivoweb.org/ontology/core#Department":
+				c.DepartmentOrgs = append(c.DepartmentOrgs, org)
+			case "http://vivoweb.org/ontology/core#School":
+				c.SchoolOrgs = append(c.SchoolOrgs, org)
+			case "http://vivoweb.org/ontology/core#University":
+				c.InstitutionOrgs = append(c.InstitutionOrgs, org)
+			}
+		} else {
+			// If no type, then assuming an institution
 			c.InstitutionOrgs = append(c.InstitutionOrgs, org)
 		}
 	}
