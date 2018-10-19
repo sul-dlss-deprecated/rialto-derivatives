@@ -24,19 +24,22 @@ func TestNewPersonAllFields(t *testing.T) {
 	data := make(map[string]rdf.Term)
 	id, _ := rdf.NewIRI("http://example.com/record1")
 	faculty, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#FacultyMember")
-
+	country, _ := rdf.NewIRI("http://sws.geonames.org/6252001/")
 	fname, _ := rdf.NewLiteral("Justin")
 	lname, _ := rdf.NewLiteral("Coyne")
+
 	data["id"] = id
 	data["subtype"] = faculty
 	data["lastname"] = lname
 	data["firstname"] = fname
+	data["country"] = country
 
 	resource := NewPerson(data)
 	assert.IsType(t, &Person{}, resource)
 	assert.Equal(t, faculty.String(), resource.Subtype)
 	assert.Equal(t, resource.Firstname, fname.String())
 	assert.Equal(t, resource.Lastname, lname.String())
+	assert.Equal(t, resource.Country, country.String())
 
 }
 

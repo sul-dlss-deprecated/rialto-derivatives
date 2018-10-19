@@ -8,7 +8,23 @@ import (
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 )
 
-func TestSerializePersonResourceWithName(t *testing.T) {
+func TestSerializePersonResourceMinimal(t *testing.T) {
+	fakeSparql := new(MockedReader)
+
+	indexer := NewPersonSerializer(repository.NewService(fakeSparql))
+
+	resource := &models.Person{
+		Firstname: "Harry",
+		Lastname:  "Potter",
+		URI:       "http://example.com/record1",
+	}
+
+	doc := indexer.Serialize(resource)
+
+	assert.Equal(t, `{"name":"Harry Potter","departments":[],"institutionalAffiliations":[],"country":null}`, doc)
+}
+
+func TestSerializePersonResourceAllFields(t *testing.T) {
 	fakeSparql := new(MockedReader)
 
 	indexer := NewPersonSerializer(repository.NewService(fakeSparql))
@@ -23,9 +39,10 @@ func TestSerializePersonResourceWithName(t *testing.T) {
 		InstitutionOrgs: []*models.PositionOrganization{&models.PositionOrganization{
 			URI:   "http://example.com/institution1",
 			Label: "Institution 1"}},
+		Country: "http://sws.geonames.org/6252001/",
 	}
 
 	doc := indexer.Serialize(resource)
 
-	assert.Equal(t, `{"name":"Harry Potter","departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"]}`, doc)
+	assert.Equal(t, `{"name":"Harry Potter","departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"country":"http://sws.geonames.org/6252001/"}`, doc)
 }

@@ -11,6 +11,7 @@ type Person struct {
 	Subtype         string
 	Firstname       string
 	Lastname        string
+	Country         string
 	DepartmentOrgs  []*PositionOrganization
 	SchoolOrgs      []*PositionOrganization
 	InstitutionOrgs []*PositionOrganization
@@ -37,6 +38,10 @@ func NewPerson(data map[string]rdf.Term) *Person {
 
 	if lastname := data["lastname"]; lastname != nil {
 		obj.Lastname = lastname.String()
+	}
+
+	if country := data["country"]; country != nil {
+		obj.Country = country.String()
 	}
 
 	return obj

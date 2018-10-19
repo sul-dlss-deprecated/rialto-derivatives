@@ -102,7 +102,7 @@ func (r *SparqlReader) queryPage(sparqlForOffset func(offset int) string, f func
 func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
-			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?firstname ?lastname
+			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?firstname ?lastname ?country
 			WHERE {
 				?id a ?type .
 				%s
@@ -115,6 +115,9 @@ func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string)
 					?id <http://www.w3.org/2006/vcard/ns#hasName> ?n .
 					?n <http://www.w3.org/2006/vcard/ns#given-name> ?firstname .
 					?n <http://www.w3.org/2006/vcard/ns#family-name> ?lastname .
+				}
+				OPTIONAL {
+					?id <http://purl.org/dc/terms/spatial> ?country .
 				}
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)

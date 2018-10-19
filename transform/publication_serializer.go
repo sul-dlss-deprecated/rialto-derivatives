@@ -14,7 +14,7 @@ type publication struct {
 	Title string `json:"title"`
 }
 
-// NewPublicationSerializer makes a new instance of the PersonSerializer
+// NewPublicationSerializer makes a new instance of the PublicationSerializer
 func NewPublicationSerializer() *PublicationSerializer {
 	return &PublicationSerializer{}
 }

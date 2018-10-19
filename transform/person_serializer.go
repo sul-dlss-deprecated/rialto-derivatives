@@ -14,9 +14,10 @@ type PersonSerializer struct {
 }
 
 type person struct {
-	Name        string  `json:"name"`
+	Name         string    `json:"name"`
 	Departments  *[]string `json:"departments"`
 	Institutions *[]string `json:"institutionalAffiliations"`
+	Country      *string   `json:"country"`
 }
 
 // NewPersonSerializer makes a new instance of the PersonSerializer
@@ -35,6 +36,10 @@ func (m *PersonSerializer) Serialize(resource *models.Person) string {
 		Name:         m.retrieveAssociatedName(resource),
 		Departments:  m.retrievePositionOrganizationURIs(resource.DepartmentOrgs),
 		Institutions: m.retrievePositionOrganizationURIs(resource.InstitutionOrgs),
+	}
+
+	if resource.Country != "" {
+		p.Country = &resource.Country
 	}
 
 	b, err := json.Marshal(p)
