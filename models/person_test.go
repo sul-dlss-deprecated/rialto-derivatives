@@ -107,6 +107,15 @@ func TestSetPositionOrganizationInfo(t *testing.T) {
       "type" : "uri",
       "value" : "http://vivoweb.org/ontology/core#School"
     }
+  }, {
+    "org" : {
+      "type" : "uri",
+      "value" : "http://sul.stanford.edu/rialto/agents/orgs/leland-junior-u"
+    },
+    "name" : {
+      "type" : "literal",
+      "value" : "Leland Junior University"
+    }
   } ]
 }
 	  }`)
@@ -121,6 +130,7 @@ func TestSetPositionOrganizationInfo(t *testing.T) {
 		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering", "School of Engineering"}},
 		resource.SchoolOrgs)
 	assert.Equal(t, []*PositionOrganization{
-		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/stanford", "Stanford University"}},
+		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/stanford", "Stanford University"},
+		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/leland-junior-u", "Leland Junior University"}},
 		resource.InstitutionOrgs)
 }
