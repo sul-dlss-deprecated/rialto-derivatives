@@ -170,7 +170,7 @@ func (r *SparqlReader) GetConceptInfo(subject string) (*sparql.Results, error) {
 func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
-			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?name ?altLabel ?abbreviation ?parent
+			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?name ?parent
 			WHERE {
 			  ?id a <http://xmlns.com/foaf/0.1/Organization> .
 				?id a ?type .
@@ -180,8 +180,8 @@ func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...
 				FILTER ( ?type = <http://xmlns.com/foaf/0.1/Organization>)
 			  OPTIONAL {
 					?id a ?subtype .
-			    ?id <http://www.w3.org/2004/02/skos/core#altLabel> ?altLabel .
-					?id <http://vivoweb.org/ontology/core#abbreviation> ?abbreviation .
+				}
+				OPTIONAL {
 					?id <http://purl.obolibrary.org/obo/BFO_0000050> ?parent .
 			  }
 			}
