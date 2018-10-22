@@ -14,6 +14,7 @@ type Person struct {
 	DepartmentOrgs  []*PositionOrganization
 	SchoolOrgs      []*PositionOrganization
 	InstitutionOrgs []*PositionOrganization
+	Countries       []string
 }
 
 // PositionOrganization is an organization that the person is affiliated with via a position that the person holds
@@ -65,5 +66,14 @@ func (c *Person) SetPositionOrganizationInfo(results *sparql.Results) {
 			// If no type, then assuming an institution
 			c.InstitutionOrgs = append(c.InstitutionOrgs, org)
 		}
+	}
+}
+
+// SetCountriesInfo adds countries to a person from sparql results
+func (c *Person) SetCountriesInfo(results *sparql.Results) {
+	solutions := results.Solutions()
+	for _, solution := range solutions {
+		country := solution["country"].String()
+		c.Countries = append(c.Countries, country)
 	}
 }

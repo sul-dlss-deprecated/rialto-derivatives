@@ -8,7 +8,7 @@ import (
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 )
 
-func TestSerializePersonResourceWithName(t *testing.T) {
+func TestSerializePersonResource(t *testing.T) {
 	fakeSparql := new(MockedReader)
 
 	indexer := NewPersonSerializer(repository.NewService(fakeSparql))
@@ -23,9 +23,10 @@ func TestSerializePersonResourceWithName(t *testing.T) {
 		InstitutionOrgs: []*models.PositionOrganization{&models.PositionOrganization{
 			URI:   "http://example.com/institution1",
 			Label: "Institution 1"}},
+		Countries: []string{"http://sws.geonames.org/1814991/"},
 	}
 
 	doc := indexer.Serialize(resource)
 
-	assert.Equal(t, `{"name":"Harry Potter","departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"]}`, doc)
+	assert.Equal(t, `{"name":"Harry Potter","departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"countries":["http://sws.geonames.org/1814991/"]}`, doc)
 }

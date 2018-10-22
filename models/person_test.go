@@ -134,3 +134,33 @@ func TestSetPositionOrganizationInfo(t *testing.T) {
 		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/leland-junior-u", "Leland Junior University"}},
 		resource.InstitutionOrgs)
 }
+
+func TestSetCountriesInfo(t *testing.T) {
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
+	faculty, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#FacultyMember")
+
+	data["id"] = id
+	data["subtype"] = faculty
+
+	resource := NewPerson(data)
+
+	countriesJSON := strings.NewReader(`{
+    "head" : {
+  		"vars" : [ "country" ]
+		},
+		"results" : {
+  		"bindings" : [ {
+    		"country" : {
+      		"type" : "uri",
+      		"value" : "http://sws.geonames.org/1814991/"
+    		}
+  		} ]
+		}
+	}`)
+	results, _ := sparql.ParseJSON(countriesJSON)
+	resource.SetCountriesInfo(results)
+	assert.IsType(t, &Person{}, resource)
+	assert.Equal(t, []string{"http://sws.geonames.org/1814991/"},
+		resource.Countries)
+}
