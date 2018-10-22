@@ -4,11 +4,10 @@ import "github.com/knakk/rdf"
 
 // Organization is a non-person agent. It may represent a University, School or Department
 type Organization struct {
-	URI          string
-	Subtype      string
-	Name         string
-	Abbreviation string
-	Parent       string
+	URI     string
+	Subtype string
+	Name    string
+	Parent  string
 }
 
 // NewOrganization instantiates an organization from sparql results
@@ -20,10 +19,6 @@ func NewOrganization(data map[string]rdf.Term) *Organization {
 
 	if subtype := data["subtype"]; subtype != nil {
 		org.Subtype = subtype.String()
-	}
-
-	if abbrev := data["abbreviation"]; abbrev != nil {
-		org.Abbreviation = abbrev.String()
 	}
 
 	if parent := data["parent"]; parent != nil {
