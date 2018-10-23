@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 10.3
--- Dumped by pg_dump version 10.3
+-- Dumped from database version 10.5 (Debian 10.5-1.pgdg90+1)
+-- Dumped by pg_dump version 10.5 (Debian 10.5-1.pgdg90+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -34,7 +34,7 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: jcoyne
+-- Name: ar_internal_metadata; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.ar_internal_metadata (
@@ -45,10 +45,10 @@ CREATE TABLE public.ar_internal_metadata (
 );
 
 
-ALTER TABLE public.ar_internal_metadata OWNER TO jcoyne;
+ALTER TABLE public.ar_internal_metadata OWNER TO postgres;
 
 --
--- Name: bookmarks; Type: TABLE; Schema: public; Owner: jcoyne
+-- Name: bookmarks; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.bookmarks (
@@ -63,10 +63,10 @@ CREATE TABLE public.bookmarks (
 );
 
 
-ALTER TABLE public.bookmarks OWNER TO jcoyne;
+ALTER TABLE public.bookmarks OWNER TO postgres;
 
 --
--- Name: bookmarks_id_seq; Type: SEQUENCE; Schema: public; Owner: jcoyne
+-- Name: bookmarks_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.bookmarks_id_seq
@@ -78,57 +78,34 @@ CREATE SEQUENCE public.bookmarks_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.bookmarks_id_seq OWNER TO jcoyne;
+ALTER TABLE public.bookmarks_id_seq OWNER TO postgres;
 
 --
--- Name: bookmarks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcoyne
+-- Name: bookmarks_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.bookmarks_id_seq OWNED BY public.bookmarks.id;
 
 
 --
--- Name: organizations; Type: TABLE; Schema: public; Owner: jcoyne
+-- Name: organizations; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.organizations (
-    id bigint NOT NULL,
-    uri character varying,
+    uri character varying NOT NULL,
     metadata jsonb,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
 );
 
 
-ALTER TABLE public.organizations OWNER TO jcoyne;
+ALTER TABLE public.organizations OWNER TO postgres;
 
 --
--- Name: organizations_id_seq; Type: SEQUENCE; Schema: public; Owner: jcoyne
---
-
-CREATE SEQUENCE public.organizations_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.organizations_id_seq OWNER TO jcoyne;
-
---
--- Name: organizations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcoyne
---
-
-ALTER SEQUENCE public.organizations_id_seq OWNED BY public.organizations.id;
-
-
---
--- Name: people; Type: TABLE; Schema: public; Owner: jcoyne
+-- Name: people; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.people (
-    id bigint NOT NULL,
     uri character varying NOT NULL,
     metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -136,47 +113,25 @@ CREATE TABLE public.people (
 );
 
 
-ALTER TABLE public.people OWNER TO jcoyne;
+ALTER TABLE public.people OWNER TO postgres;
 
 --
--- Name: people_id_seq; Type: SEQUENCE; Schema: public; Owner: jcoyne
---
-
-CREATE SEQUENCE public.people_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.people_id_seq OWNER TO jcoyne;
-
---
--- Name: people_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcoyne
---
-
-ALTER SEQUENCE public.people_id_seq OWNED BY public.people.id;
-
-
---
--- Name: people_publications; Type: TABLE; Schema: public; Owner: jcoyne
+-- Name: people_publications; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.people_publications (
-    person_id bigint NOT NULL,
-    publication_id bigint NOT NULL
+    person_uri character varying NOT NULL,
+    publication_uri character varying NOT NULL
 );
 
 
-ALTER TABLE public.people_publications OWNER TO jcoyne;
+ALTER TABLE public.people_publications OWNER TO postgres;
 
 --
--- Name: publications; Type: TABLE; Schema: public; Owner: jcoyne
+-- Name: publications; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.publications (
-    id bigint NOT NULL,
     uri character varying NOT NULL,
     metadata jsonb DEFAULT '{}'::jsonb NOT NULL,
     created_at timestamp without time zone NOT NULL,
@@ -184,31 +139,10 @@ CREATE TABLE public.publications (
 );
 
 
-ALTER TABLE public.publications OWNER TO jcoyne;
+ALTER TABLE public.publications OWNER TO postgres;
 
 --
--- Name: publications_id_seq; Type: SEQUENCE; Schema: public; Owner: jcoyne
---
-
-CREATE SEQUENCE public.publications_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.publications_id_seq OWNER TO jcoyne;
-
---
--- Name: publications_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcoyne
---
-
-ALTER SEQUENCE public.publications_id_seq OWNED BY public.publications.id;
-
-
---
--- Name: schema_migrations; Type: TABLE; Schema: public; Owner: jcoyne
+-- Name: schema_migrations; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.schema_migrations (
@@ -216,10 +150,10 @@ CREATE TABLE public.schema_migrations (
 );
 
 
-ALTER TABLE public.schema_migrations OWNER TO jcoyne;
+ALTER TABLE public.schema_migrations OWNER TO postgres;
 
 --
--- Name: searches; Type: TABLE; Schema: public; Owner: jcoyne
+-- Name: searches; Type: TABLE; Schema: public; Owner: postgres
 --
 
 CREATE TABLE public.searches (
@@ -232,10 +166,10 @@ CREATE TABLE public.searches (
 );
 
 
-ALTER TABLE public.searches OWNER TO jcoyne;
+ALTER TABLE public.searches OWNER TO postgres;
 
 --
--- Name: searches_id_seq; Type: SEQUENCE; Schema: public; Owner: jcoyne
+-- Name: searches_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
 --
 
 CREATE SEQUENCE public.searches_id_seq
@@ -247,61 +181,40 @@ CREATE SEQUENCE public.searches_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.searches_id_seq OWNER TO jcoyne;
+ALTER TABLE public.searches_id_seq OWNER TO postgres;
 
 --
--- Name: searches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: jcoyne
+-- Name: searches_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
 --
 
 ALTER SEQUENCE public.searches_id_seq OWNED BY public.searches.id;
 
 
 --
--- Name: bookmarks id; Type: DEFAULT; Schema: public; Owner: jcoyne
+-- Name: bookmarks id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.bookmarks ALTER COLUMN id SET DEFAULT nextval('public.bookmarks_id_seq'::regclass);
 
 
 --
--- Name: organizations id; Type: DEFAULT; Schema: public; Owner: jcoyne
---
-
-ALTER TABLE ONLY public.organizations ALTER COLUMN id SET DEFAULT nextval('public.organizations_id_seq'::regclass);
-
-
---
--- Name: people id; Type: DEFAULT; Schema: public; Owner: jcoyne
---
-
-ALTER TABLE ONLY public.people ALTER COLUMN id SET DEFAULT nextval('public.people_id_seq'::regclass);
-
-
---
--- Name: publications id; Type: DEFAULT; Schema: public; Owner: jcoyne
---
-
-ALTER TABLE ONLY public.publications ALTER COLUMN id SET DEFAULT nextval('public.publications_id_seq'::regclass);
-
-
---
--- Name: searches id; Type: DEFAULT; Schema: public; Owner: jcoyne
+-- Name: searches id; Type: DEFAULT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.searches ALTER COLUMN id SET DEFAULT nextval('public.searches_id_seq'::regclass);
 
 
 --
--- Data for Name: ar_internal_metadata; Type: TABLE DATA; Schema: public; Owner: jcoyne
+-- Data for Name: ar_internal_metadata; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.ar_internal_metadata (key, value, created_at, updated_at) FROM stdin;
-environment	test	2018-08-01 21:45:14.974433	2018-08-01 21:45:14.974433
+environment	development	2018-10-22 22:46:30.633589	2018-10-22 22:46:30.633589
 \.
 
 
 --
--- Data for Name: bookmarks; Type: TABLE DATA; Schema: public; Owner: jcoyne
+-- Data for Name: bookmarks; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.bookmarks (id, user_id, user_type, document_id, document_type, title, created_at, updated_at) FROM stdin;
@@ -309,55 +222,54 @@ COPY public.bookmarks (id, user_id, user_type, document_id, document_type, title
 
 
 --
--- Data for Name: organizations; Type: TABLE DATA; Schema: public; Owner: jcoyne
+-- Data for Name: organizations; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.organizations (id, uri, metadata, created_at, updated_at) FROM stdin;
+COPY public.organizations (uri, metadata, created_at, updated_at) FROM stdin;
 \.
 
 
 --
--- Data for Name: people; Type: TABLE DATA; Schema: public; Owner: jcoyne
+-- Data for Name: people; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.people (id, uri, metadata, created_at, updated_at) FROM stdin;
-51	http://foo.com/123	{"title": "hello"}	2018-08-17 11:48:30.872362	2018-08-17 11:48:30.872362
+COPY public.people (uri, metadata, created_at, updated_at) FROM stdin;
 \.
 
 
 --
--- Data for Name: people_publications; Type: TABLE DATA; Schema: public; Owner: jcoyne
+-- Data for Name: people_publications; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.people_publications (person_id, publication_id) FROM stdin;
+COPY public.people_publications (person_uri, publication_uri) FROM stdin;
 \.
 
 
 --
--- Data for Name: publications; Type: TABLE DATA; Schema: public; Owner: jcoyne
+-- Data for Name: publications; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.publications (id, uri, metadata, created_at, updated_at) FROM stdin;
+COPY public.publications (uri, metadata, created_at, updated_at) FROM stdin;
 \.
 
 
 --
--- Data for Name: schema_migrations; Type: TABLE DATA; Schema: public; Owner: jcoyne
+-- Data for Name: schema_migrations; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.schema_migrations (version) FROM stdin;
-20180731164045
-20180713160758
-20180731154440
 20180713160757
+20180713160758
 20180713160759
 20180731154305
+20180731154440
 20180731162927
+20180731164045
 \.
 
 
 --
--- Data for Name: searches; Type: TABLE DATA; Schema: public; Owner: jcoyne
+-- Data for Name: searches; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.searches (id, query_params, user_id, user_type, created_at, updated_at) FROM stdin;
@@ -365,42 +277,21 @@ COPY public.searches (id, query_params, user_id, user_type, created_at, updated_
 
 
 --
--- Name: bookmarks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcoyne
+-- Name: bookmarks_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.bookmarks_id_seq', 1, false);
 
 
 --
--- Name: organizations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcoyne
---
-
-SELECT pg_catalog.setval('public.organizations_id_seq', 112, true);
-
-
---
--- Name: people_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcoyne
---
-
-SELECT pg_catalog.setval('public.people_id_seq', 51, true);
-
-
---
--- Name: publications_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcoyne
---
-
-SELECT pg_catalog.setval('public.publications_id_seq', 176, true);
-
-
---
--- Name: searches_id_seq; Type: SEQUENCE SET; Schema: public; Owner: jcoyne
+-- Name: searches_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
 SELECT pg_catalog.setval('public.searches_id_seq', 1, false);
 
 
 --
--- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: jcoyne
+-- Name: ar_internal_metadata ar_internal_metadata_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.ar_internal_metadata
@@ -408,7 +299,7 @@ ALTER TABLE ONLY public.ar_internal_metadata
 
 
 --
--- Name: bookmarks bookmarks_pkey; Type: CONSTRAINT; Schema: public; Owner: jcoyne
+-- Name: bookmarks bookmarks_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.bookmarks
@@ -416,31 +307,31 @@ ALTER TABLE ONLY public.bookmarks
 
 
 --
--- Name: organizations organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: jcoyne
+-- Name: organizations organizations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.organizations
-    ADD CONSTRAINT organizations_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT organizations_pkey PRIMARY KEY (uri);
 
 
 --
--- Name: people people_pkey; Type: CONSTRAINT; Schema: public; Owner: jcoyne
+-- Name: people people_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.people
-    ADD CONSTRAINT people_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT people_pkey PRIMARY KEY (uri);
 
 
 --
--- Name: publications publications_pkey; Type: CONSTRAINT; Schema: public; Owner: jcoyne
+-- Name: publications publications_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.publications
-    ADD CONSTRAINT publications_pkey PRIMARY KEY (id);
+    ADD CONSTRAINT publications_pkey PRIMARY KEY (uri);
 
 
 --
--- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: jcoyne
+-- Name: schema_migrations schema_migrations_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.schema_migrations
@@ -448,7 +339,7 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: searches searches_pkey; Type: CONSTRAINT; Schema: public; Owner: jcoyne
+-- Name: searches searches_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
 --
 
 ALTER TABLE ONLY public.searches
@@ -456,80 +347,45 @@ ALTER TABLE ONLY public.searches
 
 
 --
--- Name: index_bookmarks_on_document_id; Type: INDEX; Schema: public; Owner: jcoyne
+-- Name: index_bookmarks_on_document_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX index_bookmarks_on_document_id ON public.bookmarks USING btree (document_id);
 
 
 --
--- Name: index_bookmarks_on_user_id; Type: INDEX; Schema: public; Owner: jcoyne
+-- Name: index_bookmarks_on_user_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX index_bookmarks_on_user_id ON public.bookmarks USING btree (user_id);
 
 
 --
--- Name: index_organizations_on_metadata_department; Type: INDEX; Schema: public; Owner: jcoyne
+-- Name: index_organizations_on_metadata_department; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX index_organizations_on_metadata_department ON public.organizations USING hash (((metadata ->> 'department'::text)));
 
 
 --
--- Name: index_organizations_on_metadata_type; Type: INDEX; Schema: public; Owner: jcoyne
+-- Name: index_organizations_on_metadata_type; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX index_organizations_on_metadata_type ON public.organizations USING hash (((metadata ->> 'type'::text)));
 
 
 --
--- Name: index_organizations_on_uri; Type: INDEX; Schema: public; Owner: jcoyne
---
-
-CREATE UNIQUE INDEX index_organizations_on_uri ON public.organizations USING btree (uri);
-
-
---
--- Name: index_people_on_uri; Type: INDEX; Schema: public; Owner: jcoyne
---
-
-CREATE UNIQUE INDEX index_people_on_uri ON public.people USING btree (uri);
-
-
---
--- Name: index_people_publications_on_person_id; Type: INDEX; Schema: public; Owner: jcoyne
---
-
-CREATE INDEX index_people_publications_on_person_id ON public.people_publications USING btree (person_id);
-
-
---
--- Name: index_people_publications_on_publication_id; Type: INDEX; Schema: public; Owner: jcoyne
---
-
-CREATE INDEX index_people_publications_on_publication_id ON public.people_publications USING btree (publication_id);
-
-
---
--- Name: index_publications_on_uri; Type: INDEX; Schema: public; Owner: jcoyne
---
-
-CREATE UNIQUE INDEX index_publications_on_uri ON public.publications USING btree (uri);
-
-
---
--- Name: index_searches_on_user_id; Type: INDEX; Schema: public; Owner: jcoyne
+-- Name: index_searches_on_user_id; Type: INDEX; Schema: public; Owner: postgres
 --
 
 CREATE INDEX index_searches_on_user_id ON public.searches USING btree (user_id);
 
 
 --
--- Name: pub_person_uk; Type: INDEX; Schema: public; Owner: jcoyne
+-- Name: pub_person_uk; Type: INDEX; Schema: public; Owner: postgres
 --
 
-CREATE UNIQUE INDEX pub_person_uk ON public.people_publications USING btree (publication_id, person_id);
+CREATE UNIQUE INDEX pub_person_uk ON public.people_publications USING btree (publication_uri, person_uri);
 
 
 --

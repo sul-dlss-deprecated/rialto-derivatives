@@ -172,5 +172,4 @@ func TestPostgresAddPublication(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Len(t, *uris, 2)
 
-	// TODO: Test authors
 }

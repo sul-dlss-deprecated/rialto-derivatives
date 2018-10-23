@@ -89,7 +89,7 @@ func (d *PostgresClient) retrieveOnePublication(subject string) (string, error) 
 }
 
 func (d *PostgresClient) retrievePeoplePublicationRelationship(subject string) (*[]string, error) {
-	return d.retrieveRelationship("people_publications", "people", "person_id", "publications", "publication_id", subject)
+	return d.retrieveRelationship("people_publications", "people", "person_uri", "publications", "publication_uri", subject)
 }
 
 func (d *PostgresClient) retrieveOneRecord(table string, subject string) (string, error) {
@@ -105,35 +105,12 @@ func (d *PostgresClient) retrieveOneRecord(table string, subject string) (string
 	return metadata, nil
 }
 
-func (d *PostgresClient) retrieveOneKey(table string, uri string) (int, error) {
-	query := fmt.Sprintf("SELECT id FROM %v WHERE uri = $1", table)
-	rows, err := d.DB.Query(query, uri)
-	if err != nil {
-		return 0, err
-	}
-	defer rows.Close()
-	ret := rows.Next()
-	// Make sure at least one row
-	if ret == false {
-		return 0, fmt.Errorf("No matches for %s in %s", uri, table)
-	}
-	var key int
-	rows.Scan(&key)
-	ret = rows.Next()
-	// Make sure not more than one row
-	if ret == true {
-		return 0, fmt.Errorf("More than one match for %s in %s", uri, table)
-	}
-
-	return key, nil
-}
-
 func (d *PostgresClient) retrieveRelationship(manyTable string, selectTable string,
 	selectTableJoinField string, whereTable string, whereTableJoinField, whereURI string) (*[]string, error) {
 
 	query := fmt.Sprintf(`SELECT st.uri FROM "%v" st
-		INNER JOIN "%v" mt ON st.id=mt.%v
-		INNER JOIN "%v" wt ON mt.%v=wt.id
+		INNER JOIN "%v" mt ON st.uri=mt.%v
+		INNER JOIN "%v" wt ON mt.%v=wt.uri
 		WHERE wt.uri=$1`, selectTable, manyTable, selectTableJoinField, whereTable, whereTableJoinField)
 	rows, err := d.DB.Query(query, whereURI)
 	if err != nil {
@@ -169,7 +146,7 @@ func (d *PostgresClient) addPublication(resource *models.Publication) error {
 	for i, author := range resource.Authors {
 		peopleURIs[i] = author.URI
 	}
-	return d.addRelationship("people_publications", "publication_id", "publications", resource.URI, "person_id", "people", peopleURIs)
+	return d.addRelationship("people_publications", "publication_uri", resource.URI, "person_uri", peopleURIs)
 }
 
 func (d *PostgresClient) addResource(table string, subject string, data string) error {
@@ -180,23 +157,9 @@ func (d *PostgresClient) addResource(table string, subject string, data string) 
 	return err
 }
 
-func (d *PostgresClient) addRelationship(table string, oneField string, oneTable string, one string, manyField string, manyTable string, many []string) error {
-	// First, find the keys of the one and manies.
-	oneKey, err := d.retrieveOneKey(oneTable, one)
-	if err != nil {
-		return err
-	}
-	manyKeys := make([]int, len(many))
-	var key int
-	for i, manyValue := range many {
-		key, err = d.retrieveOneKey(manyTable, manyValue)
-		if err != nil {
-			return err
-		}
-		manyKeys[i] = key
-	}
+func (d *PostgresClient) addRelationship(table string, oneField string, one string, manyField string, many []string) error {
 	deleteSQL := fmt.Sprintf(`DELETE FROM "%s" WHERE %s=$1`, table, oneField)
-	_, err = d.DB.Exec(deleteSQL, oneKey)
+	_, err := d.DB.Exec(deleteSQL, one)
 	if err != nil {
 		return err
 	}
@@ -206,8 +169,8 @@ func (d *PostgresClient) addRelationship(table string, oneField string, oneTable
 	if err != nil {
 		return err
 	}
-	for _, manyKey := range manyKeys {
-		_, err := insertStmt.Exec(oneKey, manyKey)
+	for _, manyItem := range many {
+		_, err := insertStmt.Exec(one, manyItem)
 		if err != nil {
 			return err
 		}
