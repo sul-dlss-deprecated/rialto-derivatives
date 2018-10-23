@@ -142,6 +142,16 @@ func (r *SparqlReader) GetPositionOrganizationInfo(personID string) (*sparql.Res
 	return r.repo.Query(query)
 }
 
+// GetCountriesInfo retrieves a list of countries for a person
+func (r *SparqlReader) GetCountriesInfo(personID string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`SELECT ?country
+		 WHERE {
+				 <%s> <http://purl.org/dc/terms/spatial> ?country .
+			}
+			ORDER BY ?country OFFSET 0 LIMIT 100`, personID)
+	return r.repo.Query(query)
+}
+
 // GetAuthorInfo retrieves a list of authors the given publication subject is part of
 func (r *SparqlReader) GetAuthorInfo(publication string) (*sparql.Results, error) {
 	query := fmt.Sprintf(`SELECT ?author ?author_label

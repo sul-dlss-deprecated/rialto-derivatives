@@ -65,6 +65,12 @@ func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resou
 				panic(err)
 			}
 			v.SetPositionOrganizationInfo(results)
+			// People also need to be informed of their countries.
+			results, err = m.reader.GetCountriesInfo(v.Subject())
+			if err != nil {
+				panic(err)
+			}
+			v.SetCountriesInfo(results)
 		} else if v, ok := resource.(*models.Publication); ok {
 			// Publications need to be informed of their authors.
 			results, err := m.reader.GetAuthorInfo(v.Subject())
