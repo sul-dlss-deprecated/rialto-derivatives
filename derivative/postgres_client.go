@@ -3,7 +3,6 @@ package derivative
 import (
 	"fmt"
 	"log"
-	"time"
 
 	"database/sql"
 
@@ -52,7 +51,7 @@ func (d *PostgresClient) RemoveAll() error {
 	return err
 }
 
-// Add puts a bunch of documents in Solr
+// Add puts a bunch of documents into Postgres
 func (d *PostgresClient) Add(resourceList []models.Resource) error {
 	for _, resource := range resourceList {
 		err := d.addOne(resource)
@@ -76,24 +75,16 @@ func (d *PostgresClient) addOne(resource models.Resource) error {
 	}
 }
 
-func (d *PostgresClient) retrieveOnePerson(subject string) (string, error) {
+func (d *PostgresClient) retrieveOnePerson(subject string) (string, string, error) {
 	return d.retrieveOneRecord("people", subject)
 }
 
-func (d *PostgresClient) retrieveOneOrganization(subject string) (string, error) {
+func (d *PostgresClient) retrieveOneOrganization(subject string) (string, string, error) {
 	return d.retrieveOneRecord("organizations", subject)
 }
 
 func (d *PostgresClient) retrieveOnePublication(subject string) (string, error) {
-	return d.retrieveOneRecord("publications", subject)
-}
-
-func (d *PostgresClient) retrievePeoplePublicationRelationship(subject string) (*[]string, error) {
-	return d.retrieveRelationship("people_publications", "people", "person_uri", "publications", "publication_uri", subject)
-}
-
-func (d *PostgresClient) retrieveOneRecord(table string, subject string) (string, error) {
-	query := fmt.Sprintf("SELECT metadata FROM %v WHERE uri = $1", table)
+	query := fmt.Sprintf("SELECT metadata FROM publications WHERE uri = $1")
 	rows, err := d.DB.Query(query, subject)
 	if err != nil {
 		return "", err
@@ -103,6 +94,24 @@ func (d *PostgresClient) retrieveOneRecord(table string, subject string) (string
 	rows.Next()
 	rows.Scan(&metadata)
 	return metadata, nil
+}
+
+func (d *PostgresClient) retrievePeoplePublicationRelationship(subject string) (*[]string, error) {
+	return d.retrieveRelationship("people_publications", "people", "person_uri", "publications", "publication_uri", subject)
+}
+
+func (d *PostgresClient) retrieveOneRecord(table string, subject string) (string, string, error) {
+	query := fmt.Sprintf("SELECT name, metadata FROM %v WHERE uri = $1", table)
+	rows, err := d.DB.Query(query, subject)
+	if err != nil {
+		return "", "", err
+	}
+	defer rows.Close()
+	var name string
+	var metadata string
+	rows.Next()
+	rows.Scan(&name, &metadata)
+	return name, metadata, nil
 }
 
 func (d *PostgresClient) retrieveRelationship(manyTable string, selectTable string,
@@ -130,15 +139,15 @@ func (d *PostgresClient) retrieveRelationship(manyTable string, selectTable stri
 }
 
 func (d *PostgresClient) addPerson(resource *models.Person) error {
-	return d.addResource("people", resource.Subject(), d.personSerializer.Serialize(resource))
+	return d.addResource(d.personSerializer.SQLForInsert(resource))
 }
 
 func (d *PostgresClient) addOrganization(resource *models.Organization) error {
-	return d.addResource("organizations", resource.Subject(), d.organizationSerializer.Serialize(resource))
+	return d.addResource(d.organizationSerializer.SQLForInsert(resource))
 }
 
 func (d *PostgresClient) addPublication(resource *models.Publication) error {
-	err := d.addResource("publications", resource.Subject(), d.publicationSerializer.Serialize(resource))
+	err := d.addResource(d.publicationSerializer.SQLForInsert(resource))
 	if err != nil {
 		return err
 	}
@@ -149,11 +158,8 @@ func (d *PostgresClient) addPublication(resource *models.Publication) error {
 	return d.addRelationship("people_publications", "publication_uri", resource.URI, "person_uri", peopleURIs)
 }
 
-func (d *PostgresClient) addResource(table string, subject string, data string) error {
-	sql := fmt.Sprintf(`INSERT INTO "%v" ("uri", "metadata", "created_at", "updated_at")
-		VALUES ($1, $2, $3, $4)
-		ON CONFLICT (uri) DO UPDATE SET metadata=$2, updated_at=$4 WHERE %v.uri=$1`, table, table)
-	_, err := d.DB.Exec(sql, subject, data, time.Now(), time.Now())
+func (d *PostgresClient) addResource(sql string, vals []interface{}) error {
+	_, err := d.DB.Exec(sql, vals...)
 	return err
 }
 

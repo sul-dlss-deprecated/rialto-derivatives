@@ -28,6 +28,6 @@ func NewOrganization(data map[string]rdf.Term) *Organization {
 }
 
 // Subject returns the resources Subject URI
-func (c *Organization) Subject() string {
+func (c Organization) Subject() string {
 	return c.URI
 }

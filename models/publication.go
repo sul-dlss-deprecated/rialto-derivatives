@@ -64,6 +64,11 @@ func NewPublication(data map[string]rdf.Term) *Publication {
 	return pub
 }
 
+// Name returns the resources Name
+func (c *Publication) Name() string {
+	return c.Title
+}
+
 // SetAuthorInfo allow author relationships to be passed in
 func (c *Publication) SetAuthorInfo(results *sparql.Results) {
 	solutions := results.Solutions()
