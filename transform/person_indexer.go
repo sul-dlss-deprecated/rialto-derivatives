@@ -26,21 +26,24 @@ func (m *PersonIndexer) Index(resource *models.Person, doc solr.Document) solr.D
 	doc.Set("name_tsim", resource.Name())
 
 	// 2. department
-	doc.Set("department_label_ssim", m.retrievePositionOrganizationNames(resource.DepartmentOrgs))
+	doc.Set("department_label_ssim", m.retrieveLabels(resource.DepartmentOrgs))
 
 	// 3. school
-	doc.Set("school_label_ssim", m.retrievePositionOrganizationNames(resource.SchoolOrgs))
+	doc.Set("school_label_ssim", m.retrieveLabels(resource.SchoolOrgs))
 
 	// 4. institution
-	doc.Set("institution_label_ssim", m.retrievePositionOrganizationNames(resource.InstitutionOrgs))
+	doc.Set("institution_label_ssim", m.retrieveLabels(resource.InstitutionOrgs))
+
+	// 5. institution
+	doc.Set("countries_label_ssim", m.retrieveLabels(resource.Countries))
 
 	return doc
 }
 
-func (m *PersonIndexer) retrievePositionOrganizationNames(resources []*models.PositionOrganization) *[]string {
-	orgs := make([]string, len(resources))
+func (m *PersonIndexer) retrieveLabels(resources []*models.Labeled) *[]string {
+	labels := make([]string, len(resources))
 	for n, resource := range resources {
-		orgs[n] = resource.Label
+		labels[n] = resource.Label
 	}
-	return &orgs
+	return &labels
 }
