@@ -68,11 +68,12 @@ func TestPostgresAddPerson(t *testing.T) {
 	err := addPerson(client, "http://example.com/record1", "http://vivoweb.org/ontology/core#Student", "Barbara", "Liskov")
 	assert.Nil(t, err)
 
-	person, err := client.retrieveOnePerson("http://example.com/record1")
+	name, person, err := client.retrieveOnePerson("http://example.com/record1")
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"name": "Barbara Liskov", "countries": null, "departments": [], "institutionalAffiliations": []}`, person)
+	assert.Equal(t, `{"countries": null, "departments": [], "institutionalAffiliations": []}`, person)
+	assert.Equal(t, "Barbara Liskov", name)
 
 }
 
@@ -89,12 +90,12 @@ func TestPostgresUpdatePerson(t *testing.T) {
 	err = addPerson(client, "http://example.com/record1", "http://vivoweb.org/ontology/core#Student", "B.", "Liskov")
 	assert.Nil(t, err)
 
-	person, err := client.retrieveOnePerson("http://example.com/record1")
+	name, person, err := client.retrieveOnePerson("http://example.com/record1")
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"name": "B. Liskov", "countries": null, "departments": [], "institutionalAffiliations": []}`, person)
-
+	assert.Equal(t, `{"countries": null, "departments": [], "institutionalAffiliations": []}`, person)
+	assert.Equal(t, "B. Liskov", name)
 }
 
 func TestPostgresAddOrganization(t *testing.T) {
@@ -120,11 +121,13 @@ func TestPostgresAddOrganization(t *testing.T) {
 	err := client.addOrganization(resource.(*models.Organization))
 	assert.Nil(t, err)
 
-	org, err := client.retrieveOneOrganization("http://example.com/record1")
+	retrievedName, org, err := client.retrieveOneOrganization("http://example.com/record1")
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"name": "School of Engineering", "type": "http://vivoweb.org/ontology/core#School"}`, org)
+	assert.Equal(t, `{"type": "http://vivoweb.org/ontology/core#School"}`, org)
+	assert.Equal(t, "School of Engineering", retrievedName)
+
 }
 
 func TestPostgresAddPublication(t *testing.T) {

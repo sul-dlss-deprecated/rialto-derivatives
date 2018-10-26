@@ -1,8 +1,6 @@
 package transform
 
 import (
-	"fmt"
-
 	"github.com/sul-dlss-labs/rialto-derivatives/models"
 	"github.com/sul-dlss-labs/rialto-derivatives/repository"
 	"github.com/vanng822/go-solr/solr"
@@ -25,7 +23,7 @@ func (m *PersonIndexer) Index(resource *models.Person, doc solr.Document) solr.D
 	doc.Set("type_ssi", "Person")
 
 	// 1. Get the associated name resource
-	doc.Set("name_tsim", m.retrieveAssociatedName(resource))
+	doc.Set("name_tsim", resource.Name())
 
 	// 2. department
 	doc.Set("department_label_ssim", m.retrievePositionOrganizationNames(resource.DepartmentOrgs))
@@ -37,12 +35,6 @@ func (m *PersonIndexer) Index(resource *models.Person, doc solr.Document) solr.D
 	doc.Set("institution_label_ssim", m.retrievePositionOrganizationNames(resource.InstitutionOrgs))
 
 	return doc
-}
-
-func (m *PersonIndexer) retrieveAssociatedName(resource *models.Person) string {
-	givenName := resource.Firstname
-	familyName := resource.Lastname
-	return fmt.Sprintf("%v %v", givenName, familyName)
 }
 
 func (m *PersonIndexer) retrievePositionOrganizationNames(resources []*models.PositionOrganization) *[]string {

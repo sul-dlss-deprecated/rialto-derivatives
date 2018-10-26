@@ -1,6 +1,8 @@
 package models
 
 import (
+	"fmt"
+
 	"github.com/knakk/rdf"
 	"github.com/knakk/sparql"
 )
@@ -46,6 +48,13 @@ func NewPerson(data map[string]rdf.Term) *Person {
 // Subject returns the resources Subject URI
 func (c Person) Subject() string {
 	return c.URI
+}
+
+// Name returns the resources Name
+func (c Person) Name() string {
+	givenName := c.Firstname
+	familyName := c.Lastname
+	return fmt.Sprintf("%v %v", givenName, familyName)
 }
 
 // SetPositionOrganizationInfo adds organization relationships to a person from sparql results
