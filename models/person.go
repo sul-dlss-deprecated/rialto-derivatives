@@ -10,13 +10,13 @@ import (
 // Person is a human actor involved in creating works
 type Person struct {
 	URI             string
-	Subtype         string
 	Firstname       string
 	Lastname        string
 	DepartmentOrgs  []*Labeled
 	SchoolOrgs      []*Labeled
 	InstitutionOrgs []*Labeled
 	Countries       []*Labeled
+	Subtypes        []*Labeled
 }
 
 // Labeled is a resource that has a label
@@ -29,9 +29,6 @@ type Labeled struct {
 func NewPerson(data map[string]rdf.Term) *Person {
 	obj := &Person{
 		URI: data["id"].String(),
-	}
-	if subtype := data["subtype"]; subtype != nil {
-		obj.Subtype = subtype.String()
 	}
 
 	if firstname := data["firstname"]; firstname != nil {
@@ -84,5 +81,15 @@ func (c *Person) SetCountriesInfo(results *sparql.Results) {
 	for _, solution := range solutions {
 		country := &Labeled{solution["country"].String(), solution["label"].String()}
 		c.Countries = append(c.Countries, country)
+	}
+}
+
+// SetPersonSubtypesInfo adds subtypes to a person from sparql results
+func (c *Person) SetPersonSubtypesInfo(results *sparql.Results) {
+	solutions := results.Solutions()
+	for _, solution := range solutions {
+		// For label, removing http://sul.stanford.edu/rialto/ontology# from URI
+		subtype := &Labeled{solution["subtype"].String(), solution["subtype"].String()[40:]}
+		c.Subtypes = append(c.Subtypes, subtype)
 	}
 }

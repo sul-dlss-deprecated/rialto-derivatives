@@ -23,18 +23,15 @@ func TestNewPersonMinimalFields(t *testing.T) {
 func TestNewPersonAllFields(t *testing.T) {
 	data := make(map[string]rdf.Term)
 	id, _ := rdf.NewIRI("http://example.com/record1")
-	faculty, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#FacultyMember")
 
 	fname, _ := rdf.NewLiteral("Justin")
 	lname, _ := rdf.NewLiteral("Coyne")
 	data["id"] = id
-	data["subtype"] = faculty
 	data["lastname"] = lname
 	data["firstname"] = fname
 
 	resource := NewPerson(data)
 	assert.IsType(t, &Person{}, resource)
-	assert.Equal(t, faculty.String(), resource.Subtype)
 	assert.Equal(t, resource.Firstname, fname.String())
 	assert.Equal(t, resource.Lastname, lname.String())
 
@@ -43,16 +40,14 @@ func TestNewPersonAllFields(t *testing.T) {
 func TestSetPositionOrganizationInfo(t *testing.T) {
 	data := make(map[string]rdf.Term)
 	id, _ := rdf.NewIRI("http://example.com/record1")
-	faculty, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#FacultyMember")
 
 	data["id"] = id
-	data["subtype"] = faculty
 
 	resource := NewPerson(data)
 
 	organizationJSON := strings.NewReader(`{
     "head" : {
-  "vars" : [ "org", "type", "name" ]
+  "vars" : [ "org", "name" ]
 },
 "results" : {
   "bindings" : [ {
@@ -138,16 +133,14 @@ func TestSetPositionOrganizationInfo(t *testing.T) {
 func TestSetCountriesInfo(t *testing.T) {
 	data := make(map[string]rdf.Term)
 	id, _ := rdf.NewIRI("http://example.com/record1")
-	faculty, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#FacultyMember")
 
 	data["id"] = id
-	data["subtype"] = faculty
 
 	resource := NewPerson(data)
 
 	countriesJSON := strings.NewReader(`{
     "head" : {
-  		"vars" : [ "country" ]
+  		"vars" : [ "country", "label" ]
 		},
 		"results" : {
   		"bindings" : [ {
@@ -168,4 +161,33 @@ func TestSetCountriesInfo(t *testing.T) {
 	assert.Equal(t, []*Labeled{
 		&Labeled{"http://sws.geonames.org/1814991/", "United States"}},
 		resource.Countries)
+}
+
+func TestSetPersonSubtypesInfo(t *testing.T) {
+	data := make(map[string]rdf.Term)
+	id, _ := rdf.NewIRI("http://example.com/record1")
+
+	data["id"] = id
+
+	resource := NewPerson(data)
+
+	subtypeJSON := strings.NewReader(`{
+    "head" : {
+  		"vars" : [ "subtype" ]
+		},
+		"results" : {
+  		"bindings" : [ {
+    		"subtype" : {
+      		"type" : "uri",
+      		"value" : "http://sul.stanford.edu/rialto/ontology#Faculty"
+    		}
+  		} ]
+		}
+	}`)
+	results, _ := sparql.ParseJSON(subtypeJSON)
+	resource.SetPersonSubtypesInfo(results)
+	assert.IsType(t, &Person{}, resource)
+	assert.Equal(t, []*Labeled{
+		&Labeled{"http://sul.stanford.edu/rialto/ontology#Faculty", "Faculty"}},
+		resource.Subtypes)
 }

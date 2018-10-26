@@ -71,6 +71,12 @@ func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resou
 				panic(err)
 			}
 			v.SetCountriesInfo(results)
+			// People also need to be informed of their subtypes.
+			results, err = m.reader.GetPersonSubtypesInfo(v.Subject())
+			if err != nil {
+				panic(err)
+			}
+			v.SetPersonSubtypesInfo(results)
 		} else if v, ok := resource.(*models.Publication); ok {
 			// Publications need to be informed of their authors.
 			results, err := m.reader.GetAuthorInfo(v.Subject())

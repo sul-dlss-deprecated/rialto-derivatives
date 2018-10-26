@@ -102,15 +102,11 @@ func (r *SparqlReader) queryPage(sparqlForOffset func(offset int) string, f func
 func (r *SparqlReader) queryPeople(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
-			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?firstname ?lastname
+			return fmt.Sprintf(`SELECT ?id ?type ?firstname ?lastname
 			WHERE {
 				?id a ?type .
 				%s
 				FILTER ( ?type = <http://xmlns.com/foaf/0.1/Person>)
-				OPTIONAL {
-					?id a ?subtype .
-					FILTER ( ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Person>, <http://xmlns.com/foaf/0.1/Agent>))
-				}
 				OPTIONAL {
 					?id <http://www.w3.org/2006/vcard/ns#hasName> ?n .
 					?n <http://www.w3.org/2006/vcard/ns#given-name> ?firstname .
@@ -150,6 +146,17 @@ func (r *SparqlReader) GetCountriesInfo(personID string) (*sparql.Results, error
 				 ?country rdfs:label ?label .
 			}
 			ORDER BY ?country OFFSET 0 LIMIT 100`, personID)
+	return r.repo.Query(query)
+}
+
+// GetPersonSubtypesInfo retrieves a list of types for a person
+func (r *SparqlReader) GetPersonSubtypesInfo(personID string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`SELECT ?subtype
+		 WHERE {
+				 <%s> a ?subtype .
+				 FILTER ( ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Person>, <http://xmlns.com/foaf/0.1/Agent>))
+			}
+			ORDER BY ?subtype OFFSET 0 LIMIT 100`, personID)
 	return r.repo.Query(query)
 }
 
