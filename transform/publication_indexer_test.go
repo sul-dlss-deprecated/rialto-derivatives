@@ -30,6 +30,7 @@ func TestPublicationResourceToDoc(t *testing.T) {
 		Description: &description,
 		Authors:     authors,
 		Concepts:    concepts,
+		CreatedYear: 2004,
 	}
 	in := make(solr.Document)
 	in.Set("id", "http://example.com/record1")
@@ -48,5 +49,5 @@ func TestPublicationResourceToDoc(t *testing.T) {
 	assert.Equal(t, abstract, doc.Get("abstract_tesim"))
 	assert.Equal(t, publisher, doc.Get("publisher_ssim"))
 	assert.Equal(t, description, doc.Get("description_tesim"))
-
+	assert.Equal(t, 2004, doc.Get("created_year_isim"))
 }

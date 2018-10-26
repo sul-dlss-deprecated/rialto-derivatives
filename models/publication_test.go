@@ -46,6 +46,7 @@ func TestNewPublicationAllFields(t *testing.T) {
 	data["abstract"] = abstract
 	data["publisher"] = publisher
 	data["description"] = description
+	data["created"] = created
 
 	resource := NewPublication(data)
 	assert.IsType(t, &Publication{}, resource)
@@ -56,5 +57,6 @@ func TestNewPublicationAllFields(t *testing.T) {
 	assert.Equal(t, *resource.Abstract, abstract.String())
 	assert.Equal(t, *resource.Publisher, publisher.String())
 	assert.Equal(t, *resource.Description, description.String())
+	assert.Equal(t, resource.CreatedYear, 2004)
 
 }

@@ -13,7 +13,8 @@ type PublicationSerializer struct {
 }
 
 type publication struct {
-	Title string `json:"title"`
+	Title       string `json:"title"`
+	CreatedYear *int   `json:"created_year"`
 }
 
 // NewPublicationSerializer makes a new instance of the PersonSerializer
@@ -25,6 +26,10 @@ func NewPublicationSerializer() *PublicationSerializer {
 func (m *PublicationSerializer) Serialize(resource *models.Publication) string {
 	p := &publication{
 		Title: resource.Title,
+	}
+
+	if resource.CreatedYear != 0 {
+		p.CreatedYear = &resource.CreatedYear
 	}
 
 	b, err := json.Marshal(p)
