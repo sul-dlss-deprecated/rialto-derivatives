@@ -17,18 +17,20 @@ func TestSerializePersonResource(t *testing.T) {
 		Firstname: "Harry",
 		Lastname:  "Potter",
 		URI:       "http://example.com/record1",
-		DepartmentOrgs: []*models.PositionOrganization{&models.PositionOrganization{
+		DepartmentOrgs: []*models.Labeled{&models.Labeled{
 			URI:   "http://example.com/department1",
 			Label: "Department 1"}},
-		InstitutionOrgs: []*models.PositionOrganization{&models.PositionOrganization{
+		InstitutionOrgs: []*models.Labeled{&models.Labeled{
 			URI:   "http://example.com/institution1",
 			Label: "Institution 1"}},
-		Countries: []string{"http://sws.geonames.org/1814991/"},
+		Countries: []*models.Labeled{&models.Labeled{
+			URI:   "http://sws.geonames.org/1814991/",
+			Label: "United States"}},
 	}
 
 	doc := indexer.Serialize(resource)
 
-	assert.Equal(t, `{"departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"countries":["http://sws.geonames.org/1814991/"]}`, doc)
+	assert.Equal(t, `{"departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"country_labels":["United States"]}`, doc)
 }
 
 func TestToSQLPersonResource(t *testing.T) {
@@ -40,13 +42,15 @@ func TestToSQLPersonResource(t *testing.T) {
 		Firstname: "Harry",
 		Lastname:  "Potter",
 		URI:       "http://example.com/record1",
-		DepartmentOrgs: []*models.PositionOrganization{&models.PositionOrganization{
+		DepartmentOrgs: []*models.Labeled{&models.Labeled{
 			URI:   "http://example.com/department1",
 			Label: "Department 1"}},
-		InstitutionOrgs: []*models.PositionOrganization{&models.PositionOrganization{
+		InstitutionOrgs: []*models.Labeled{&models.Labeled{
 			URI:   "http://example.com/institution1",
 			Label: "Institution 1"}},
-		Countries: []string{"http://sws.geonames.org/1814991/"},
+		Countries: []*models.Labeled{&models.Labeled{
+			URI:   "http://sws.geonames.org/1814991/",
+			Label: "United States"}},
 	}
 
 	sql, values := indexer.SQLForInsert(resource)
@@ -55,5 +59,5 @@ func TestToSQLPersonResource(t *testing.T) {
 		VALUES ($1, $2, $3, $4, $5)
 		ON CONFLICT (uri) DO UPDATE SET name=$2, metadata=$3, updated_at=$5 WHERE people.uri=$1`, sql)
 	assert.Equal(t, "Harry Potter", values[1])
-	assert.Equal(t, `{"departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"countries":["http://sws.geonames.org/1814991/"]}`, values[2])
+	assert.Equal(t, `{"departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"country_labels":["United States"]}`, values[2])
 }

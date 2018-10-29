@@ -13,14 +13,14 @@ type Person struct {
 	Subtype         string
 	Firstname       string
 	Lastname        string
-	DepartmentOrgs  []*PositionOrganization
-	SchoolOrgs      []*PositionOrganization
-	InstitutionOrgs []*PositionOrganization
-	Countries       []string
+	DepartmentOrgs  []*Labeled
+	SchoolOrgs      []*Labeled
+	InstitutionOrgs []*Labeled
+	Countries       []*Labeled
 }
 
-// PositionOrganization is an organization that the person is affiliated with via a position that the person holds
-type PositionOrganization struct {
+// Labeled is a resource that has a label
+type Labeled struct {
 	URI   string
 	Label string
 }
@@ -61,7 +61,7 @@ func (c Person) Name() string {
 func (c *Person) SetPositionOrganizationInfo(results *sparql.Results) {
 	solutions := results.Solutions()
 	for _, solution := range solutions {
-		org := &PositionOrganization{solution["org"].String(), solution["name"].String()}
+		org := &Labeled{solution["org"].String(), solution["name"].String()}
 		if solution["type"] != nil {
 			switch solution["type"].String() {
 			case "http://vivoweb.org/ontology/core#Department":
@@ -82,7 +82,7 @@ func (c *Person) SetPositionOrganizationInfo(results *sparql.Results) {
 func (c *Person) SetCountriesInfo(results *sparql.Results) {
 	solutions := results.Solutions()
 	for _, solution := range solutions {
-		country := solution["country"].String()
+		country := &Labeled{solution["country"].String(), solution["label"].String()}
 		c.Countries = append(c.Countries, country)
 	}
 }

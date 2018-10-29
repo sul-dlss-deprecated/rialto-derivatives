@@ -144,9 +144,10 @@ func (r *SparqlReader) GetPositionOrganizationInfo(personID string) (*sparql.Res
 
 // GetCountriesInfo retrieves a list of countries for a person
 func (r *SparqlReader) GetCountriesInfo(personID string) (*sparql.Results, error) {
-	query := fmt.Sprintf(`SELECT ?country
+	query := fmt.Sprintf(`SELECT ?country ?label
 		 WHERE {
 				 <%s> <http://purl.org/dc/terms/spatial> ?country .
+				 ?country rdfs:label ?label .
 			}
 			ORDER BY ?country OFFSET 0 LIMIT 100`, personID)
 	return r.repo.Query(query)
@@ -186,10 +187,10 @@ func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...
 				?id a ?type .
 				?id <http://www.w3.org/2004/02/skos/core#prefLabel> ?name .
 				%s
-			  FILTER ( ! bound(?subtype) || ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Agent>))
 				FILTER ( ?type = <http://xmlns.com/foaf/0.1/Organization>)
 			  OPTIONAL {
 					?id a ?subtype .
+					FILTER ( ! bound(?subtype) || ?subtype NOT IN (<http://xmlns.com/foaf/0.1/Organization>, <http://xmlns.com/foaf/0.1/Agent>))
 				}
 				OPTIONAL {
 					?id <http://purl.obolibrary.org/obo/BFO_0000050> ?parent .

@@ -122,16 +122,16 @@ func TestSetPositionOrganizationInfo(t *testing.T) {
 	results, _ := sparql.ParseJSON(organizationJSON)
 	resource.SetPositionOrganizationInfo(results)
 	assert.IsType(t, &Person{}, resource)
-	assert.Equal(t, []*PositionOrganization{
-		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/electrical-engineering", "Electrical Engineering"},
-		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/nuclear-engineering", "Nuclear Engineering"}},
+	assert.Equal(t, []*Labeled{
+		&Labeled{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/electrical-engineering", "Electrical Engineering"},
+		&Labeled{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering/nuclear-engineering", "Nuclear Engineering"}},
 		resource.DepartmentOrgs)
-	assert.Equal(t, []*PositionOrganization{
-		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering", "School of Engineering"}},
+	assert.Equal(t, []*Labeled{
+		&Labeled{"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering", "School of Engineering"}},
 		resource.SchoolOrgs)
-	assert.Equal(t, []*PositionOrganization{
-		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/stanford", "Stanford University"},
-		&PositionOrganization{"http://sul.stanford.edu/rialto/agents/orgs/leland-junior-u", "Leland Junior University"}},
+	assert.Equal(t, []*Labeled{
+		&Labeled{"http://sul.stanford.edu/rialto/agents/orgs/stanford", "Stanford University"},
+		&Labeled{"http://sul.stanford.edu/rialto/agents/orgs/leland-junior-u", "Leland Junior University"}},
 		resource.InstitutionOrgs)
 }
 
@@ -154,6 +154,10 @@ func TestSetCountriesInfo(t *testing.T) {
     		"country" : {
       		"type" : "uri",
       		"value" : "http://sws.geonames.org/1814991/"
+    		},
+				"label" : {
+      		"type" : "literal",
+      		"value" : "United States"
     		}
   		} ]
 		}
@@ -161,6 +165,7 @@ func TestSetCountriesInfo(t *testing.T) {
 	results, _ := sparql.ParseJSON(countriesJSON)
 	resource.SetCountriesInfo(results)
 	assert.IsType(t, &Person{}, resource)
-	assert.Equal(t, []string{"http://sws.geonames.org/1814991/"},
+	assert.Equal(t, []*Labeled{
+		&Labeled{"http://sws.geonames.org/1814991/", "United States"}},
 		resource.Countries)
 }

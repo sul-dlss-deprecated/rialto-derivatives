@@ -17,7 +17,7 @@ type PersonSerializer struct {
 type person struct {
 	Departments  *[]string `json:"departments"`
 	Institutions *[]string `json:"institutionalAffiliations"`
-	Countries    *[]string `json:"countries"`
+	Countries    *[]string `json:"country_labels"`
 }
 
 // NewPersonSerializer makes a new instance of the PersonSerializer
@@ -33,9 +33,9 @@ func NewPersonSerializer(repo repository.Repository) *PersonSerializer {
 //   institution ([URI])
 func (m *PersonSerializer) Serialize(resource *models.Person) string {
 	p := &person{
-		Departments:  m.retrievePositionOrganizationURIs(resource.DepartmentOrgs),
-		Institutions: m.retrievePositionOrganizationURIs(resource.InstitutionOrgs),
-		Countries:    &resource.Countries,
+		Departments:  m.retrieveURIs(resource.DepartmentOrgs),
+		Institutions: m.retrieveURIs(resource.InstitutionOrgs),
+		Countries:    m.retrieveLabels(resource.Countries),
 	}
 
 	b, err := json.Marshal(p)
@@ -58,10 +58,18 @@ func (m *PersonSerializer) SQLForInsert(resource *models.Person) (string, []inte
 	return sql, vals
 }
 
-func (m *PersonSerializer) retrievePositionOrganizationURIs(resources []*models.PositionOrganization) *[]string {
-	orgs := make([]string, len(resources))
+func (m *PersonSerializer) retrieveURIs(resources []*models.Labeled) *[]string {
+	uris := make([]string, len(resources))
 	for n, resource := range resources {
-		orgs[n] = resource.URI
+		uris[n] = resource.URI
 	}
-	return &orgs
+	return &uris
+}
+
+func (m *PersonSerializer) retrieveLabels(resources []*models.Labeled) *[]string {
+	labels := make([]string, len(resources))
+	for n, resource := range resources {
+		labels[n] = resource.Label
+	}
+	return &labels
 }
