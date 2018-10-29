@@ -34,8 +34,11 @@ func (m *PersonIndexer) Index(resource *models.Person, doc solr.Document) solr.D
 	// 4. institution
 	doc.Set("institution_label_ssim", m.retrieveLabels(resource.InstitutionOrgs))
 
-	// 5. institution
+	// 5. countries
 	doc.Set("countries_label_ssim", m.retrieveLabels(resource.Countries))
+
+	// 6. subtype
+	doc.Set("person_subtype_ssim", m.retrieveLabels(resource.Subtypes))
 
 	return doc
 }
