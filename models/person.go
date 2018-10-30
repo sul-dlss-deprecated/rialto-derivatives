@@ -14,6 +14,7 @@ type Person struct {
 	Lastname        string
 	DepartmentOrgs  []*Labeled
 	SchoolOrgs      []*Labeled
+	InstituteOrgs   []*Labeled
 	InstitutionOrgs []*Labeled
 	Countries       []*Labeled
 	Subtypes        []*Labeled
@@ -67,6 +68,8 @@ func (c *Person) SetPositionOrganizationInfo(results *sparql.Results) {
 				c.SchoolOrgs = append(c.SchoolOrgs, org)
 			case "http://vivoweb.org/ontology/core#University":
 				c.InstitutionOrgs = append(c.InstitutionOrgs, org)
+			case "http://vivoweb.org/ontology/core#Institute":
+				c.InstituteOrgs = append(c.InstituteOrgs, org)
 			}
 		} else {
 			// If no type, then assuming an institution

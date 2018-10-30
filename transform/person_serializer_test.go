@@ -23,6 +23,9 @@ func TestSerializePersonResource(t *testing.T) {
 		InstitutionOrgs: []*models.Labeled{&models.Labeled{
 			URI:   "http://example.com/institution1",
 			Label: "Institution 1"}},
+		InstituteOrgs: []*models.Labeled{&models.Labeled{
+			URI:   "http://example.com/institute1",
+			Label: "Institute 1"}},
 		Countries: []*models.Labeled{&models.Labeled{
 			URI:   "http://sws.geonames.org/1814991/",
 			Label: "United States"}},
@@ -30,7 +33,7 @@ func TestSerializePersonResource(t *testing.T) {
 
 	doc := indexer.Serialize(resource)
 
-	assert.Equal(t, `{"departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"country_labels":["United States"]}`, doc)
+	assert.Equal(t, `{"departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"institutes":["http://example.com/institute1"],"country_labels":["United States"]}`, doc)
 }
 
 func TestToSQLPersonResource(t *testing.T) {
@@ -48,6 +51,9 @@ func TestToSQLPersonResource(t *testing.T) {
 		InstitutionOrgs: []*models.Labeled{&models.Labeled{
 			URI:   "http://example.com/institution1",
 			Label: "Institution 1"}},
+		InstituteOrgs: []*models.Labeled{&models.Labeled{
+			URI:   "http://example.com/institute1",
+			Label: "Institute 1"}},
 		Countries: []*models.Labeled{&models.Labeled{
 			URI:   "http://sws.geonames.org/1814991/",
 			Label: "United States"}},
@@ -59,5 +65,5 @@ func TestToSQLPersonResource(t *testing.T) {
 		VALUES ($1, $2, $3, $4, $5)
 		ON CONFLICT (uri) DO UPDATE SET name=$2, metadata=$3, updated_at=$5 WHERE people.uri=$1`, sql)
 	assert.Equal(t, "Harry Potter", values[1])
-	assert.Equal(t, `{"departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"country_labels":["United States"]}`, values[2])
+	assert.Equal(t, `{"departments":["http://example.com/department1"],"institutionalAffiliations":["http://example.com/institution1"],"institutes":["http://example.com/institute1"],"country_labels":["United States"]}`, values[2])
 }
