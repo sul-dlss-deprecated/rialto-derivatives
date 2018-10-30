@@ -102,7 +102,20 @@ func TestSetPositionOrganizationInfo(t *testing.T) {
       "type" : "uri",
       "value" : "http://vivoweb.org/ontology/core#School"
     }
-  }, {
+		}, {
+	    "org" : {
+	      "type" : "uri",
+	      "value" : "http://sul.stanford.edu/rialto/agents/orgs/independent-labs-institutes-and-centers-dean-of-research/stanford-neurosciences-institute"
+	    },
+	    "name" : {
+	      "type" : "literal",
+	      "value" : "Stanford Neurosciences Institute"
+	    },
+	    "type" : {
+	      "type" : "uri",
+	      "value" : "http://vivoweb.org/ontology/core#Institute"
+	    }
+	  }, {
     "org" : {
       "type" : "uri",
       "value" : "http://sul.stanford.edu/rialto/agents/orgs/leland-junior-u"
@@ -128,6 +141,9 @@ func TestSetPositionOrganizationInfo(t *testing.T) {
 		&Labeled{"http://sul.stanford.edu/rialto/agents/orgs/stanford", "Stanford University"},
 		&Labeled{"http://sul.stanford.edu/rialto/agents/orgs/leland-junior-u", "Leland Junior University"}},
 		resource.InstitutionOrgs)
+	assert.Equal(t, []*Labeled{
+		&Labeled{"http://sul.stanford.edu/rialto/agents/orgs/independent-labs-institutes-and-centers-dean-of-research/stanford-neurosciences-institute", "Stanford Neurosciences Institute"}},
+		resource.InstituteOrgs)
 }
 
 func TestSetCountriesInfo(t *testing.T) {

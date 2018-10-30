@@ -22,22 +22,25 @@ func NewPersonIndexer(repository repository.Repository) *PersonIndexer {
 func (m *PersonIndexer) Index(resource *models.Person, doc solr.Document) solr.Document {
 	doc.Set("type_ssi", "Person")
 
-	// 1. Get the associated name resource
+	// Get the associated name resource
 	doc.Set("name_tsim", resource.Name())
 
-	// 2. department
+	// Department
 	doc.Set("department_label_ssim", m.retrieveLabels(resource.DepartmentOrgs))
 
-	// 3. school
+	// School
 	doc.Set("school_label_ssim", m.retrieveLabels(resource.SchoolOrgs))
 
-	// 4. institution
+	// Institute
+	doc.Set("institute_label_ssim", m.retrieveLabels(resource.InstituteOrgs))
+
+	// Institution
 	doc.Set("institution_label_ssim", m.retrieveLabels(resource.InstitutionOrgs))
 
-	// 5. countries
+	// Countries
 	doc.Set("countries_label_ssim", m.retrieveLabels(resource.Countries))
 
-	// 6. subtype
+	// Subtype
 	doc.Set("person_subtype_ssim", m.retrieveLabels(resource.Subtypes))
 
 	return doc
