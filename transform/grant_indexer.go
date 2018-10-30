@@ -13,5 +13,14 @@ type GrantIndexer struct {
 func (m *GrantIndexer) Index(resource *models.Grant, doc solr.Document) solr.Document {
 	doc.Set("type_ssi", "Grant")
 	doc.Set("title_tesi", resource.Name)
+	if resource.PI != nil {
+		doc.Set("pi_label_tsim", resource.PI.Label)
+		doc.Set("pi_ssim", resource.PI.URI)
+	}
+	if resource.Assigned != nil {
+		doc.Set("assigned_label_tsim", resource.Assigned.Label)
+		doc.Set("assigned_ssim", resource.Assigned.URI)
+	}
+
 	return doc
 }
