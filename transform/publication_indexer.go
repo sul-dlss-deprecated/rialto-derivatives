@@ -52,6 +52,10 @@ func (m *PublicationIndexer) Index(resource *models.Publication, doc solr.Docume
 		doc.Set("publisher_ssim", *resource.Publisher)
 	}
 
+	if resource.CreatedYear != 0 {
+		doc.Set("created_year_isim", resource.CreatedYear)
+	}
+
 	// TODO Fields still to map:
 	// "cites":            "cites_ssim",
 	// "link":             "link_ssim",

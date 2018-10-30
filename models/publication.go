@@ -1,6 +1,8 @@
 package models
 
 import (
+	"strconv"
+
 	"github.com/knakk/rdf"
 	"github.com/knakk/sparql"
 )
@@ -17,6 +19,7 @@ type Publication struct {
 	Publisher   *string
 	Description *string
 	Created     string
+	CreatedYear int
 	Authors     []*Author
 	Concepts    []*Concept
 }
@@ -60,6 +63,14 @@ func NewPublication(data map[string]rdf.Term) *Publication {
 	if description := data["description"]; description != nil {
 		descriptionStr := description.String()
 		pub.Description = &descriptionStr
+	}
+
+	if date := data["created"]; date != nil {
+		yearStr := date.String()[0:4]
+		yearInt, err := strconv.Atoi(yearStr)
+		if err == nil {
+			pub.CreatedYear = yearInt
+		}
 	}
 	return pub
 }

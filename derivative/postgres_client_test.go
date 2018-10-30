@@ -169,7 +169,7 @@ func TestPostgresAddPublication(t *testing.T) {
 
 	pub, err := client.retrieveOnePublication("http://example.com/publication1")
 	assert.Nil(t, err)
-	assert.Equal(t, `{"title": "New developments in the management of narcolepsy"}`, pub)
+	assert.Equal(t, `{"title": "New developments in the management of narcolepsy", "created_year": null}`, pub)
 
 	uris, err := client.retrievePeoplePublicationRelationship("http://example.com/publication1")
 	assert.Nil(t, err)
