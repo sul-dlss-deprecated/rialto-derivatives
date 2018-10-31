@@ -169,10 +169,40 @@ func TestPostgresAddPublication(t *testing.T) {
 
 	pub, err := client.retrieveOnePublication("http://example.com/publication1")
 	assert.Nil(t, err)
-	assert.Equal(t, `{"title": "New developments in the management of narcolepsy", "created_year": null}`, pub)
+	assert.Equal(t, `{"title": "New developments in the management of narcolepsy", "concepts": [], "created_year": null}`, pub)
 
 	uris, err := client.retrievePeoplePublicationRelationship("http://example.com/publication1")
 	assert.Nil(t, err)
 	assert.Len(t, *uris, 2)
+
+}
+
+func TestPostgresAddOConcept(t *testing.T) {
+	conf := NewPostgresConfig().WithDbname("rialto_test").WithSSL(false)
+	repo := new(MockRepository)
+
+	client := NewPostgresClient(conf, repo)
+	client.RemoveAll()
+
+	data := make(map[string]rdf.Term)
+	label, _ := rdf.NewLiteral("Philosophy")
+	id, _ := rdf.NewIRI("http://example.com/concept1")
+	resourceType, _ := rdf.NewIRI("http://www.w3.org/2004/02/skos/core#Concept")
+
+	data["id"] = id
+	data["type"] = resourceType
+	data["label"] = label
+
+	resource := models.NewResource(data)
+
+	err := client.addConcept(resource.(*models.Concept))
+	assert.Nil(t, err)
+
+	retrievedName, concept, err := client.retrieveOneConcept("http://example.com/concept1")
+	if err != nil {
+		panic(err)
+	}
+	assert.Equal(t, `{}`, concept)
+	assert.Equal(t, "Philosophy", retrievedName)
 
 }

@@ -244,7 +244,7 @@ func (r *SparqlReader) queryConcepts(f func(*sparql.Results) error, ids ...strin
 			WHERE {
 			  ?id a <http://www.w3.org/2004/02/skos/core#Concept> .
 				?id a ?type .
-			  ?id <http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?label .
+			  ?id <http://purl.org/dc/terms/subject> ?label .
 				%s
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)
