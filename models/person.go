@@ -20,12 +20,6 @@ type Person struct {
 	Subtypes        []*Labeled
 }
 
-// Labeled is a resource that has a label
-type Labeled struct {
-	URI   string
-	Label string
-}
-
 // NewPerson instantiates a person from sparql results
 func NewPerson(data map[string]rdf.Term) *Person {
 	obj := &Person{

@@ -70,10 +70,18 @@ func TestGrantResource(t *testing.T) {
 	id, _ := rdf.NewIRI("http://example.com/record1")
 	document, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#Grant")
 	name, _ := rdf.NewLiteral("Hydra in a Box")
+	pi, _ := rdf.NewIRI("http://example.com/record2")
+	piName, _ := rdf.NewLiteral("Bob")
+	assigned, _ := rdf.NewIRI("http://example.com/record3")
+	assignedName, _ := rdf.NewLiteral("Chocolate Foundation")
 
 	data["id"] = id
 	data["type"] = document
 	data["name"] = name
+	data["pi"] = pi
+	data["pi_label"] = piName
+	data["assigned"] = assigned
+	data["assigned_label"] = assignedName
 	resource := NewResource(data)
 	assert.IsType(t, &Grant{}, resource)
 }

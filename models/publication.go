@@ -25,10 +25,7 @@ type Publication struct {
 }
 
 // Author is a representation of a person that authored a publication.
-type Author struct {
-	URI   string
-	Label string
-}
+type Author Labeled
 
 // NewPublication instantiates a publication from sparql results
 func NewPublication(data map[string]rdf.Term) *Publication {

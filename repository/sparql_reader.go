@@ -210,16 +210,24 @@ func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...
 func (r *SparqlReader) queryGrants(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
-			return fmt.Sprintf(`SELECT ?id ?type ?name
+			return fmt.Sprintf(`SELECT ?id ?type ?name ?pi ?pi_label ?assigned ?assigned_label
 			WHERE {
 			  ?id a <http://vivoweb.org/ontology/core#Grant> .
 				?id a ?type .
 			  ?id <http://www.w3.org/2004/02/skos/core#prefLabel>|<http://www.w3.org/2000/01/rdf-schema#label> ?name .
+				?id <http://vivoweb.org/ontology/core#relates> ?pi_role .
+				?pi_role a <http://vivoweb.org/ontology/core#PrincipalInvestigatorRole> .
+				?pi_role <http://purl.obolibrary.org/obo/RO_0000052> ?pi .
+				?pi <http://www.w3.org/2004/02/skos/core#prefLabel> ?pi_label .
+				?id <http://vivoweb.org/ontology/core#assignedBy> ?assigned .
+				?assigned <http://www.w3.org/2004/02/skos/core#prefLabel> ?assigned_label .
 				%s
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)
 		}, f)
 }
+
+//vivo:relates vivo:PrincipalInvestigatorRole obo:RO_0000052 foaf:Person
 
 // filter creates a SPARQL filter fragement to match only on the passed id.
 func (r *SparqlReader) filter(ids []string) string {
