@@ -1,8 +1,8 @@
 package runtime
 
 import (
-	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
-	"github.com/sul-dlss-labs/rialto-derivatives/repository"
+	"github.com/sul-dlss/rialto-derivatives/derivative"
+	"github.com/sul-dlss/rialto-derivatives/repository"
 )
 
 // Registry is the object that holds all the external services

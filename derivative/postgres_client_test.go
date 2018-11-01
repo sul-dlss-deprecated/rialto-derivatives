@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/mock"
 
 	"github.com/knakk/rdf"
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/models"
 )
 
 // MockRepository is a mocked object that implements the repository interface

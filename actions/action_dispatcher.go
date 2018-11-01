@@ -3,8 +3,8 @@ package actions
 import (
 	"log"
 
-	"github.com/sul-dlss-labs/rialto-derivatives/message"
-	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
+	"github.com/sul-dlss/rialto-derivatives/message"
+	"github.com/sul-dlss/rialto-derivatives/runtime"
 )
 
 // DispatchMessage transforms a message into an action

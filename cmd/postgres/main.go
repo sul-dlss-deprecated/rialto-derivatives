@@ -7,11 +7,11 @@ import (
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
-	"github.com/sul-dlss-labs/rialto-derivatives/actions"
-	"github.com/sul-dlss-labs/rialto-derivatives/derivative"
-	"github.com/sul-dlss-labs/rialto-derivatives/message"
-	"github.com/sul-dlss-labs/rialto-derivatives/repository"
-	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
+	"github.com/sul-dlss/rialto-derivatives/actions"
+	"github.com/sul-dlss/rialto-derivatives/derivative"
+	"github.com/sul-dlss/rialto-derivatives/message"
+	"github.com/sul-dlss/rialto-derivatives/repository"
+	"github.com/sul-dlss/rialto-derivatives/runtime"
 
 	// Added for the postgres driver
 	_ "github.com/lib/pq"

@@ -6,8 +6,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
-	"github.com/sul-dlss-labs/rialto-derivatives/transform"
+	"github.com/sul-dlss/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/transform"
 	"github.com/vanng822/go-solr/solr"
 )
 
