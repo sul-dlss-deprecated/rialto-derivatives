@@ -16,6 +16,7 @@ type PersonSerializer struct {
 
 type person struct {
 	Departments  *[]string `json:"departments"`
+	Schools      *[]string `json:"schools"`
 	Institutions *[]string `json:"institutionalAffiliations"`
 	Institutes   *[]string `json:"institutes"`
 	Countries    *[]string `json:"country_labels"`
@@ -37,6 +38,7 @@ func (m *PersonSerializer) Serialize(resource *models.Person) string {
 		Departments:  m.retrieveURIs(resource.DepartmentOrgs),
 		Institutions: m.retrieveURIs(resource.InstitutionOrgs),
 		Institutes:   m.retrieveURIs(resource.InstituteOrgs),
+		Schools:      m.retrieveURIs(resource.SchoolOrgs),
 		Countries:    m.retrieveLabels(resource.Countries),
 	}
 

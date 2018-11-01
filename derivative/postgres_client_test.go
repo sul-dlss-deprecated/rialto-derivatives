@@ -72,9 +72,8 @@ func TestPostgresAddPerson(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"institutes": [], "departments": [], "country_labels": [], "institutionalAffiliations": []}`, person)
+	assert.Equal(t, `{"schools": [], "institutes": [], "departments": [], "country_labels": [], "institutionalAffiliations": []}`, person)
 	assert.Equal(t, "Barbara Liskov", name)
-
 }
 
 func TestPostgresUpdatePerson(t *testing.T) {
@@ -94,7 +93,7 @@ func TestPostgresUpdatePerson(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"institutes": [], "departments": [], "country_labels": [], "institutionalAffiliations": []}`, person)
+	assert.Equal(t, `{"schools": [], "institutes": [], "departments": [], "country_labels": [], "institutionalAffiliations": []}`, person)
 	assert.Equal(t, "B. Liskov", name)
 }
 
