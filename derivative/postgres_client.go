@@ -17,6 +17,7 @@ type PostgresClient struct {
 	personSerializer       *transform.PersonSerializer
 	organizationSerializer *transform.OrganizationSerializer
 	publicationSerializer  *transform.PublicationSerializer
+	conceptSerializer      *transform.ConceptSerializer
 }
 
 // NewPostgresClient returns a new PostgresClient instance
@@ -30,6 +31,7 @@ func NewPostgresClient(config *PostgresConfig, repo repository.Repository) *Post
 		personSerializer:       transform.NewPersonSerializer(repo),
 		organizationSerializer: &transform.OrganizationSerializer{},
 		publicationSerializer:  &transform.PublicationSerializer{},
+		conceptSerializer:      transform.NewConceptSerializer(),
 	}
 }
 
@@ -48,6 +50,10 @@ func (d *PostgresClient) RemoveAll() error {
 		return err
 	}
 	_, err = d.DB.Exec(`TRUNCATE TABLE organizations`)
+	if err != nil {
+		return err
+	}
+	_, err = d.DB.Exec(`TRUNCATE TABLE concepts`)
 	return err
 }
 
@@ -70,6 +76,8 @@ func (d *PostgresClient) addOne(resource models.Resource) error {
 		return d.addOrganization(v)
 	case *models.Publication:
 		return d.addPublication(v)
+	case *models.Concept:
+		return d.addConcept(v)
 	default:
 		return fmt.Errorf("Unrecognized resource type: %v", resource)
 	}
@@ -81,6 +89,10 @@ func (d *PostgresClient) retrieveOnePerson(subject string) (string, string, erro
 
 func (d *PostgresClient) retrieveOneOrganization(subject string) (string, string, error) {
 	return d.retrieveOneRecord("organizations", subject)
+}
+
+func (d *PostgresClient) retrieveOneConcept(subject string) (string, string, error) {
+	return d.retrieveOneRecord("concepts", subject)
 }
 
 func (d *PostgresClient) retrieveOnePublication(subject string) (string, error) {
@@ -144,6 +156,10 @@ func (d *PostgresClient) addPerson(resource *models.Person) error {
 
 func (d *PostgresClient) addOrganization(resource *models.Organization) error {
 	return d.addResource(d.organizationSerializer.SQLForInsert(resource))
+}
+
+func (d *PostgresClient) addConcept(resource *models.Concept) error {
+	return d.addResource(d.conceptSerializer.SQLForInsert(resource))
 }
 
 func (d *PostgresClient) addPublication(resource *models.Publication) error {

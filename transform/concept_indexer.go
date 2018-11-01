@@ -13,6 +13,5 @@ type ConceptIndexer struct {
 func (m *ConceptIndexer) Index(resource *models.Concept, doc solr.Document) solr.Document {
 	doc.Set("type_ssi", "Concept")
 	doc.Set("title_tesi", resource.Label)
-	doc.Set("alternative_title_tesim", resource.AlternativeLabel)
 	return doc
 }

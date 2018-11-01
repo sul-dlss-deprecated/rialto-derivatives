@@ -13,8 +13,9 @@ type PublicationSerializer struct {
 }
 
 type publication struct {
-	Title       string `json:"title"`
-	CreatedYear *int   `json:"created_year"`
+	Title       string    `json:"title"`
+	CreatedYear *int      `json:"created_year"`
+	Concepts    *[]string `json:"concepts"`
 }
 
 // NewPublicationSerializer makes a new instance of the PersonSerializer
@@ -25,7 +26,8 @@ func NewPublicationSerializer() *PublicationSerializer {
 // Serialize returns the Publication resource as a JSON string.
 func (m *PublicationSerializer) Serialize(resource *models.Publication) string {
 	p := &publication{
-		Title: resource.Title,
+		Title:    resource.Title,
+		Concepts: m.retrieveURIs(resource.Concepts),
 	}
 
 	if resource.CreatedYear != 0 {
@@ -49,4 +51,12 @@ func (m *PublicationSerializer) SQLForInsert(resource *models.Publication) (stri
 		ON CONFLICT (uri) DO UPDATE SET metadata=$2, updated_at=$4 WHERE %v.uri=$1`, table, table)
 	vals := []interface{}{subject, data, time.Now(), time.Now()}
 	return sql, vals
+}
+
+func (m *PublicationSerializer) retrieveURIs(resources []*models.Concept) *[]string {
+	uris := make([]string, len(resources))
+	for n, resource := range resources {
+		uris[n] = resource.URI
+	}
+	return &uris
 }
