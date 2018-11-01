@@ -7,8 +7,8 @@ import (
 	"github.com/knakk/sparql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
-	"github.com/sul-dlss-labs/rialto-derivatives/repository"
+	"github.com/sul-dlss/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/repository"
 	"github.com/vanng822/go-solr/solr"
 )
 

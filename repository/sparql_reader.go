@@ -10,7 +10,7 @@ import (
 )
 
 // Number of records to pull per requst.  If this is too large, then the SPARQL proxy
-// lambda will hit a 6mb limit. See: https://github.com/sul-dlss-labs/sparql-loader/issues/44
+// lambda will hit a 6mb limit. See: https://github.com/sul-dlss/sparql-loader/issues/44
 // When this was set to anything over 10000, it failed.
 const tripleLimit = 9000
 const idVariable = "?id"

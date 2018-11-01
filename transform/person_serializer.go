@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
-	"github.com/sul-dlss-labs/rialto-derivatives/repository"
+	"github.com/sul-dlss/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/repository"
 )
 
 // PersonSerializer transforms person resource types into JSON Documents

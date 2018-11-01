@@ -1,7 +1,7 @@
 package transform
 
 import (
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/models"
 	"github.com/vanng822/go-solr/solr"
 )
 

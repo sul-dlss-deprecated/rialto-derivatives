@@ -5,7 +5,7 @@ import (
 
 	"github.com/knakk/rdf"
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/models"
 )
 
 func TestOrganizationSerializer(t *testing.T) {

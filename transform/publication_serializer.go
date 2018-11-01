@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/models"
 )
 
 // PublicationSerializer transforms publication resource types into JSON Documents

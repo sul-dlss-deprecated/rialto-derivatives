@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/sul-dlss-labs/rialto-derivatives/message"
+	"github.com/sul-dlss/rialto-derivatives/message"
 )
 
 func TestTouchAction(t *testing.T) {

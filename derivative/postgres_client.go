@@ -6,9 +6,9 @@ import (
 
 	"database/sql"
 
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
-	"github.com/sul-dlss-labs/rialto-derivatives/repository"
-	"github.com/sul-dlss-labs/rialto-derivatives/transform"
+	"github.com/sul-dlss/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/repository"
+	"github.com/sul-dlss/rialto-derivatives/transform"
 )
 
 // PostgresClient represents the functions on the Postgres derivative tables

@@ -5,9 +5,9 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/sul-dlss-labs/rialto-derivatives/message"
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
-	"github.com/sul-dlss-labs/rialto-derivatives/runtime"
+	"github.com/sul-dlss/rialto-derivatives/message"
+	"github.com/sul-dlss/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/runtime"
 )
 
 // MockedWriter is a mocked object that implements the Writer interface

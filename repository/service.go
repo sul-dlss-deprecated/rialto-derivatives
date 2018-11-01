@@ -5,7 +5,7 @@ import (
 
 	"github.com/knakk/rdf"
 	"github.com/knakk/sparql"
-	"github.com/sul-dlss-labs/rialto-derivatives/models"
+	"github.com/sul-dlss/rialto-derivatives/models"
 )
 
 // Repository is an interface that rialto-derivatives reads from as its source
