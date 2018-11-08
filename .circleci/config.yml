@@ -66,6 +66,7 @@ jobs:
             aws configure set default.output json
             aws configure list  # Get confirmation it worked in your logs
             aws lambda update-function-code --function-name rialto-derivatives-solr-development --zip-file fileb://lambda.zip
+            aws s3 cp lambda.zip s3://rialto-lambdas-west-development/rialto-derivatives-solr-development
       - run: zip lambda.zip postgres_derivative
       - run:
           name: Update Lambda Function
@@ -82,6 +83,7 @@ jobs:
             aws configure set default.output json
             aws configure list  # Get confirmation it worked in your logs
             aws lambda update-function-code --function-name rialto-derivatives-postgres-development --zip-file fileb://lambda.zip
+            aws s3 cp lambda.zip s3://rialto-lambdas-west-development/rialto-derivatives-postgres-development
 
 workflows:
   version: 2
