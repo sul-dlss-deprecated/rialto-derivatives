@@ -21,6 +21,7 @@ type Publication struct {
 	Created     string
 	CreatedYear int
 	Authors     []*Author
+	Grants      []*Labeled
 	Concepts    []*Concept
 }
 
@@ -33,6 +34,7 @@ func NewPublication(data map[string]rdf.Term) *Publication {
 		URI:        data["id"].String(),
 		Title:      data["title"].String(),
 		Authors:    []*Author{},
+		Grants:     []*Labeled{},
 		Created:    data["created"].String(),
 		Identifier: data["identifier"].String(),
 	}
@@ -84,6 +86,16 @@ func (c *Publication) SetAuthorInfo(results *sparql.Results) {
 		uri := solution["author"].String()
 		label := solution["author_label"].String()
 		c.Authors = append(c.Authors, &Author{URI: uri, Label: label})
+	}
+}
+
+// SetGrantInfo allow grant relationships to be passed in
+func (c *Publication) SetGrantInfo(results *sparql.Results) {
+	solutions := results.Solutions()
+	for _, solution := range solutions {
+		uri := solution["grant"].String()
+		label := solution["grant_label"].String()
+		c.Grants = append(c.Grants, &Labeled{URI: uri, Label: label})
 	}
 }
 

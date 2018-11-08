@@ -58,5 +58,4 @@ func TestNewPublicationAllFields(t *testing.T) {
 	assert.Equal(t, *resource.Publisher, publisher.String())
 	assert.Equal(t, *resource.Description, description.String())
 	assert.Equal(t, resource.CreatedYear, 2004)
-
 }

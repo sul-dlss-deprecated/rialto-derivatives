@@ -17,9 +17,11 @@ func TestPublicationResourceToDoc(t *testing.T) {
 	author1 := &models.Author{URI: "http://example.com/person1", Label: "Harry Potter"}
 	author2 := &models.Author{URI: "http://example.com/person2", Label: "Hermione Granger"}
 	concept := &models.Concept{URI: "http://example.com/concept1", Label: "Magic"}
+	grant := &models.Labeled{URI: "http://example.com/grant1", Label: "Learning Magic"}
 
 	authors := []*models.Author{author1, author2}
 	concepts := []*models.Concept{concept}
+	grants := []*models.Labeled{grant}
 	resource := &models.Publication{
 		DOI:         &doi,
 		Title:       "Hello world!",
@@ -30,6 +32,7 @@ func TestPublicationResourceToDoc(t *testing.T) {
 		Description: &description,
 		Authors:     authors,
 		Concepts:    concepts,
+		Grants:      grants,
 		CreatedYear: 2004,
 	}
 	in := make(solr.Document)
@@ -44,6 +47,8 @@ func TestPublicationResourceToDoc(t *testing.T) {
 	assert.Equal(t, []string{"Harry Potter", "Hermione Granger"}, doc.Get("author_labels_tsim"))
 	assert.Equal(t, []string{"http://example.com/concept1"}, doc.Get("concepts_ssim"))
 	assert.Equal(t, []string{"Magic"}, doc.Get("concept_labels_ssim"))
+	assert.Equal(t, []string{"http://example.com/grant1"}, doc.Get("grants_ssim"))
+	assert.Equal(t, []string{"Learning Magic"}, doc.Get("grant_labels_ssim"))
 
 	assert.Equal(t, doi, doc.Get("doi_ssim"))
 	assert.Equal(t, abstract, doc.Get("abstract_tesim"))
