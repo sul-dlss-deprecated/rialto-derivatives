@@ -185,6 +185,18 @@ func (r *SparqlReader) GetConceptInfo(subject string) (*sparql.Results, error) {
 	return r.repo.Query(query)
 }
 
+// GetGrantInfo retrieves a list of concepts for a subject
+func (r *SparqlReader) GetGrantInfo(subject string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`SELECT ?id ?label
+		 WHERE {
+				 <%s> <http://vivoweb.org/ontology/core#hasFundingVehicle> ?id .
+				 ?id a <http://vivoweb.org/ontology/core#Grant> .
+				 ?id <http://www.w3.org/2004/02/skos/core#prefLabel> ?label .
+			}
+			ORDER BY ?id OFFSET 0 LIMIT 100`, subject)
+	return r.repo.Query(query)
+}
+
 func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
@@ -257,7 +269,6 @@ func (r *SparqlReader) queryConcepts(f func(*sparql.Results) error, ids ...strin
 // 	"journalIssue":   Predicates["dct"]["hasPart"],
 // 	"subject":        Predicates["dct"]["subject"],
 // 	"alternateTitle": Predicates["dct"]["alternate"],
-// 	"fundedBy":       Predicates["vivo"]["hasFundingVehicle"],
 // 	"sponsor":        Predicates["vivo"]["informationResourceSupportedBy"],
 // 	"hasInstrument":  Predicates["gcis"]["hasInstrument"],
 // 	"sameAs":         Predicates["owl"]["sameAs"],

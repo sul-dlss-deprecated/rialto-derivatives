@@ -79,6 +79,10 @@ func (f *MockedReader) GetConceptInfo(id string) (*sparql.Results, error) {
 	return nil, nil
 }
 
+func (f *MockedReader) GetGrantInfo(id string) (*sparql.Results, error) {
+	return nil, nil
+}
+
 func (f *MockedReader) GetCountriesInfo(id string) (*sparql.Results, error) {
 	return nil, nil
 }

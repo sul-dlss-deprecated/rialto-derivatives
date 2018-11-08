@@ -59,40 +59,54 @@ func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resou
 	for _, solution := range solutions {
 		resource := models.NewResource(solution)
 		if v, ok := resource.(*models.Person); ok {
-			// People also need to be informed of their organization membership.
-			results, err := m.reader.GetPositionOrganizationInfo(v.Subject())
-			if err != nil {
-				panic(err)
-			}
-			v.SetPositionOrganizationInfo(results)
-			// People also need to be informed of their countries.
-			results, err = m.reader.GetCountriesInfo(v.Subject())
-			if err != nil {
-				panic(err)
-			}
-			v.SetCountriesInfo(results)
-			// People also need to be informed of their subtypes.
-			results, err = m.reader.GetPersonSubtypesInfo(v.Subject())
-			if err != nil {
-				panic(err)
-			}
-			v.SetPersonSubtypesInfo(results)
+			m.toPerson(v)
 		} else if v, ok := resource.(*models.Publication); ok {
-			// Publications need to be informed of their authors.
-			results, err := m.reader.GetAuthorInfo(v.Subject())
-			if err != nil {
-				panic(err)
-			}
-			v.SetAuthorInfo(results)
-			// Publications need to be informed of their concepts.
-			results, err = m.reader.GetConceptInfo(v.Subject())
-			if err != nil {
-				panic(err)
-			}
-			v.SetConceptInfo(results)
-
+			m.toPublication(v)
 		}
 		list = append(list, resource)
 	}
 	return list
+}
+
+func (m *Service) toPublication(v *models.Publication) {
+	// Publications need to be informed of their authors.
+	results, err := m.reader.GetAuthorInfo(v.Subject())
+	if err != nil {
+		panic(err)
+	}
+	v.SetAuthorInfo(results)
+	// Publications need to be informed of their concepts.
+	results, err = m.reader.GetConceptInfo(v.Subject())
+	if err != nil {
+		panic(err)
+	}
+	v.SetConceptInfo(results)
+
+	// Publications need to be informed of their grants.
+	results, err = m.reader.GetGrantInfo(v.Subject())
+	if err != nil {
+		panic(err)
+	}
+	v.SetGrantInfo(results)
+}
+
+func (m *Service) toPerson(v *models.Person) {
+	// People also need to be informed of their organization membership.
+	results, err := m.reader.GetPositionOrganizationInfo(v.Subject())
+	if err != nil {
+		panic(err)
+	}
+	v.SetPositionOrganizationInfo(results)
+	// People also need to be informed of their countries.
+	results, err = m.reader.GetCountriesInfo(v.Subject())
+	if err != nil {
+		panic(err)
+	}
+	v.SetCountriesInfo(results)
+	// People also need to be informed of their subtypes.
+	results, err = m.reader.GetPersonSubtypesInfo(v.Subject())
+	if err != nil {
+		panic(err)
+	}
+	v.SetPersonSubtypesInfo(results)
 }
