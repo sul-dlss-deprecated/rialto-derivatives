@@ -162,12 +162,12 @@ func (r *SparqlReader) GetPersonSubtypesInfo(personID string) (*sparql.Results, 
 
 // GetAuthorInfo retrieves a list of authors the given publication subject is part of
 func (r *SparqlReader) GetAuthorInfo(publication string) (*sparql.Results, error) {
-	query := fmt.Sprintf(`SELECT ?author ?author_label
+	query := fmt.Sprintf(`SELECT ?id ?label
 		 WHERE {
 				 <%s> <http://vivoweb.org/ontology/core#relatedBy> ?authorship .
 				 ?authorship a <http://vivoweb.org/ontology/core#Authorship> .
-				 ?authorship <http://vivoweb.org/ontology/core#relates> ?author .
-				 ?author <http://www.w3.org/2004/02/skos/core#prefLabel> ?author_label .
+				 ?authorship <http://vivoweb.org/ontology/core#relates> ?id .
+				 ?id <http://www.w3.org/2004/02/skos/core#prefLabel> ?label .
 			}
 			ORDER BY ?author OFFSET 0 LIMIT 100`, publication)
 	return r.repo.Query(query)
@@ -185,15 +185,15 @@ func (r *SparqlReader) GetConceptInfo(subject string) (*sparql.Results, error) {
 	return r.repo.Query(query)
 }
 
-// GetGrantInfo retrieves a list of concepts for a subject
-func (r *SparqlReader) GetGrantInfo(subject string) (*sparql.Results, error) {
+// GetGrantInfo retrieves a list of grants for a publication
+func (r *SparqlReader) GetGrantInfo(publication string) (*sparql.Results, error) {
 	query := fmt.Sprintf(`SELECT ?id ?label
 		 WHERE {
 				 <%s> <http://vivoweb.org/ontology/core#hasFundingVehicle> ?id .
 				 ?id a <http://vivoweb.org/ontology/core#Grant> .
 				 ?id <http://www.w3.org/2004/02/skos/core#prefLabel> ?label .
 			}
-			ORDER BY ?id OFFSET 0 LIMIT 100`, subject)
+			ORDER BY ?id OFFSET 0 LIMIT 100`, publication)
 	return r.repo.Query(query)
 }
 

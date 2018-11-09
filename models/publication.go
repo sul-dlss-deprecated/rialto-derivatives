@@ -83,8 +83,8 @@ func (c *Publication) Name() string {
 func (c *Publication) SetAuthorInfo(results *sparql.Results) {
 	solutions := results.Solutions()
 	for _, solution := range solutions {
-		uri := solution["author"].String()
-		label := solution["author_label"].String()
+		uri := solution["id"].String()
+		label := solution["label"].String()
 		c.Authors = append(c.Authors, &Author{URI: uri, Label: label})
 	}
 }
@@ -93,8 +93,8 @@ func (c *Publication) SetAuthorInfo(results *sparql.Results) {
 func (c *Publication) SetGrantInfo(results *sparql.Results) {
 	solutions := results.Solutions()
 	for _, solution := range solutions {
-		uri := solution["grant"].String()
-		label := solution["grant_label"].String()
+		uri := solution["id"].String()
+		label := solution["label"].String()
 		c.Grants = append(c.Grants, &Labeled{URI: uri, Label: label})
 	}
 }
