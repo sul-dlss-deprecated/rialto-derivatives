@@ -88,6 +88,14 @@ func (m *Service) toPublication(v *models.Publication) {
 		panic(err)
 	}
 	v.SetGrantInfo(results)
+
+	// Publications need to be informed of their identifiers.
+	results, err = m.reader.GetIdentifierInfo(v.Subject())
+	if err != nil {
+		panic(err)
+	}
+	v.SetIdentifierInfo(results)
+
 }
 
 func (m *Service) toPerson(v *models.Person) {

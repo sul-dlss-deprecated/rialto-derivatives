@@ -91,6 +91,10 @@ func (f *MockedReader) GetPersonSubtypesInfo(id string) (*sparql.Results, error)
 	return nil, nil
 }
 
+func (f *MockedReader) GetIdentifierInfo(id string) (*sparql.Results, error) {
+	return nil, nil
+}
+
 func TestPersonResourceWithName(t *testing.T) {
 	fakeSparql := new(MockedReader)
 
