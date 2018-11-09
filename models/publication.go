@@ -15,7 +15,7 @@ type Publication struct {
 	Title       string
 	DOI         *string
 	Abstract    *string
-	Identifier  string
+	Identifiers []string
 	Publisher   *string
 	Description *string
 	Created     string
@@ -31,12 +31,12 @@ type Author Labeled
 // NewPublication instantiates a publication from sparql results
 func NewPublication(data map[string]rdf.Term) *Publication {
 	pub := &Publication{
-		URI:        data["id"].String(),
-		Title:      data["title"].String(),
-		Authors:    []*Author{},
-		Grants:     []*Labeled{},
-		Created:    data["created"].String(),
-		Identifier: data["identifier"].String(),
+		URI:         data["id"].String(),
+		Title:       data["title"].String(),
+		Authors:     []*Author{},
+		Grants:      []*Labeled{},
+		Created:     data["created"].String(),
+		Identifiers: []string{},
 	}
 
 	if subtype := data["subtype"]; subtype != nil {
@@ -104,6 +104,15 @@ func (c *Publication) SetConceptInfo(results *sparql.Results) {
 	solutions := results.Solutions()
 	for _, solution := range solutions {
 		c.Concepts = append(c.Concepts, NewConcept(solution))
+	}
+}
+
+// SetIdentifierInfo allow identifiers to be passed in
+func (c *Publication) SetIdentifierInfo(results *sparql.Results) {
+	solutions := results.Solutions()
+	for _, solution := range solutions {
+		identifier := solution["id"].String()
+		c.Identifiers = append(c.Identifiers, identifier)
 	}
 }
 

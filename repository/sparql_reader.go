@@ -197,6 +197,16 @@ func (r *SparqlReader) GetGrantInfo(publication string) (*sparql.Results, error)
 	return r.repo.Query(query)
 }
 
+// GetIdentifierInfo retrieves a list of identifiers for a publication
+func (r *SparqlReader) GetIdentifierInfo(publication string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`SELECT ?id
+		 WHERE {
+				 <%s> <http://purl.org/ontology/bibo/identifier> ?id .
+			}
+			ORDER BY ?id OFFSET 0 LIMIT 100`, publication)
+	return r.repo.Query(query)
+}
+
 func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
@@ -285,7 +295,6 @@ func (r *SparqlReader) queryPublications(f func(*sparql.Results) error, ids ...s
 			  ?id a <http://purl.org/ontology/bibo/Document> .
 				?id a ?type .
 			  ?id <http://purl.org/dc/terms/title> ?title .
-				?id <http://purl.org/ontology/bibo/identifier> ?identifier .
 				?id <http://purl.org/dc/terms/created> ?created .
 				%s
 				FILTER ( ?type = <http://purl.org/ontology/bibo/Document>)

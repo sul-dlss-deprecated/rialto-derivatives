@@ -14,7 +14,6 @@ func (m *PublicationIndexer) Index(resource *models.Publication, doc solr.Docume
 	doc.Set("type_ssi", "Publication")
 	doc.Set("title_tesi", resource.Title)
 	doc.Set("created_ssim", resource.Created)
-	doc.Set("identifier_ssim", resource.Identifier)
 
 	if resource.DOI != nil {
 		doc.Set("doi_ssim", *resource.DOI)
@@ -26,6 +25,7 @@ func (m *PublicationIndexer) Index(resource *models.Publication, doc solr.Docume
 	m.indexAuthors(resource, &doc)
 	m.indexConcepts(resource, &doc)
 	m.indexGrants(resource, &doc)
+	doc.Set("identifiers_ssim", resource.Identifiers)
 
 	if resource.Description != nil {
 		doc.Set("description_tesim", *resource.Description)
@@ -39,20 +39,9 @@ func (m *PublicationIndexer) Index(resource *models.Publication, doc solr.Docume
 		doc.Set("created_year_isim", resource.CreatedYear)
 	}
 
-	// TODO Fields still to map:
-	// "cites":            "cites_ssim",
-	// "link":             "link_ssim",
-	// "fundedBy":         "funded_by_ssim",
-	// "sponsor":          "sponsor_label_tsim",   // TODO: Needs URI lookup
-	// "hasInstrument":    "has_instrument_ssim",
-	// "sameAs":           "same_as_ssim",
-	// "journalIssue":     "journal_issue_ssim",
-	// "subject":          "subject_label_ssim", // TODO: Needs URI
-	// "alternativeTitle": "alternative_title_tesim",
-
-	// TODO: complex lookups
-	// Profiles confirmed 	vivo:relatedBy vivo:Authorship dcterms:source 	"Profiles" string-literal 	[0,1] 	If the authorship relationship has been confirmed by the Author in Profiles. Can be reused for any relationship needed (i.e. Editorship, Advising Relationship, etc.)
-	// editor 	vivo:relatedBy vivo:Editorship vivo:relates 	URI for foaf:Agent 	[0,n] 	Editor of the publication.
+	if resource.Identifiers != nil {
+		doc.Set("identifiers_ssim", resource.Identifiers)
+	}
 
 	return doc
 }
