@@ -78,6 +78,9 @@ func (d *PostgresClient) addOne(resource models.Resource) error {
 		return d.addPublication(v)
 	case *models.Concept:
 		return d.addConcept(v)
+	case *models.Grant:
+		// NOP
+		return nil
 	default:
 		return fmt.Errorf("Unrecognized resource type: %v", resource)
 	}
