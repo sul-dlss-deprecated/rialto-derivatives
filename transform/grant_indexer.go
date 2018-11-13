@@ -21,6 +21,15 @@ func (m *GrantIndexer) Index(resource *models.Grant, doc solr.Document) solr.Doc
 		doc.Set("assigned_label_tsim", resource.Assigned.Label)
 		doc.Set("assigned_ssim", resource.Assigned.URI)
 	}
+	if resource.Start != "" {
+		doc.Set("start_date_ss", resource.Start)
+	}
+	if resource.End != "" {
+		doc.Set("end_date_ss", resource.End)
+	}
+	if resource.Identifiers != nil {
+		doc.Set("identifiers_ssim", resource.Identifiers)
+	}
 
 	return doc
 }

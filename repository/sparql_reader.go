@@ -207,6 +207,16 @@ func (r *SparqlReader) GetIdentifierInfo(publication string) (*sparql.Results, e
 	return r.repo.Query(query)
 }
 
+// GetGrantIdentifierInfo retrieves a list of identifiers for a grant
+func (r *SparqlReader) GetGrantIdentifierInfo(grant string) (*sparql.Results, error) {
+	query := fmt.Sprintf(`SELECT ?id
+		 WHERE {
+				 <%s> <http://purl.org/dc/terms/identifier> ?id .
+			}
+			ORDER BY ?id OFFSET 0 LIMIT 100`, grant)
+	return r.repo.Query(query)
+}
+
 func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
@@ -232,7 +242,7 @@ func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...
 func (r *SparqlReader) queryGrants(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
-			return fmt.Sprintf(`SELECT ?id ?type ?name ?pi ?pi_label ?assigned ?assigned_label
+			return fmt.Sprintf(`SELECT ?id ?type ?name ?pi ?pi_label ?assigned ?assigned_label ?start ?end
 			WHERE {
 			  ?id a <http://vivoweb.org/ontology/core#Grant> .
 				?id a ?type .
@@ -243,6 +253,12 @@ func (r *SparqlReader) queryGrants(f func(*sparql.Results) error, ids ...string)
 				?pi <http://www.w3.org/2004/02/skos/core#prefLabel> ?pi_label .
 				?id <http://vivoweb.org/ontology/core#assignedBy> ?assigned .
 				?assigned <http://www.w3.org/2004/02/skos/core#prefLabel> ?assigned_label .
+				OPTIONAL {
+					?id <http://purl.org/cerif/frapo/hasStartDate> ?start .
+				}
+				OPTIONAL {
+					?id <http://purl.org/cerif/frapo/hasEndDate> ?end .
+				}
 				%s
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)
