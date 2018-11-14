@@ -25,7 +25,6 @@ func (m *PublicationIndexer) Index(resource *models.Publication, doc solr.Docume
 	m.indexAuthors(resource, &doc)
 	m.indexConcepts(resource, &doc)
 	m.indexGrants(resource, &doc)
-	doc.Set("identifiers_ssim", resource.Identifiers)
 
 	if resource.Description != nil {
 		doc.Set("description_tesim", *resource.Description)

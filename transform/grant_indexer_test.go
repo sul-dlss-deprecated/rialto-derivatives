@@ -19,6 +19,7 @@ func TestGrantIndexerToDoc(t *testing.T) {
 	piName, _ := rdf.NewLiteral("Bob")
 	assigned, _ := rdf.NewIRI("http://example.com/record3")
 	assignedName, _ := rdf.NewLiteral("Chocolate Foundation")
+	start, _ := rdf.NewLiteral("2018-05-14")
 
 	data["id"] = id
 	data["type"] = document
@@ -27,11 +28,13 @@ func TestGrantIndexerToDoc(t *testing.T) {
 	data["pi_label"] = piName
 	data["assigned"] = assigned
 	data["assigned_label"] = assignedName
+	data["start"] = start
 
-	resource := models.NewResource(data)
+	resource := models.NewGrant(data)
+	resource.Identifiers = []string{"123456"}
 	in := make(solr.Document)
 	in.Set("id", "http://example.com/record1")
-	doc := indexer.Index(resource.(*models.Grant), in)
+	doc := indexer.Index(resource, in)
 
 	assert.Equal(t, "Hydra in a Box", doc.Get("title_tesi"))
 	assert.Equal(t, "http://example.com/record1", doc.Get("id"))
@@ -39,4 +42,7 @@ func TestGrantIndexerToDoc(t *testing.T) {
 	assert.Equal(t, "Bob", doc.Get("pi_label_tsim"))
 	assert.Equal(t, "http://example.com/record3", doc.Get("assigned_ssim"))
 	assert.Equal(t, "Chocolate Foundation", doc.Get("assigned_label_tsim"))
+	assert.Equal(t, "2018-05-14", doc.Get("start_date_ss"))
+	assert.Equal(t, nil, doc.Get("end_date_ss"))
+	assert.Equal(t, []string{"123456"}, doc.Get("identifiers_ssim"))
 }

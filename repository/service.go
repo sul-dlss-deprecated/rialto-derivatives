@@ -62,6 +62,8 @@ func (m *Service) toResourceList(solutions []map[string]rdf.Term) []models.Resou
 			m.toPerson(v)
 		} else if v, ok := resource.(*models.Publication); ok {
 			m.toPublication(v)
+		} else if v, ok := resource.(*models.Grant); ok {
+			m.toGrant(v)
 		}
 		list = append(list, resource)
 	}
@@ -96,6 +98,15 @@ func (m *Service) toPublication(v *models.Publication) {
 	}
 	v.SetIdentifierInfo(results)
 
+}
+
+func (m *Service) toGrant(v *models.Grant) {
+	// Grants need to be informed of their identifiers.
+	results, err := m.reader.GetGrantIdentifierInfo(v.Subject())
+	if err != nil {
+		panic(err)
+	}
+	v.SetIdentifierInfo(results)
 }
 
 func (m *Service) toPerson(v *models.Person) {

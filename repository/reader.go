@@ -13,6 +13,7 @@ type Reader interface {
 	GetAuthorInfo(publicationID string) (*sparql.Results, error)
 	GetConceptInfo(subject string) (*sparql.Results, error)
 	GetIdentifierInfo(subject string) (*sparql.Results, error)
+	GetGrantIdentifierInfo(subject string) (*sparql.Results, error)
 	GetGrantInfo(subject string) (*sparql.Results, error)
 	GetPersonSubtypesInfo(subject string) (*sparql.Results, error)
 }
