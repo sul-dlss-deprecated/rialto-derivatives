@@ -37,7 +37,7 @@ type RetryingSparqlRepository struct {
 func (r *RetryingSparqlRepository) Query(q string) (*sparql.Results, error) {
 	results, err := r.repo.Query(q)
 	// Retrying because when running under Localstack, triplestore may not be immediately available.
-	for i := 0; i < retries && err != nil && strings.Contains(err.Error(), "no such host"); i++ {
+	for i := 0; i < retries && err != nil && (strings.Contains(err.Error(), "no such host") || strings.Contains(err.Error(), "connection refused")); i++ {
 		log.Printf("Retrying repo, time %d", i+1)
 		time.Sleep(1 * time.Second)
 		results, err = r.repo.Query(q)
@@ -220,7 +220,7 @@ func (r *SparqlReader) GetGrantIdentifierInfo(grant string) (*sparql.Results, er
 func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...string) error {
 	return r.queryPage(
 		func(offset int) string {
-			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?name ?parent
+			return fmt.Sprintf(`SELECT ?id ?type ?subtype ?name ?parent ?parent_school
 			WHERE {
 			  ?id a <http://xmlns.com/foaf/0.1/Organization> .
 				?id a ?type .
@@ -234,6 +234,10 @@ func (r *SparqlReader) queryOrganizations(f func(*sparql.Results) error, ids ...
 				OPTIONAL {
 					?id <http://purl.obolibrary.org/obo/BFO_0000050> ?parent .
 			  }
+				OPTIONAL {
+					?id <http://purl.obolibrary.org/obo/BFO_0000050>+ ?parent_school .
+					?parent_school a <http://vivoweb.org/ontology/core#School> .
+				}
 			}
 			ORDER BY ?id OFFSET %v LIMIT %v`, r.filter(ids), offset, tripleLimit)
 		}, f)

@@ -14,16 +14,18 @@ func TestOrganizationSerializer(t *testing.T) {
 	name, _ := rdf.NewLiteral("School of Engineering")
 	organization, _ := rdf.NewIRI("http://xmlns.com/foaf/0.1/Organization")
 	school, _ := rdf.NewIRI("http://vivoweb.org/ontology/core#School")
+	parentSchool, _ := rdf.NewIRI("http://example.com/record2")
 
 	data["id"] = id
 	data["name"] = name
 	data["type"] = organization
 	data["subtype"] = school
+	data["parent_school"] = parentSchool
 
 	resource := models.NewResource(data)
 
 	org := (&OrganizationSerializer{}).Serialize(resource.(*models.Organization))
-	assert.Equal(t, `{"type": "http://vivoweb.org/ontology/core#School"}`, org)
+	assert.Equal(t, `{"type":"http://vivoweb.org/ontology/core#School","parent_school":"http://example.com/record2"}`, org)
 }
 
 func TestToSQLOrganizationResource(t *testing.T) {
@@ -46,5 +48,5 @@ func TestToSQLOrganizationResource(t *testing.T) {
 		VALUES ($1, $2, $3, $4, $5)
 		ON CONFLICT (uri) DO UPDATE SET name=$2, metadata=$3, updated_at=$5 WHERE organizations.uri=$1`, sql)
 	assert.Equal(t, "School of Engineering", values[1])
-	assert.Equal(t, `{"type": "http://vivoweb.org/ontology/core#School"}`, values[2])
+	assert.Equal(t, `{"type":"http://vivoweb.org/ontology/core#School","parent_school":null}`, values[2])
 }

@@ -1,11 +1,17 @@
 package transform
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
 	"github.com/sul-dlss/rialto-derivatives/models"
 )
+
+type organization struct {
+	Type         string  `json:"type"`
+	ParentSchool *string `json:"parent_school"`
+}
 
 // OrganizationSerializer transforms organization resource types into JSON Documents
 type OrganizationSerializer struct {
@@ -17,7 +23,19 @@ type OrganizationSerializer struct {
 //   name (string)
 //   type (URI) the most specific type (e.g. Department or University)
 func (m *OrganizationSerializer) Serialize(resource *models.Organization) string {
-	return fmt.Sprintf(`{"type": "%s"}`, resource.Subtype)
+	o := &organization{
+		Type: resource.Subtype,
+	}
+
+	if resource.ParentSchool != "" {
+		o.ParentSchool = &resource.ParentSchool
+	}
+
+	b, err := json.Marshal(o)
+	if err != nil {
+		panic(err)
+	}
+	return string(b)
 }
 
 // SQLForInsert returns the sql and the values to insert
