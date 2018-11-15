@@ -124,7 +124,7 @@ func TestPostgresAddOrganization(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
-	assert.Equal(t, `{"type": "http://vivoweb.org/ontology/core#School"}`, org)
+	assert.Equal(t, `{"type": "http://vivoweb.org/ontology/core#School", "parent_school": null}`, org)
 	assert.Equal(t, "School of Engineering", retrievedName)
 
 }
