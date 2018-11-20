@@ -97,7 +97,7 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws sns \
 --endpoint-url=http://localhost:4575 publish \
 --topic-arn arn:aws:sns:us-east-1:123456789012:data-update \
 --message '{"Records": [{"EventSource": "foo", "Sns": { "Timestamp": "2014-05-16T08:28:06.801Z",
-"Message": "{\"Action\": \"rebuild\", \"Entities\": []}" }}]}'
+"Message": "{\"Action\": \"touch\", \"Entities\": [\"http://sul.stanford.edu/rialto/agents/orgs/school-of-engineering\"]}" }}]}'
 ```
 
 8. View output
