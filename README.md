@@ -8,7 +8,7 @@ when an appropriately formatted SNS message is received. In the RIALTO architect
 
 ### Localstack
 
-Start localstack. If you're on a Mac, ensure you are running the docker daemon.
+Start [localstack](https://github.com/localstack/localstack#installing). If you're on a Mac, ensure you are running the docker daemon.
 
 ```
 SERVICES=lambda,sns LAMBDA_EXECUTOR=docker localstack start
