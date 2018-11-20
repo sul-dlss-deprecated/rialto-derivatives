@@ -15,11 +15,15 @@ type PersonSerializer struct {
 }
 
 type person struct {
-	Departments  *[]string `json:"departments"`
-	Schools      *[]string `json:"schools"`
-	Institutions *[]string `json:"institutionalAffiliations"`
-	Institutes   *[]string `json:"institutes"`
-	Countries    *[]string `json:"country_labels"`
+	Departments       *[]string `json:"departments"`
+	DepartmentLabels  *[]string `json:"department_labels"`
+	Schools           *[]string `json:"schools"`
+	SchoolLabels      *[]string `json:"school_labels"`
+	Institutions      *[]string `json:"institutions"`
+	InstitutionLabels *[]string `json:"institution_labels"`
+	Institutes        *[]string `json:"institutes"`
+	InstituteLabels   *[]string `json:"institute_labels"`
+	Countries         *[]string `json:"country_labels"`
 }
 
 // NewPersonSerializer makes a new instance of the PersonSerializer
@@ -28,18 +32,17 @@ func NewPersonSerializer(repo repository.Repository) *PersonSerializer {
 }
 
 // Serialize returns the Person resource as a JSON string.
-// Must include the following properties:
-//
-//   name (string)
-//   department ([URI])
-//   institution ([URI])
 func (m *PersonSerializer) Serialize(resource *models.Person) string {
 	p := &person{
-		Departments:  m.retrieveURIs(resource.DepartmentOrgs),
-		Institutions: m.retrieveURIs(resource.InstitutionOrgs),
-		Institutes:   m.retrieveURIs(resource.InstituteOrgs),
-		Schools:      m.retrieveURIs(resource.SchoolOrgs),
-		Countries:    m.retrieveLabels(resource.Countries),
+		Departments:       m.retrieveURIs(resource.DepartmentOrgs),
+		DepartmentLabels:  m.retrieveLabels(resource.DepartmentOrgs),
+		Institutions:      m.retrieveURIs(resource.InstitutionOrgs),
+		InstitutionLabels: m.retrieveLabels(resource.InstitutionOrgs),
+		Institutes:        m.retrieveURIs(resource.InstituteOrgs),
+		InstituteLabels:   m.retrieveLabels(resource.InstituteOrgs),
+		Schools:           m.retrieveURIs(resource.SchoolOrgs),
+		SchoolLabels:      m.retrieveLabels(resource.SchoolOrgs),
+		Countries:         m.retrieveLabels(resource.Countries),
 	}
 
 	b, err := json.Marshal(p)

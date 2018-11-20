@@ -36,7 +36,7 @@ func TestSerializePersonResource(t *testing.T) {
 
 	doc := indexer.Serialize(resource)
 
-	assert.Equal(t, `{"departments":["http://example.com/department1"],"schools":["http://example.com/school1"],"institutionalAffiliations":["http://example.com/institution1"],"institutes":["http://example.com/institute1"],"country_labels":["United States"]}`, doc)
+	assert.Equal(t, `{"departments":["http://example.com/department1"],"department_labels":["Department 1"],"schools":["http://example.com/school1"],"school_labels":["School 1"],"institutions":["http://example.com/institution1"],"institution_labels":["Institution 1"],"institutes":["http://example.com/institute1"],"institute_labels":["Institute 1"],"country_labels":["United States"]}`, doc)
 }
 
 func TestToSQLPersonResource(t *testing.T) {
@@ -71,5 +71,5 @@ func TestToSQLPersonResource(t *testing.T) {
 		VALUES ($1, $2, $3, $4, $5)
 		ON CONFLICT (uri) DO UPDATE SET name=$2, metadata=$3, updated_at=$5 WHERE people.uri=$1`, sql)
 	assert.Equal(t, "Harry Potter", values[1])
-	assert.Equal(t, `{"departments":["http://example.com/department1"],"schools":["http://example.com/school1"],"institutionalAffiliations":["http://example.com/institution1"],"institutes":["http://example.com/institute1"],"country_labels":["United States"]}`, values[2])
+	assert.Equal(t, `{"departments":["http://example.com/department1"],"department_labels":["Department 1"],"schools":["http://example.com/school1"],"school_labels":["School 1"],"institutions":["http://example.com/institution1"],"institution_labels":["Institution 1"],"institutes":["http://example.com/institute1"],"institute_labels":["Institute 1"],"country_labels":["United States"]}`, values[2])
 }
