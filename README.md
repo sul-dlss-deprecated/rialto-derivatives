@@ -40,7 +40,7 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws \
 --function-name f1 \
 --runtime go1.x \
 --role r1 \
---handler main \
+--handler postgres_derivative \
 --environment "Variables={\
   SPARQL_ENDPOINT=http://127.0.0.1:9999/blazegraph/namespace/kb/sparql, \
   RDS_DB_NAME=rialto_development, \
@@ -56,7 +56,7 @@ AWS_ACCESS_KEY_ID=999999 AWS_SECRET_ACCESS_KEY=1231 aws \
 --function-name f2 \
 --runtime go1.x \
 --role r1 \
---handler main \
+--handler solr_derivative \
 --environment "Variables={SOLR_HOST=http://127.0.0.1:8983/solr,SOLR_COLLECTION=collection1,\
   SPARQL_ENDPOINT=http://127.0.0.1:9999/blazegraph/namespace/kb/sparql}" \
 --zip-file fileb://solr_derivative.zip
