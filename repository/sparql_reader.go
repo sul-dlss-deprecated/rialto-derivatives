@@ -3,6 +3,8 @@ package repository
 import (
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -14,9 +16,6 @@ import (
 // When this was set to anything over 10000, it failed.
 const tripleLimit = 9000
 const idVariable = "?id"
-
-// Number of times to retry connecting to the triplestore
-const retries = 90
 
 // SparqlReader represents the functions we do on the triplestore
 type SparqlReader struct {
@@ -30,19 +29,35 @@ type SparqlRepository interface {
 
 // RetryingSparqlRepository is a wrapper for a SparqlRepository that will retry failed connections
 type RetryingSparqlRepository struct {
-	repo *sparql.Repo
+	repo    *sparql.Repo
+	retries int
 }
 
 // Query wraps querying a SparqlRepository that will retry failed connections
 func (r *RetryingSparqlRepository) Query(q string) (*sparql.Results, error) {
 	results, err := r.repo.Query(q)
 	// Retrying because when running under Localstack, triplestore may not be immediately available.
-	for i := 0; i < retries && err != nil && (strings.Contains(err.Error(), "no such host") || strings.Contains(err.Error(), "connection refused")); i++ {
+	for i := 0; i < r.retries && err != nil && (strings.Contains(err.Error(), "no such host") || strings.Contains(err.Error(), "connection refused")); i++ {
 		log.Printf("Retrying repo, time %d", i+1)
 		time.Sleep(1 * time.Second)
 		results, err = r.repo.Query(q)
 	}
 	return results, err
+}
+
+//NewRetryingSparqlRepository creates a new RetryingSparqlRepository and sets the number of retries.
+func NewRetryingSparqlRepository(repo *sparql.Repo) *RetryingSparqlRepository {
+	newrepo := RetryingSparqlRepository{repo: repo, retries: 30}
+
+	if os.Getenv("SPARQL_RETRIES") != "" {
+		retries, err := strconv.Atoi(os.Getenv("SPARQL_RETRIES"))
+		if err != nil {
+			panic(err)
+		}
+		newrepo.retries = retries
+	}
+	// 	return &repo
+	return &newrepo
 }
 
 // NewSparqlReader creates a new instance of the sparqlReader for the provided endpoint
@@ -53,7 +68,7 @@ func NewSparqlReader(url string) *SparqlReader {
 	if err != nil {
 		log.Fatal(err)
 	}
-	return &SparqlReader{repo: &RetryingSparqlRepository{repo: repo}}
+	return &SparqlReader{repo: NewRetryingSparqlRepository(repo)}
 }
 
 // QueryEverything returns all triples in the datastore

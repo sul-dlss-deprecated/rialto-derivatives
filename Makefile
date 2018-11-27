@@ -31,7 +31,8 @@ local-create-solr: solr local-delete-solr
 	--handler solr_derivative \
 	--region us-east-1 \
 	--environment "Variables={SOLR_HOST=http://solr:8983/solr,SOLR_COLLECTION=collection1,\
-	  SPARQL_ENDPOINT=http://triplestore:9999/blazegraph/namespace/kb/sparql}" \
+	  SPARQL_ENDPOINT=http://triplestore:9999/blazegraph/namespace/kb/sparql, \
+		SPARQL_RETRIES=300}" \
 	--zip-file fileb://solr_derivative.zip
 
 local-create-postgres: postgres local-delete-postgres
@@ -43,6 +44,7 @@ local-create-postgres: postgres local-delete-postgres
 	--handler postgres_derivative \
 	--region us-east-1 \
 	--environment "Variables={SPARQL_ENDPOINT=http://triplestore:9999/blazegraph/namespace/kb/sparql, \
+	  SPARQL_RETRIES=300, \
 	  RDS_DB_NAME=rialto_development, \
 	  RDS_USERNAME=postgres, \
 	  RDS_HOSTNAME=db, \
