@@ -11,7 +11,7 @@ type ConceptIndexer struct {
 
 // Index adds fields from the resource to the Solr Document
 func (m *ConceptIndexer) Index(resource *models.Concept, doc solr.Document) solr.Document {
-	doc.Set("type_ssi", "Concept")
+	doc.Set("type_ssi", "Research Area")
 	doc.Set("title_tesi", resource.Label)
 	return doc
 }

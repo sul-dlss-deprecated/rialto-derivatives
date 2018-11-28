@@ -16,7 +16,7 @@ func TestSerializePublicationResource(t *testing.T) {
 		CreatedYear: 2018,
 		Concepts: []*models.Concept{&models.Concept{
 			URI:   "http://example.com/concept1",
-			Label: "Concept 1"}},
+			Label: "Research Area 1"}},
 	}
 
 	doc := indexer.Serialize(resource)
