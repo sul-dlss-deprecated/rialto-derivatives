@@ -177,14 +177,14 @@ func (r *SparqlReader) GetPersonSubtypesInfo(personID string) (*sparql.Results, 
 
 // GetAuthorInfo retrieves a list of authors the given publication subject is part of
 func (r *SparqlReader) GetAuthorInfo(publication string) (*sparql.Results, error) {
-	query := fmt.Sprintf(`SELECT ?id ?label
+	query := fmt.Sprintf(`SELECT ?id (SAMPLE(?label) as ?label)
 		 WHERE {
 				 <%s> <http://vivoweb.org/ontology/core#relatedBy> ?authorship .
 				 ?authorship a <http://vivoweb.org/ontology/core#Authorship> .
 				 ?authorship <http://vivoweb.org/ontology/core#relates> ?id .
 				 ?id <http://www.w3.org/2004/02/skos/core#prefLabel> ?label .
 			}
-			ORDER BY ?author OFFSET 0 LIMIT 100`, publication)
+			GROUP BY ?id ORDER BY ?id OFFSET 0 LIMIT 100`, publication)
 	return r.repo.Query(query)
 }
 
