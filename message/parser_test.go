@@ -8,11 +8,10 @@ import (
 )
 
 func TestParse(t *testing.T) {
-	evtRecord := events.SNSEventRecord{
-		SNS: events.SNSEntity{
-			Message: "{\"Action\": \"touch\", \"Entities\":[\"http://example.com/foo1\"] }",
-		},
+	evtRecord := events.SQSMessage{
+		Body: "{\"Message\": \"{\\\"Action\\\": \\\"touch\\\", \\\"Entities\\\":[\\\"http://example.com/foo1\\\"] }\"}",
 	}
+
 	event, _ := Parse(evtRecord)
 	assert.Equal(t, "touch", event.Action)
 	assert.Equal(t, []string{"http://example.com/foo1"}, event.Entities)
