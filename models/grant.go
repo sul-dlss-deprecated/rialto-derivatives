@@ -27,7 +27,10 @@ func NewGrant(data map[string]rdf.Term) *Grant {
 	}
 
 	obj.PI = &Labeled{data["pi"].String(), data["pi_label"].String()}
-	obj.Assigned = &Labeled{data["assigned"].String(), data["assigned_label"].String()}
+
+	if data["assigned"] != nil {
+		obj.Assigned = &Labeled{data["assigned"].String(), data["assigned_label"].String()}
+	}
 
 	if start := data["start"]; start != nil {
 		obj.Start = start.String()

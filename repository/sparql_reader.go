@@ -270,8 +270,10 @@ func (r *SparqlReader) queryGrants(f func(*sparql.Results) error, ids ...string)
 				?pi_role a <http://vivoweb.org/ontology/core#PrincipalInvestigatorRole> .
 				?pi_role <http://purl.obolibrary.org/obo/RO_0000052> ?pi .
 				?pi <http://www.w3.org/2004/02/skos/core#prefLabel> ?pi_label .
-				?id <http://vivoweb.org/ontology/core#assignedBy> ?assigned .
-				?assigned <http://www.w3.org/2004/02/skos/core#prefLabel> ?assigned_label .
+				OPTIONAL {
+				  ?id <http://vivoweb.org/ontology/core#assignedBy> ?assigned .
+					?assigned <http://www.w3.org/2004/02/skos/core#prefLabel> ?assigned_label .
+				}
 				OPTIONAL {
 					?id <http://purl.org/cerif/frapo/hasStartDate> ?start .
 				}
