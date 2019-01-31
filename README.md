@@ -2,7 +2,7 @@
 [![CircleCI](https://circleci.com/gh/sul-dlss/rialto-derivatives.svg?style=svg)](https://circleci.com/gh/sul-dlss/rialto-derivatives)
 
 This project contains Lambda functions that migrate data from Neptune to Solr and Postgres
-when an appropriately formatted SNS message is received. In the RIALTO architecture these messages come from https://github.com/sul-dlss/rialto-trigger-rebuild when a full rebuild is needed or from https://github.com/sul-dlss/sparql-loader when a single entity needs to be updated.
+when an appropriately formatted SQS message is received. In the RIALTO architecture these messages come from https://github.com/sul-dlss/rialto-trigger-rebuild when a full rebuild is needed or from https://github.com/sul-dlss/sparql-loader when a single entity needs to be updated.
 
 ## Running a lambda on localstack
 
@@ -11,7 +11,7 @@ when an appropriately formatted SNS message is received. In the RIALTO architect
 Start [localstack](https://github.com/localstack/localstack#installing). If you're on a Mac, ensure you are running the docker daemon.
 
 ```
-SERVICES=lambda,sns LAMBDA_EXECUTOR=docker localstack start
+SERVICES=lambda,sns,sqs LAMBDA_EXECUTOR=docker localstack start
 ```
 
 ### Blazegraph

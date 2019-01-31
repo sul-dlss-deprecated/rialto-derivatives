@@ -6,18 +6,27 @@ import (
 	"github.com/aws/aws-lambda-go/events"
 )
 
-// Message a message (from SNS) that the application understands
+// Message a message (from SQS) that the application understands
 type Message struct {
 	Action   string
 	Entities []string
 	Body     interface{}
 }
 
-// Parse transforms a SNSEventRecord into a message
-func Parse(record events.SNSEventRecord) (*Message, error) {
-	data := record.SNS.Message
+// SQSBody is the body of an SQS message
+type SQSBody struct {
+	Message string
+}
+
+// Parse transforms an SQSMessage into a message
+func Parse(record events.SQSMessage) (*Message, error) {
+	body := &SQSBody{}
+	err := json.Unmarshal([]byte(record.Body), body)
+	if err != nil {
+		return nil, err
+	}
 	msg := &Message{}
-	err := json.Unmarshal([]byte(data), msg)
+	err = json.Unmarshal([]byte(body.Message), msg)
 	if err != nil {
 		return nil, err
 	}
