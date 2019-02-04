@@ -7,12 +7,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestParse(t *testing.T) {
+func TestParseSQS(t *testing.T) {
 	evtRecord := events.SQSMessage{
 		Body: "{\"Message\": \"{\\\"Action\\\": \\\"touch\\\", \\\"Entities\\\":[\\\"http://example.com/foo1\\\"] }\"}",
 	}
 
-	event, _ := Parse(evtRecord)
+	event, _ := ParseSQS(evtRecord)
+	assert.Equal(t, "touch", event.Action)
+	assert.Equal(t, []string{"http://example.com/foo1"}, event.Entities)
+
+}
+
+func TestParseSNS(t *testing.T) {
+	evtRecord := events.SNSEventRecord{
+		SNS: events.SNSEntity{
+			Message: "{\"Action\": \"touch\", \"Entities\":[\"http://example.com/foo1\"] }",
+		},
+	}
+	event, _ := ParseSNS(evtRecord)
 	assert.Equal(t, "touch", event.Action)
 	assert.Equal(t, []string{"http://example.com/foo1"}, event.Entities)
 

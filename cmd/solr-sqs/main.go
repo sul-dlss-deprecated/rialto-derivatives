@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"os"
-	"strings"
 
 	"github.com/aws/aws-lambda-go/events"
 	"github.com/aws/aws-lambda-go/lambda"
@@ -12,17 +11,15 @@ import (
 	"github.com/sul-dlss/rialto-derivatives/message"
 	"github.com/sul-dlss/rialto-derivatives/repository"
 	"github.com/sul-dlss/rialto-derivatives/runtime"
-
-	// Added for the postgres driver
-	_ "github.com/lib/pq"
+	"github.com/sul-dlss/rialto-derivatives/transform"
 )
 
 // Handler is the Lambda function handler
 func Handler(ctx context.Context, sqsEvent events.SQSEvent) {
 	repo := repository.BuildRepository()
-	registry := runtime.NewRegistry(repo, buildDatabase(repo))
+	registry := runtime.NewRegistry(repo, buildSolrClient(repo))
 	for _, record := range sqsEvent.Records {
-		msg, err := message.Parse(record)
+		msg, err := message.ParseSQS(record)
 		if err != nil {
 			panic(err)
 		}
@@ -33,16 +30,12 @@ func Handler(ctx context.Context, sqsEvent events.SQSEvent) {
 	}
 }
 
-func buildDatabase(repo repository.Repository) *derivative.PostgresClient {
-	conf := derivative.NewPostgresConfig().
-		WithUser(os.Getenv("RDS_USERNAME")).
-		WithPassword(os.Getenv("RDS_PASSWORD")).
-		WithDbname(os.Getenv("RDS_DB_NAME")).
-		WithHost(os.Getenv("RDS_HOSTNAME")).
-		WithPort(os.Getenv("RDS_PORT")).
-		WithSSL(os.Getenv("RDS_SSL") == "" || strings.ToLower(os.Getenv("RDS_SSL")) == "true")
+func buildSolrClient(repo repository.Repository) *derivative.SolrClient {
+	indexer := transform.NewCompositeIndexer(repo)
 
-	return derivative.NewPostgresClient(conf, repo)
+	host := os.Getenv("SOLR_HOST")
+	collection := os.Getenv("SOLR_COLLECTION")
+	return derivative.NewSolrClient(host, collection, indexer)
 }
 
 func main() {

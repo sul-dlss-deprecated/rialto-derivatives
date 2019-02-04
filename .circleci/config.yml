@@ -30,8 +30,8 @@ jobs:
           command: sudo apt-get install postgresql-client
       - run: psql -h localhost -p 5432 rialto_test < database.dump
       - run: go test -v ./...
-      - run: GOOS=linux go build -o solr_derivative cmd/solr/main.go
-      - run: GOOS=linux go build -o postgres_derivative cmd/postgres/main.go
+      - run: GOOS=linux go build -o solr_derivative cmd/solr-sqs/main.go
+      - run: GOOS=linux go build -o postgres_derivative cmd/postgres-sqs/main.go
 
   deploy:
     docker:
@@ -46,8 +46,8 @@ jobs:
       - checkout
       - run: go get github.com/golang/dep/cmd/dep
       - run: dep ensure
-      - run: GOOS=linux go build -o solr_derivative cmd/solr/main.go
-      - run: GOOS=linux go build -o postgres_derivative cmd/postgres/main.go
+      - run: GOOS=linux go build -o solr_derivative cmd/solr-sqs/main.go
+      - run: GOOS=linux go build -o postgres_derivative cmd/postgres-sqs/main.go
       - run: zip lambda.zip solr_derivative
       - run:
           name: Update Lambda Function
@@ -87,7 +87,7 @@ jobs:
 
 workflows:
   version: 2
-  
+
   deploy-dev:
     jobs:
       - build:
