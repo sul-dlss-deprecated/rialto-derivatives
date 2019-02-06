@@ -53,6 +53,15 @@ func (m *PublicationSerializer) SQLForInsert(resource *models.Publication) (stri
 	return sql, vals
 }
 
+// ShouldAdd returns True if this publication should be added.
+// Publications should not be added if they will not be included in a report.
+func (m *PublicationSerializer) ShouldAdd(resource *models.Publication) bool {
+	if resource.CreatedYear < 2000 || resource.HasStanfordAuthor == false {
+		return false
+	}
+	return true
+}
+
 func (m *PublicationSerializer) retrieveURIs(resources []*models.Concept) *[]string {
 	uris := make([]string, len(resources))
 	for n, resource := range resources {
