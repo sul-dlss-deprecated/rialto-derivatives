@@ -148,7 +148,7 @@ func TestPostgresAddPublication(t *testing.T) {
 	titleLiteral, _ := rdf.NewLiteral("New developments in the management of narcolepsy")
 	idIRI, _ := rdf.NewIRI("http://example.com/publication1")
 	resourceType, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
-	createdLiteral, _ := rdf.NewLiteral("Right now")
+	createdLiteral, _ := rdf.NewLiteral("2020")
 	identifierLiteral, _ := rdf.NewLiteral("publication1")
 
 	data["id"] = idIRI
@@ -162,17 +162,51 @@ func TestPostgresAddPublication(t *testing.T) {
 	// Add authors
 	resource.Authors = append(resource.Authors, &models.Author{URI: "http://example.com/record1", Label: "Barbara Liskov"})
 	resource.Authors = append(resource.Authors, &models.Author{URI: "http://example.com/record2", Label: "Barry Liskovich"})
+	resource.HasStanfordAuthor = true
 
 	err = client.addPublication(resource)
 	assert.Nil(t, err)
 
 	pub, err := client.retrieveOnePublication("http://example.com/publication1")
 	assert.Nil(t, err)
-	assert.Equal(t, `{"title": "New developments in the management of narcolepsy", "concepts": [], "created_year": null}`, pub)
+	assert.Equal(t, `{"title": "New developments in the management of narcolepsy", "concepts": [], "created_year": 2020}`, pub)
 
 	uris, err := client.retrievePeoplePublicationRelationship("http://example.com/publication1")
 	assert.Nil(t, err)
 	assert.Len(t, *uris, 2)
+
+}
+
+func TestPostgresNoAddPublication(t *testing.T) {
+	conf := NewPostgresConfig().WithDbname("rialto_test").WithSSL(false)
+	repo := new(MockRepository)
+
+	client := NewPostgresClient(conf, repo)
+	client.RemoveAll()
+
+	data := make(map[string]rdf.Term)
+
+	titleLiteral, _ := rdf.NewLiteral("New developments in the management of narcolepsy")
+	idIRI, _ := rdf.NewIRI("http://example.com/publication1")
+	resourceType, _ := rdf.NewIRI("http://purl.org/ontology/bibo/Document")
+	// This is too old to be included.
+	createdLiteral, _ := rdf.NewLiteral("1776")
+	identifierLiteral, _ := rdf.NewLiteral("publication1")
+
+	data["id"] = idIRI
+	data["title"] = titleLiteral
+	data["type"] = resourceType
+	data["created"] = createdLiteral
+	data["identifier"] = identifierLiteral
+
+	resource := models.NewResource(data).(*models.Publication)
+
+	err := client.addPublication(resource)
+	assert.Nil(t, err)
+
+	pub, err := client.retrieveOnePublication("http://example.com/publication1")
+	assert.Nil(t, err)
+	assert.Equal(t, "", pub)
 
 }
 
