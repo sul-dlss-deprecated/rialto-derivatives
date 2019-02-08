@@ -167,10 +167,8 @@ func (d *PostgresClient) addConcept(resource *models.Concept) error {
 
 func (d *PostgresClient) addPublication(resource *models.Publication) error {
 	if d.publicationSerializer.ShouldAdd(resource) == false {
-		log.Printf("Skipping!")
 		return nil
 	}
-	log.Printf("Adding!")
 	err := d.addResource(d.publicationSerializer.SQLForInsert(resource))
 	if err != nil {
 		return err
