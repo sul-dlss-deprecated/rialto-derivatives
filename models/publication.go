@@ -10,20 +10,19 @@ import (
 // Publication is a representation of articles, research outputs, datasets, etc.
 // If feasible, there should be a link to manifestations of that Work (i.e. DOI).
 type Publication struct {
-	URI               string
-	Subtype           *string
-	Title             string
-	DOI               *string
-	Abstract          *string
-	Identifiers       []string
-	Publisher         *string
-	Description       *string
-	Created           string
-	CreatedYear       int
-	Authors           []*Author
-	Grants            []*Labeled
-	Concepts          []*Concept
-	HasStanfordAuthor bool
+	URI         string
+	Subtype     *string
+	Title       string
+	DOI         *string
+	Abstract    *string
+	Identifiers []string
+	Publisher   *string
+	Description *string
+	Created     string
+	CreatedYear int
+	Authors     []*Author
+	Grants      []*Labeled
+	Concepts    []*Concept
 }
 
 // Author is a representation of a person that authored a publication.
@@ -114,14 +113,6 @@ func (c *Publication) SetIdentifierInfo(results *sparql.Results) {
 	for _, solution := range solutions {
 		identifier := solution["id"].String()
 		c.Identifiers = append(c.Identifiers, identifier)
-	}
-}
-
-// SetStanfordAuthor sets whether any of the authors are affiliated with department, school, or institute.
-func (c *Publication) SetStanfordAuthor(results *sparql.Results) {
-	solutions := results.Solutions()
-	for _, solution := range solutions {
-		c.HasStanfordAuthor = solution["count"].String() != "0"
 	}
 }
 

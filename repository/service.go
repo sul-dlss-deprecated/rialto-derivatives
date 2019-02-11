@@ -97,14 +97,6 @@ func (m *Service) toPublication(v *models.Publication) {
 		panic(err)
 	}
 	v.SetIdentifierInfo(results)
-
-	// Publications need to be informed if any of authors are Standford authors.
-	results, err = m.reader.GetStanfordAuthorCount(v.Subject())
-	if err != nil {
-		panic(err)
-	}
-	v.SetStanfordAuthor(results)
-
 }
 
 func (m *Service) toGrant(v *models.Grant) {

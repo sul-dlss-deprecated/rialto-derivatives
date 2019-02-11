@@ -188,24 +188,6 @@ func (r *SparqlReader) GetAuthorInfo(publication string) (*sparql.Results, error
 	return r.repo.Query(query)
 }
 
-// GetStanfordAuthorCount returns the number of authors is affiliated with a department, school, or institute.
-func (r *SparqlReader) GetStanfordAuthorCount(publication string) (*sparql.Results, error) {
-	query := fmt.Sprintf(`SELECT (COUNT(?id) as ?count) {
-				 <%s> <http://vivoweb.org/ontology/core#relatedBy> ?authorship .
-				 ?authorship a <http://vivoweb.org/ontology/core#Authorship> .
-				 ?authorship <http://vivoweb.org/ontology/core#relates> ?id .
-				 ?pos_org a <http://xmlns.com/foaf/0.1/Organization> .
-           		 ?pos_org a ?org_type .
-				 FILTER ( ?org_type IN (<http://vivoweb.org/ontology/core#Department>, <http://vivoweb.org/ontology/core#School>, <http://vivoweb.org/ontology/core#Institute>))
-				 ?pos_org <http://purl.obolibrary.org/obo/BFO_0000050>* ?org .
-    		     ?pos_org <http://vivoweb.org/ontology/core#relatedBy> ?pos .
-    		     ?pos a <http://vivoweb.org/ontology/core#Position> .
-    		     ?pos <http://vivoweb.org/ontology/core#relates> ?id .
-			}
-			GROUP BY ?id`, publication)
-	return r.repo.Query(query)
-}
-
 // GetConceptInfo retrieves a list of concepts for a subject
 func (r *SparqlReader) GetConceptInfo(subject string) (*sparql.Results, error) {
 	query := fmt.Sprintf(`SELECT ?id ?label

@@ -162,7 +162,6 @@ func TestPostgresAddPublication(t *testing.T) {
 	// Add authors
 	resource.Authors = append(resource.Authors, &models.Author{URI: "http://example.com/record1", Label: "Barbara Liskov"})
 	resource.Authors = append(resource.Authors, &models.Author{URI: "http://example.com/record2", Label: "Barry Liskovich"})
-	resource.HasStanfordAuthor = true
 
 	err = client.addPublication(resource)
 	assert.Nil(t, err)
