@@ -16,5 +16,4 @@ type Reader interface {
 	GetGrantIdentifierInfo(subject string) (*sparql.Results, error)
 	GetGrantInfo(subject string) (*sparql.Results, error)
 	GetPersonSubtypesInfo(subject string) (*sparql.Results, error)
-	GetStanfordAuthorCount(subject string) (*sparql.Results, error)
 }

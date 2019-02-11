@@ -99,10 +99,6 @@ func (f *MockedReader) GetGrantIdentifierInfo(id string) (*sparql.Results, error
 	return nil, nil
 }
 
-func (f *MockedReader) GetStanfordAuthorCount(subject string) (*sparql.Results, error) {
-	return nil, nil
-}
-
 func TestPersonResourceWithName(t *testing.T) {
 	fakeSparql := new(MockedReader)
 

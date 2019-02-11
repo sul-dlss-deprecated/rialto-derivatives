@@ -1,11 +1,9 @@
 package models
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/knakk/rdf"
-	"github.com/knakk/sparql"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -55,35 +53,4 @@ func TestNewPublicationAllFields(t *testing.T) {
 	assert.Equal(t, *resource.Publisher, publisher.String())
 	assert.Equal(t, *resource.Description, description.String())
 	assert.Equal(t, resource.CreatedYear, 2004)
-}
-
-func TestSetStanfordAuthors(t *testing.T) {
-	data := make(map[string]rdf.Term)
-	id, _ := rdf.NewIRI("http://example.com/record1")
-	title, _ := rdf.NewLiteral("Hello world!")
-	created, _ := rdf.NewLiteral("2004-06-11?")
-
-	data["id"] = id
-	data["title"] = title
-	data["created"] = created
-
-	resource := NewPublication(data)
-
-	authorsJSON := strings.NewReader(`{
-    "head" : {
-  		"vars" : [ "count" ]
-		},
-		"results" : {
-  		"bindings" : [ {
-    		"count" : {
-      		"type" : "literal",
-      		"value" : "3"
-    		}
-  		} ]
-		}
-	}`)
-	results, _ := sparql.ParseJSON(authorsJSON)
-	resource.SetStanfordAuthor(results)
-	assert.IsType(t, &Publication{}, resource)
-	assert.True(t, resource.HasStanfordAuthor)
 }

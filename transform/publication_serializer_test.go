@@ -11,10 +11,9 @@ func TestSerializePublicationResource(t *testing.T) {
 	indexer := NewPublicationSerializer()
 
 	resource := &models.Publication{
-		URI:               "http://example.com/publication1",
-		Title:             "New developments in the management of narcolepsy",
-		CreatedYear:       2018,
-		HasStanfordAuthor: true,
+		URI:         "http://example.com/publication1",
+		Title:       "New developments in the management of narcolepsy",
+		CreatedYear: 2018,
 		Concepts: []*models.Concept{&models.Concept{
 			URI:   "http://example.com/concept1",
 			Label: "Research Area 1"}},
@@ -45,8 +44,7 @@ func TestShouldAddPublicationResource(t *testing.T) {
 	indexer := NewPublicationSerializer()
 
 	resource := &models.Publication{
-		CreatedYear:       2018,
-		HasStanfordAuthor: true,
+		CreatedYear: 2018,
 	}
 
 	assert.True(t, indexer.ShouldAdd(resource))
@@ -56,19 +54,7 @@ func TestShouldNotAddPublicationResourceCreated(t *testing.T) {
 	indexer := NewPublicationSerializer()
 
 	resource := &models.Publication{
-		CreatedYear:       1776,
-		HasStanfordAuthor: true,
-	}
-
-	assert.False(t, indexer.ShouldAdd(resource))
-}
-
-func TestShouldNotAddPublicationResourceStanfordAuthor(t *testing.T) {
-	indexer := NewPublicationSerializer()
-
-	resource := &models.Publication{
-		CreatedYear:       2020,
-		HasStanfordAuthor: false,
+		CreatedYear: 1776,
 	}
 
 	assert.False(t, indexer.ShouldAdd(resource))
