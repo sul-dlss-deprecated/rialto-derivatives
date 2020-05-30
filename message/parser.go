@@ -18,8 +18,8 @@ type SQSBody struct {
 	Message string
 }
 
-// Parse transforms an SQSMessage into a message
-func Parse(record events.SQSMessage) (*Message, error) {
+// ParseSQS transforms an SQSMessage into a message
+func ParseSQS(record events.SQSMessage) (*Message, error) {
 	body := &SQSBody{}
 	err := json.Unmarshal([]byte(record.Body), body)
 	if err != nil {
@@ -27,6 +27,18 @@ func Parse(record events.SQSMessage) (*Message, error) {
 	}
 	msg := &Message{}
 	err = json.Unmarshal([]byte(body.Message), msg)
+	if err != nil {
+		return nil, err
+	}
+
+	return msg, nil
+}
+
+// ParseSNS transforms a SNSEventRecord into a message
+func ParseSNS(record events.SNSEventRecord) (*Message, error) {
+	data := record.SNS.Message
+	msg := &Message{}
+	err := json.Unmarshal([]byte(data), msg)
 	if err != nil {
 		return nil, err
 	}

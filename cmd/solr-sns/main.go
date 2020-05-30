@@ -15,11 +15,11 @@ import (
 )
 
 // Handler is the Lambda function handler
-func Handler(ctx context.Context, sqsEvent events.SQSEvent) {
+func Handler(ctx context.Context, snsEvent events.SNSEvent) {
 	repo := repository.BuildRepository()
 	registry := runtime.NewRegistry(repo, buildSolrClient(repo))
-	for _, record := range sqsEvent.Records {
-		msg, err := message.Parse(record)
+	for _, record := range snsEvent.Records {
+		msg, err := message.ParseSNS(record)
 		if err != nil {
 			panic(err)
 		}
